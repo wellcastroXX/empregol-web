@@ -1,0 +1,13 @@
+# Normaliza tudo para LF no repositório. Sem isso, um checkout no Windows
+# grava CRLF e o shebang de scripts/deploy.sh quebra no servidor Linux
+# (`bash\r: No such file or directory`).
+* text=auto eol=lf
+
+# Binários — nunca normalizar
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
