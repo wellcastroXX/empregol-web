@@ -1,0 +1,303 @@
+/* =========================================================================
+   EMPREGOL — colors_and_type.css
+   Foundation tokens: color, type, spacing, radii, shadow.
+   "O ponto. A bola. O gol."
+   ========================================================================= */
+
+/* ---- Fonts ----------------------------------------------------------------
+   Display:  Bricolage Grotesque  — variable, sport-condensed feel
+   Body:     Geist                — neutral grotesque, broad weights
+   Mono:     Geist Mono           — for numbers, stats, IDs, jersey #s
+
+   Carregadas via <link> em index.html (não por @import): o Vite concatena o CSS
+   e um @import fora do topo do bundle seria descartado pelo browser.
+--------------------------------------------------------------------------- */
+
+:root {
+  /* ===== COLOR — 6 tokens, Portuguese names from the brand book ===========
+     Suggested proportion: 60% creme · 30% tinta · 8% osso · 2% gramado
+     ====================================================================== */
+
+  /* Tinta — primary ink, text on light, dark backgrounds */
+  --tinta: #141413;
+  /* Creme — neutral canvas, the default page background */
+  --creme: #f2efe8;
+  /* Gramado — pitch green, the accent (CTAs, status positive, emphasis) */
+  --gramado: oklch(0.6 0.15 145);
+  --gramado-hex: #2f8a4f; /* fallback */
+  /* Osso — bone, support / dividers / subtle surfaces */
+  --osso: #e8e3d5;
+  /* Giz — chalk, type ON tinta (off-white) */
+  --giz: #fbfaf5;
+  /* Cinza — ash, auxiliary text */
+  --cinza: #6b6b66;
+
+  /* Tints / scrim helpers built from the six */
+  --tinta-12: rgba(20, 20, 19, 0.12);
+  --tinta-24: rgba(20, 20, 19, 0.24);
+  --tinta-64: rgba(20, 20, 19, 0.64);
+  --giz-12: rgba(251, 250, 245, 0.12);
+  --giz-64: rgba(251, 250, 245, 0.64);
+
+  /* ===== SEMANTIC ROLES (light surface — creme) =========================== */
+  --bg: var(--creme);
+  --bg-elev: var(--giz); /* cards / elevated surfaces */
+  --bg-sunken: var(--osso); /* sunken / inset wells */
+  --fg: var(--tinta);
+  --fg-muted: var(--cinza);
+  --fg-on-dark: var(--giz);
+  --rule: var(--osso); /* dividers, hairlines */
+  --rule-strong: var(--tinta);
+  --accent: var(--gramado);
+  --accent-fg: var(--giz); /* text ON accent */
+
+  /* Status (derived from accent + ink, deliberately limited) */
+  --status-live: var(--gramado); /* novo · disponível · ao vivo */
+  --status-livre: var(--gramado); /* atleta livre */
+  --status-empregado: #b33a2a; /* atleta empregado / sob contrato */
+  --status-warn: #c77a1a; /* alerta · fim de contrato */
+  --status-neutral: var(--cinza);
+
+  /* Nível do atleta */
+  --nivel-pro: var(--tinta); /* Profissional · filled ink */
+  --nivel-amador: var(--osso); /* Amador · bone */
+  --nivel-base: transparent; /* Base · ghost (border only) */
+
+  /* ===== TYPE SCALE ======================================================= */
+  --font-display: 'Bricolage Grotesque', 'Inter Tight', system-ui, sans-serif;
+  --font-text: 'Geist', 'Inter', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Display sizes (clamp for fluid posters / hero) */
+  --t-display-xl: clamp(56px, 9vw, 144px); /* @kind font */
+  --t-display-lg: clamp(44px, 6vw, 96px); /* @kind font */
+  --t-display-md: clamp(32px, 4vw, 64px); /* @kind font */
+  --t-display-sm: 40px; /* @kind font */
+
+  /* Body & meta */
+  --t-h1: 40px;
+  --t-h2: 28px;
+  --t-h3: 20px;
+  --t-body: 16px;
+  --t-sm: 14px;
+  --t-xs: 12px;
+
+  /* Eyebrow / label — ALL CAPS, tracked out, mono.
+     Brand book uses spaced caps everywhere: "0 1 · L O G O P R I N C I P A L" */
+  --t-eyebrow: 11px;
+  --tr-eyebrow: 0.18em; /* tracking */
+
+  /* Numbers — jersey numerals are the brand's hero artifact */
+  --t-jersey-xl: 200px; /* card-of-the-week */
+  --t-jersey-lg: 120px;
+  --t-jersey-md: 64px;
+  --t-jersey-sm: 32px;
+
+  /* Line heights */
+  --lh-display: 0.92; /* @kind font */
+  --lh-tight: 1.05; /* @kind font */
+  --lh-body: 1.5; /* @kind font */
+  --lh-mono: 1.2; /* @kind font */
+
+  /* Weights */
+  --w-display: 600; /* @kind font */
+  --w-text: 400; /* @kind font */
+  --w-text-md: 500; /* @kind font */
+  --w-text-bd: 600; /* @kind font */
+
+  /* ===== SPACING (4-px base) ============================================== */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10: 40px;
+  --s-12: 48px;
+  --s-16: 64px;
+  --s-20: 80px;
+  --s-24: 96px;
+
+  /* ===== RADII — restrained. Tags + cards are crisp. ===================== */
+  --r-0: 0; /* @kind radius */
+  --r-1: 2px; /* tags, chips, inputs */
+  --r-2: 4px;
+  --r-3: 8px; /* cards */
+  --r-4: 12px; /* large cards */
+  --r-full: 999px; /* pills — for "ao vivo" status only */
+
+  /* ===== BORDERS / SHADOW ================================================= */
+  --bw-hair: 1px;
+  --bw-rule: 1.5px;
+  --bw-bold: 2px;
+  --border: var(--bw-hair) solid var(--rule);
+  --border-strong: var(--bw-rule) solid var(--rule-strong);
+
+  /* Shadows are minimal — the brand is editorial, not glossy.
+     A single low-contrast lift; an inset for sunken; nothing else. */
+  --shadow-0: none;
+  --shadow-1: 0 1px 0 0 var(--tinta-12);
+  --shadow-2: 0 1px 2px 0 var(--tinta-12), 0 4px 12px -4px var(--tinta-12);
+  --shadow-inset: inset 0 1px 0 0 var(--tinta-12);
+
+  /* ===== MOTION =========================================================== */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1); /* @kind other */
+  --ease-in: cubic-bezier(0.6, 0, 0.8, 0.4); /* @kind other */
+  --ease-inout: cubic-bezier(0.7, 0, 0.2, 1); /* @kind other */
+  --dur-1: 120ms; /* @kind other */
+  --dur-2: 220ms; /* @kind other */
+  --dur-3: 420ms; /* @kind other */
+}
+
+/* ===== Dark surface (tinta as background) ================================= */
+[data-surface='tinta'] {
+  --bg: var(--tinta);
+  --bg-elev: #1c1c1a;
+  --bg-sunken: #0d0d0c;
+  --fg: var(--giz);
+  --fg-muted: #9c9c95;
+  --rule: #2a2a26;
+  --rule-strong: var(--giz);
+  --accent-fg: var(--tinta);
+}
+
+/* ===== Base reset / element styling ======================================= */
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-text);
+  font-size: var(--t-body);
+  line-height: var(--lh-body);
+  font-weight: var(--w-text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--gramado);
+  color: var(--giz);
+}
+
+/* ===== Semantic element styling — apply these classes directly =========== */
+.display-xl {
+  font: var(--w-display) var(--t-display-xl)/var(--lh-display) var(--font-display);
+  letter-spacing: -0.02em;
+}
+.display-lg {
+  font: var(--w-display) var(--t-display-lg)/var(--lh-display) var(--font-display);
+  letter-spacing: -0.02em;
+}
+.display-md {
+  font: var(--w-display) var(--t-display-md)/var(--lh-tight) var(--font-display);
+  letter-spacing: -0.015em;
+}
+.display-sm {
+  font: var(--w-display) var(--t-display-sm)/var(--lh-tight) var(--font-display);
+  letter-spacing: -0.01em;
+}
+
+.h1 {
+  font: 600 var(--t-h1)/1.1 var(--font-display);
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+.h2 {
+  font: 600 var(--t-h2)/1.15 var(--font-display);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.h3 {
+  font: 600 var(--t-h3)/1.25 var(--font-text);
+  letter-spacing: -0.005em;
+  margin: 0;
+}
+
+.body {
+  font: var(--w-text) var(--t-body)/var(--lh-body) var(--font-text);
+  margin: 0;
+}
+.sm {
+  font: var(--w-text) var(--t-sm)/1.45 var(--font-text);
+  margin: 0;
+}
+.xs {
+  font: var(--w-text) var(--t-xs)/1.4 var(--font-text);
+  margin: 0;
+}
+
+/* Eyebrow / sectioner — the brand's signature spaced-caps label.
+   Use for "0 1 · L O G O P R I N C I P A L" lockups */
+.eyebrow {
+  font: 500 var(--t-eyebrow)/1.2 var(--font-mono);
+  letter-spacing: var(--tr-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  margin: 0;
+}
+
+/* Jersey number — mono, slightly extended, the brand's iconic numeral */
+.jersey {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  line-height: 1;
+  font-feature-settings: 'tnum' 1;
+}
+.jersey-xl {
+  font-size: var(--t-jersey-xl);
+}
+.jersey-lg {
+  font-size: var(--t-jersey-lg);
+}
+.jersey-md {
+  font-size: var(--t-jersey-md);
+}
+.jersey-sm {
+  font-size: var(--t-jersey-sm);
+}
+
+/* Tag — the brand's flat capsule. POSIÇÃO · STATUS · MÉTRICA */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: var(--r-1);
+  font: 500 var(--t-xs)/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--osso);
+  color: var(--tinta);
+  border: 1px solid transparent;
+}
+.tag--live {
+  background: var(--gramado);
+  color: var(--giz);
+}
+.tag--ghost {
+  background: transparent;
+  border-color: var(--tinta);
+}
+.tag--ink {
+  background: var(--tinta);
+  color: var(--giz);
+}
+
+/* Wordmark dot — used INLINE inside the empregol. lockup */
+.wordmark {
+  font: 600 1em/1 var(--font-display);
+  letter-spacing: -0.02em;
+}
+.wordmark::after {
+  content: '';
+  display: inline-block;
+  width: 0.18em;
+  height: 0.18em;
+  border-radius: 50%;
+  background: currentColor;
+  margin-left: 0.02em;
+  vertical-align: baseline;
+  transform: translateY(0.04em);
+}

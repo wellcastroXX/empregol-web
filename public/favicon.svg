@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="64" height="64" role="img" aria-label="Empregol">
+  <rect width="1024" height="1024" fill="#141413"></rect>
+  <path d="M636 352 C516 300 392 322 384 438 C379 512 446 536 538 524 C446 536 379 560 384 634 C392 750 516 772 636 720" fill="none" stroke="#FBFAF5" stroke-width="150" stroke-linecap="round" stroke-linejoin="round"></path>
+  <circle cx="772" cy="700" r="82" fill="#2f8a4f"></circle>
+</svg>

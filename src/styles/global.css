@@ -1,0 +1,72 @@
+/* =========================================================================
+   EMPREGOL — global.css
+   Reset + regras globais. Os tokens vivem em ./tokens.css.
+   ========================================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--creme);
+  color: var(--tinta);
+}
+
+img,
+svg,
+video {
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--gramado-hex);
+  outline-offset: 2px;
+}
+
+/* Trilho do carrossel da vitrine — scrollbar discreta, no espírito editorial */
+.empregol-scroll-x {
+  scrollbar-width: thin;
+  scrollbar-color: var(--osso) transparent;
+}
+
+.empregol-scroll-x::-webkit-scrollbar {
+  height: 6px;
+}
+
+.empregol-scroll-x::-webkit-scrollbar-thumb {
+  background: var(--osso);
+  border-radius: 999px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
