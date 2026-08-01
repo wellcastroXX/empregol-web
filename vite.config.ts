@@ -22,7 +22,9 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true,
+    // Sem sourcemap em produção: o site é público e o .map expõe o código-fonte
+    // inteiro. Ligue temporariamente se precisar depurar um erro de produção.
+    sourcemap: false,
     target: 'es2022',
     chunkSizeWarningLimit: 700,
   },

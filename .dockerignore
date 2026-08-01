@@ -1,0 +1,19 @@
+node_modules
+dist
+coverage
+.git
+.github
+.vscode
+.idea
+
+# Segredos nunca entram na imagem (.env.example é o único versionado mesmo)
+.env
+.env.*
+!.env.example
+
+*.log
+*.tsbuildinfo
+Dockerfile
+.dockerignore
+docker-compose.yml
+README.md

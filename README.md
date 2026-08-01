@@ -98,3 +98,26 @@ Histórias · Confiam`
 
 Os dados dos atletas ainda são mock (`src/features/athletes/api/showcase-athletes.mock.ts`) — a
 troca pelo endpoint real da `empregol-api` acontece nesse arquivo, sem tocar nos componentes.
+
+## Deploy
+
+Roda no servidor `infra` (192.168.3.197) em `/project/empregol/web`, ao lado do backend. A imagem é
+multi-stage (`node:22-alpine` compila → `nginx:alpine` serve), publicada pelo **Traefik** no
+entrypoint `web` e exposta pelo **Cloudflare Tunnel** (TLS termina no edge da Cloudflare).
+
+```bash
+ssh server@192.168.3.197
+cd /project/empregol/web
+./scripts/deploy.sh          # git pull + docker compose up -d --build
+```
+
+Pontos de atenção:
+
+- `VITE_API_URL` é lida **em tempo de build** — trocar o valor exige rebuild da imagem, não basta
+  reiniciar o container.
+- O compose usa `name: empregol-web`, separado do `name: empregol` do backend. Um `docker compose
+down` aqui não encosta na API nem no banco.
+- Hostnames públicos vivem no dashboard do **Cloudflare Zero Trust** (o tunnel roda com `--token`,
+  então o `config.yml` local é ignorado). Domínio novo = criar o Public Hostname apontando para
+  `http://traefik:80`.
+- `/healthz` responde `ok` — use no Uptime Kuma.
