@@ -30,6 +30,12 @@ export const colors = {
   /** Status */
   statusEmpregado: '#B33A2A',
   statusWarn: '#C77A1A',
+
+  /** Tints — réguas e scrims sobre superfície escura */
+  giz12: 'rgba(251, 250, 245, 0.12)',
+  giz24: 'rgba(251, 250, 245, 0.24)',
+  giz64: 'rgba(251, 250, 245, 0.64)',
+  tinta12: 'rgba(20, 20, 19, 0.12)',
 } as const
 
 export const fonts = {

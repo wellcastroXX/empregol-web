@@ -1,25 +1,26 @@
-import { ConfiamSection } from './components/ConfiamSection'
-import { DestaqueSection } from './components/DestaqueSection'
-import { FormationShowcase } from './components/FormationShowcase'
-import { Hero } from './components/Hero'
-import { HistoriasSection } from './components/HistoriasSection'
-import { VitrineCarousel } from './components/VitrineCarousel'
-import { WeeklyMetrics } from './components/WeeklyMetrics'
+import { CtaFinal } from './components/CtaFinal'
+import { HeroVideo } from './components/HeroVideo'
+import { MissaoSection } from './components/MissaoSection'
+import { OrigemSection } from './components/OrigemSection'
+import { ProblemaSection } from './components/ProblemaSection'
+import { SobreSection } from './components/SobreSection'
+import { SuporteSection } from './components/SuporteSection'
 
 /**
- * empregol.com — homepage editorial.
- * Ordem: Hero · Métricas da semana · Destaque · Vitrine · Formação · Histórias · Confiam.
+ * empregol.com — homepage institucional.
+ * Ordem: Hero (vídeo) · O que é · Suporte contínuo · Origem · Tamanho do
+ * problema · Missão · Fechamento.
  */
 export default function HomePage() {
   return (
     <>
-      <Hero />
-      <WeeklyMetrics />
-      <DestaqueSection />
-      <VitrineCarousel />
-      <FormationShowcase />
-      <HistoriasSection />
-      <ConfiamSection />
+      <HeroVideo />
+      <SobreSection />
+      <SuporteSection />
+      <OrigemSection />
+      <ProblemaSection />
+      <MissaoSection />
+      <CtaFinal />
     </>
   )
 }
