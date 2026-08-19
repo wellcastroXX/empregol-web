@@ -1,3 +1,4 @@
+import wordmarkCream from '@/assets/images/empregol-wordmark-cream.svg'
 import { colors, fonts } from '@/shared/config/theme'
 
 const FOOTER_COLUMNS: ReadonlyArray<readonly [string, readonly string[]]> = [
@@ -20,29 +21,14 @@ export function SiteFooter() {
         }}
       >
         <div>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
-            <span
-              style={{
-                fontFamily: fonts.display,
-                fontWeight: 600,
-                fontSize: 40,
-                letterSpacing: '-0.03em',
-                color: colors.giz,
-              }}
-            >
-              empregol
-            </span>
-            <span
-              style={{
-                fontFamily: fonts.display,
-                fontWeight: 600,
-                fontSize: 40,
-                color: colors.gramado,
-              }}
-            >
-              .
-            </span>
-          </div>
+          {/* Rodapé é superfície escura (tinta) — entra a versão creme. */}
+          <img
+            src={wordmarkCream}
+            alt="Empregol"
+            width={212}
+            height={40}
+            style={{ display: 'block' }}
+          />
           <p
             style={{
               fontFamily: fonts.text,

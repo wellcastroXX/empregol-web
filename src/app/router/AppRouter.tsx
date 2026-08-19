@@ -11,7 +11,8 @@ const NotFoundPage = lazy(() => import('@/pages/not-found/NotFoundPage'))
 
 const router = createBrowserRouter([
   {
-    element: <SiteLayout active="Atletas" />,
+    // Home: hero escuro full-bleed, nav transparente até o primeiro scroll.
+    element: <SiteLayout active="Atletas" overlay />,
     children: [
       {
         path: ROUTES.home,
@@ -21,6 +22,12 @@ const router = createBrowserRouter([
           </Suspense>
         ),
       },
+    ],
+  },
+  {
+    // Demais rotas nascem em fundo claro — nav sempre sólido.
+    element: <SiteLayout />,
+    children: [
       {
         path: '*',
         element: (

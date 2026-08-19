@@ -1,63 +1,59 @@
 import { Link } from 'react-router-dom'
 
+import wordmarkCream from '@/assets/images/empregol-wordmark-cream.svg'
+import wordmarkDark from '@/assets/images/empregol-wordmark.svg'
 import { colors, fonts } from '@/shared/config/theme'
+import { useScrolledPast } from '@/shared/lib/hooks/useScrolledPast'
 
 const NAV_ITEMS = ['Atletas', 'Clubes', 'Agentes', 'Histórias', 'Preço'] as const
+
+/** Rolagem a partir da qual a barra assume o fundo sólido. */
+const SOLID_AT = 40
+
+const TRANSITION = 'background-color 240ms ease, border-color 240ms ease, color 240ms ease'
 
 export type NavItem = (typeof NAV_ITEMS)[number]
 
 export interface SiteHeaderProps {
   active?: NavItem | ''
+  /**
+   * Deixa a barra transparente enquanto a página está no topo, para o hero
+   * escuro aparecer por trás. Só faz sentido em rotas cuja primeira seção é
+   * escura — em fundo claro o logotipo creme sumiria.
+   */
+  overlay?: boolean
 }
 
-/** Navegação superior do empregol.com — sticky com blur sobre o creme. */
-export function SiteHeader({ active = '' }: SiteHeaderProps) {
+/** Navegação superior do empregol.com — fixa, transparente no topo do hero. */
+export function SiteHeader({ active = '', overlay = false }: SiteHeaderProps) {
+  const scrolled = useScrolledPast(SOLID_AT)
+  const transparent = overlay && !scrolled
+
+  const fg = transparent ? colors.giz : colors.tinta
+
   return (
     <nav
       style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 20,
+        height: 'var(--nav-h)',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: '20px 40px',
-        borderBottom: `1px solid ${colors.osso}`,
-        background: 'rgba(242, 239, 232, 0.85)',
-        backdropFilter: 'blur(12px)',
-        position: 'sticky',
-        top: 0,
-        zIndex: 10,
+        padding: '0 40px',
+        background: transparent ? 'transparent' : 'rgba(242, 239, 232, 0.85)',
+        backdropFilter: transparent ? 'none' : 'blur(12px)',
+        borderBottom: `1px solid ${transparent ? 'transparent' : colors.osso}`,
+        transition: TRANSITION,
       }}
     >
-      <Link
-        to="/"
-        style={{
-          textDecoration: 'none',
-          color: colors.tinta,
-          display: 'flex',
-          alignItems: 'baseline',
-          gap: 1,
-        }}
-      >
-        <span
-          style={{
-            fontFamily: fonts.display,
-            fontWeight: 600,
-            fontSize: 22,
-            letterSpacing: '-0.03em',
-          }}
-        >
-          empregol
-        </span>
-        <span
-          style={{
-            fontFamily: fonts.display,
-            fontWeight: 600,
-            fontSize: 22,
-            color: colors.gramado,
-          }}
-        >
-          .
-        </span>
+      <Link to="/" aria-label="Empregol — página inicial" style={{ display: 'block' }}>
+        <Wordmark cream={transparent} />
       </Link>
+
       <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
         {NAV_ITEMS.map((i) => (
           <a
@@ -67,9 +63,10 @@ export function SiteHeader({ active = '' }: SiteHeaderProps) {
               fontFamily: fonts.text,
               fontSize: 14,
               fontWeight: 500,
-              color: colors.tinta,
+              color: fg,
               textDecoration: 'none',
               opacity: active === i ? 1 : 0.85,
+              transition: TRANSITION,
             }}
           >
             {i}
@@ -81,7 +78,8 @@ export function SiteHeader({ active = '' }: SiteHeaderProps) {
             alignItems: 'center',
             gap: 14,
             paddingLeft: 16,
-            borderLeft: `1px solid ${colors.osso}`,
+            borderLeft: `1px solid ${transparent ? colors.giz24 : colors.osso}`,
+            transition: TRANSITION,
           }}
         >
           <a
@@ -90,8 +88,9 @@ export function SiteHeader({ active = '' }: SiteHeaderProps) {
               fontFamily: fonts.text,
               fontSize: 14,
               fontWeight: 500,
-              color: colors.tinta,
+              color: fg,
               textDecoration: 'none',
+              transition: TRANSITION,
             }}
           >
             ENTRAR
@@ -99,8 +98,9 @@ export function SiteHeader({ active = '' }: SiteHeaderProps) {
           <a
             href="#"
             style={{
-              background: colors.tinta,
-              color: colors.giz,
+              // Invertido no topo: sobre o vídeo escuro, o botão claro é que vira o destaque.
+              background: transparent ? colors.giz : colors.tinta,
+              color: transparent ? colors.tinta : colors.giz,
               padding: '10px 14px',
               borderRadius: 4,
               fontFamily: fonts.text,
@@ -108,6 +108,7 @@ export function SiteHeader({ active = '' }: SiteHeaderProps) {
               fontWeight: 500,
               textDecoration: 'none',
               letterSpacing: '0.02em',
+              transition: TRANSITION,
             }}
           >
             CADASTRE-SE ›
@@ -115,5 +116,49 @@ export function SiteHeader({ active = '' }: SiteHeaderProps) {
         </div>
       </div>
     </nav>
+  )
+}
+
+const WORDMARK_HEIGHT = 22
+/** Proporção do viewBox (692 × 130.59) — reserva a largura e evita salto de layout. */
+const WORDMARK_WIDTH = Math.round((WORDMARK_HEIGHT * 692) / 130.59)
+
+/**
+ * As duas versões ficam empilhadas e alternam por opacidade em vez de trocar o
+ * `src`: assim os dois arquivos já estão carregados e a primeira rolagem não
+ * pisca esperando download.
+ */
+function Wordmark({ cream }: { cream: boolean }) {
+  return (
+    <span
+      style={{
+        position: 'relative',
+        display: 'block',
+        width: WORDMARK_WIDTH,
+        height: WORDMARK_HEIGHT,
+      }}
+    >
+      <img
+        src={wordmarkDark}
+        alt="Empregol"
+        width={WORDMARK_WIDTH}
+        height={WORDMARK_HEIGHT}
+        style={{ display: 'block', opacity: cream ? 0 : 1, transition: 'opacity 240ms ease' }}
+      />
+      <img
+        src={wordmarkCream}
+        alt=""
+        aria-hidden="true"
+        width={WORDMARK_WIDTH}
+        height={WORDMARK_HEIGHT}
+        style={{
+          position: 'absolute',
+          inset: 0,
+          display: 'block',
+          opacity: cream ? 1 : 0,
+          transition: 'opacity 240ms ease',
+        }}
+      />
+    </span>
   )
 }

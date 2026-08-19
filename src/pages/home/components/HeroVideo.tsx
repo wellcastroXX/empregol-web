@@ -15,11 +15,13 @@ export function HeroVideo() {
     <section
       style={{
         position: 'relative',
-        minHeight: '86vh',
+        minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'flex-end',
-        padding: '80px 40px 56px',
+        // O nav é fixo e transparente aqui: o topo compensa a altura dele para
+        // o vídeo correr por trás sem o texto ficar debaixo da barra.
+        padding: 'calc(var(--nav-h) + 72px) 40px 56px',
         overflow: 'hidden',
         background: colors.tinta,
         color: colors.giz,

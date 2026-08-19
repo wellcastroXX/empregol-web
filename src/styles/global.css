@@ -9,6 +9,12 @@
   box-sizing: border-box;
 }
 
+:root {
+  /* Altura do nav fixo. O layout reserva esse espaço no <main>, e o hero da
+     home o cancela para o vídeo passar por trás da barra. */
+  --nav-h: 72px;
+}
+
 html,
 body,
 #root {
