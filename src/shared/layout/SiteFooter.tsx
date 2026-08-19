@@ -1,5 +1,5 @@
-import wordmarkCream from '@/assets/images/empregol-wordmark-cream.svg'
 import { colors, fonts } from '@/shared/config/theme'
+import { Wordmark } from '@/shared/ui/Wordmark'
 
 const FOOTER_COLUMNS: ReadonlyArray<readonly [string, readonly string[]]> = [
   ['ATLETAS', ['Cadastro', 'Vitrine', 'Histórias']],
@@ -22,13 +22,7 @@ export function SiteFooter() {
       >
         <div>
           {/* Rodapé é superfície escura (tinta) — entra a versão creme. */}
-          <img
-            src={wordmarkCream}
-            alt="Empregol"
-            width={212}
-            height={40}
-            style={{ display: 'block' }}
-          />
+          <Wordmark variant="cream" height={40} />
           <p
             style={{
               fontFamily: fonts.text,

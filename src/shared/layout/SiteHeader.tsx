@@ -1,9 +1,8 @@
 import { Link } from 'react-router-dom'
 
-import wordmarkCream from '@/assets/images/empregol-wordmark-cream.svg'
-import wordmarkDark from '@/assets/images/empregol-wordmark.svg'
 import { colors, fonts } from '@/shared/config/theme'
 import { useScrolledPast } from '@/shared/lib/hooks/useScrolledPast'
+import { Wordmark } from '@/shared/ui/Wordmark'
 
 const NAV_ITEMS = ['Atletas', 'Clubes', 'Agentes', 'Histórias', 'Preço'] as const
 
@@ -51,7 +50,7 @@ export function SiteHeader({ active = '', overlay = false }: SiteHeaderProps) {
       }}
     >
       <Link to="/" aria-label="Empregol — página inicial" style={{ display: 'block' }}>
-        <Wordmark cream={transparent} />
+        <HeaderWordmark cream={transparent} />
       </Link>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
@@ -120,41 +119,27 @@ export function SiteHeader({ active = '', overlay = false }: SiteHeaderProps) {
 }
 
 const WORDMARK_HEIGHT = 22
-/** Proporção do viewBox (692 × 130.59) — reserva a largura e evita salto de layout. */
-const WORDMARK_WIDTH = Math.round((WORDMARK_HEIGHT * 692) / 130.59)
 
 /**
  * As duas versões ficam empilhadas e alternam por opacidade em vez de trocar o
  * `src`: assim os dois arquivos já estão carregados e a primeira rolagem não
  * pisca esperando download.
  */
-function Wordmark({ cream }: { cream: boolean }) {
+function HeaderWordmark({ cream }: { cream: boolean }) {
   return (
-    <span
-      style={{
-        position: 'relative',
-        display: 'block',
-        width: WORDMARK_WIDTH,
-        height: WORDMARK_HEIGHT,
-      }}
-    >
-      <img
-        src={wordmarkDark}
-        alt="Empregol"
-        width={WORDMARK_WIDTH}
+    <span style={{ position: 'relative', display: 'block' }}>
+      <Wordmark
+        variant="dark"
         height={WORDMARK_HEIGHT}
-        style={{ display: 'block', opacity: cream ? 0 : 1, transition: 'opacity 240ms ease' }}
+        style={{ opacity: cream ? 0 : 1, transition: 'opacity 240ms ease' }}
       />
-      <img
-        src={wordmarkCream}
-        alt=""
-        aria-hidden="true"
-        width={WORDMARK_WIDTH}
+      <Wordmark
+        variant="cream"
         height={WORDMARK_HEIGHT}
+        decorative
         style={{
           position: 'absolute',
           inset: 0,
-          display: 'block',
           opacity: cream ? 1 : 0,
           transition: 'opacity 240ms ease',
         }}

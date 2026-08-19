@@ -22,6 +22,8 @@ export const colors = {
   tintaElev: '#1c1c1a',
   ruleDark: '#2a2a26',
   cinzaOnDark: '#9c9c95',
+  /** Corpo de texto sobre tinta — mais claro que o cinza auxiliar */
+  gizMuted: '#bcbcb6',
 
   /** Apoios do kit web */
   ossoRule: '#ddd6c2',

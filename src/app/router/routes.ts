@@ -7,6 +7,8 @@ export const ROUTES = {
   historias: '/historias',
   entrar: '/entrar',
   cadastro: '/cadastro',
+  painel: '/painel',
+  app: '/app',
 } as const
 
 export type RouteKey = keyof typeof ROUTES
