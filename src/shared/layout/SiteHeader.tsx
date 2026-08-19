@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
 
+import { ROUTES } from '@/app/router/routes'
+
 import { colors, fonts } from '@/shared/config/theme'
 import { useScrolledPast } from '@/shared/lib/hooks/useScrolledPast'
 import { Wordmark } from '@/shared/ui/Wordmark'
@@ -81,8 +83,8 @@ export function SiteHeader({ active = '', overlay = false }: SiteHeaderProps) {
             transition: TRANSITION,
           }}
         >
-          <a
-            href="#"
+          <Link
+            to={ROUTES.entrar}
             style={{
               fontFamily: fonts.text,
               fontSize: 14,
@@ -93,9 +95,9 @@ export function SiteHeader({ active = '', overlay = false }: SiteHeaderProps) {
             }}
           >
             ENTRAR
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to={ROUTES.cadastro}
             style={{
               // Invertido no topo: sobre o vídeo escuro, o botão claro é que vira o destaque.
               background: transparent ? colors.giz : colors.tinta,
@@ -111,7 +113,7 @@ export function SiteHeader({ active = '', overlay = false }: SiteHeaderProps) {
             }}
           >
             CADASTRE-SE ›
-          </a>
+          </Link>
         </div>
       </div>
     </nav>

@@ -1,17 +1,27 @@
 import { render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 
 import HomePage from './HomePage'
 
+/** A home tem CTAs que navegam, então precisa de contexto de rota. */
+function renderHome() {
+  return render(
+    <MemoryRouter>
+      <HomePage />
+    </MemoryRouter>,
+  )
+}
+
 describe('HomePage', () => {
   it('abre com a manchete do hero', () => {
-    render(<HomePage />)
+    renderHome()
 
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Seu gol.*começa.*aqui/s)
   })
 
   it('traz as seções institucionais na ordem da copy', () => {
-    render(<HomePage />)
+    renderHome()
 
     const eyebrows = [
       /O · Q U E · É · A · E M P R E G O L/,
@@ -27,7 +37,7 @@ describe('HomePage', () => {
   })
 
   it('lista os cinco eixos de suporte contínuo', () => {
-    render(<HomePage />)
+    renderHome()
 
     for (const eixo of ['Jurídico', 'Nutricional', 'Psicológico', 'Físico', 'Financeiro']) {
       expect(screen.getByText(eixo)).toBeInTheDocument()
@@ -35,7 +45,7 @@ describe('HomePage', () => {
   })
 
   it('mostra o funil de atletas com o número de contratos ativos em destaque', () => {
-    render(<HomePage />)
+    renderHome()
 
     expect(screen.getByText('360')).toBeInTheDocument()
     expect(screen.getByText('88')).toBeInTheDocument()
@@ -43,16 +53,33 @@ describe('HomePage', () => {
   })
 
   it('fecha com os dois CTAs', () => {
-    render(<HomePage />)
+    renderHome()
 
     expect(screen.getByText(/Cadastre-se agora/)).toBeInTheDocument()
     expect(screen.getByText(/Conheça a Empregol/)).toBeInTheDocument()
   })
 
   it('reserva blocos de imagem para a direção de arte', () => {
-    render(<HomePage />)
+    renderHome()
 
     const reservas = screen.getAllByRole('img', { name: /Espaço reservado para imagem/ })
     expect(reservas.length).toBeGreaterThanOrEqual(3)
+  })
+
+  it('liga os CTAs às páginas reais', () => {
+    renderHome()
+
+    expect(screen.getByRole('link', { name: /Quero fazer parte/ })).toHaveAttribute(
+      'href',
+      '/cadastro',
+    )
+    expect(screen.getByRole('link', { name: /Cadastre-se agora/ })).toHaveAttribute(
+      'href',
+      '/cadastro',
+    )
+    expect(screen.getByRole('link', { name: /Conheça a Empregol/ })).toHaveAttribute(
+      'href',
+      '#sobre',
+    )
   })
 })

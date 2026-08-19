@@ -58,4 +58,11 @@ describe('SiteHeader', () => {
     expect(screen.getByRole('navigation')).not.toHaveStyle({ background: 'transparent' })
     expect(creamOpacity()).toBe('0')
   })
+
+  it('liga as ações de conta às rotas de auth', () => {
+    renderHeader(false)
+
+    expect(screen.getByRole('link', { name: 'ENTRAR' })).toHaveAttribute('href', '/entrar')
+    expect(screen.getByRole('link', { name: /CADASTRE-SE/ })).toHaveAttribute('href', '/cadastro')
+  })
 })

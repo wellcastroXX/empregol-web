@@ -1,3 +1,6 @@
+import { Link } from 'react-router-dom'
+
+import { ROUTES } from '@/app/router/routes'
 import heroPoster from '@/assets/videos/hero-poster.jpg'
 import heroVideo from '@/assets/videos/hero.mp4'
 import { colors, fonts } from '@/shared/config/theme'
@@ -142,8 +145,8 @@ export function HeroVideo() {
             </p>
           </div>
 
-          <a
-            href="#cadastro"
+          <Link
+            to={ROUTES.cadastro}
             style={{
               flexShrink: 0,
               display: 'inline-flex',
@@ -163,7 +166,7 @@ export function HeroVideo() {
             }}
           >
             Quero fazer parte ›
-          </a>
+          </Link>
         </div>
       </div>
     </section>

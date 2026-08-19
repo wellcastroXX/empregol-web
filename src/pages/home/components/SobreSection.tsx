@@ -5,6 +5,7 @@ import { MediaPlaceholder } from '@/shared/ui/MediaPlaceholder'
 export function SobreSection() {
   return (
     <section
+      id="sobre"
       style={{
         background: colors.creme,
         padding: '110px 40px',

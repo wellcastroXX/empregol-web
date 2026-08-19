@@ -1,3 +1,6 @@
+import { Link } from 'react-router-dom'
+
+import { ROUTES } from '@/app/router/routes'
 import { colors, fonts } from '@/shared/config/theme'
 
 const ctaBase = {
@@ -19,7 +22,6 @@ const ctaBase = {
 export function CtaFinal() {
   return (
     <section
-      id="cadastro"
       style={{
         background: colors.creme,
         padding: '110px 40px 120px',
@@ -81,11 +83,16 @@ export function CtaFinal() {
       </h2>
 
       <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-        <a href="#" style={{ ...ctaBase, background: colors.gramado, color: colors.giz }}>
+        <Link
+          to={ROUTES.cadastro}
+          style={{ ...ctaBase, background: colors.gramado, color: colors.giz }}
+        >
           Cadastre-se agora ›
-        </a>
+        </Link>
+        {/* Não existe página "sobre" ainda; leva à seção que responde isso na
+            própria home. O scroll-margin em :target impede o nav fixo de cobrir. */}
         <a
-          href="#"
+          href="#sobre"
           style={{
             ...ctaBase,
             background: 'transparent',

@@ -1,11 +1,53 @@
+import { Link } from 'react-router-dom'
+
+import { ROUTES } from '@/app/router/routes'
 import { colors, fonts } from '@/shared/config/theme'
 import { Wordmark } from '@/shared/ui/Wordmark'
 
-const FOOTER_COLUMNS: ReadonlyArray<readonly [string, readonly string[]]> = [
-  ['ATLETAS', ['Cadastro', 'Vitrine', 'Histórias']],
-  ['CLUBES', ['Scout', 'Painel', 'Combine 2026']],
-  ['EMPRESA', ['Sobre', 'Imprensa', 'Contato']],
+interface FooterLink {
+  label: string
+  /** Rota interna. Sem isso o item ainda não tem página e fica inerte. */
+  to?: string
+}
+
+interface FooterColumn {
+  title: string
+  links: readonly FooterLink[]
+}
+
+const FOOTER_COLUMNS: readonly FooterColumn[] = [
+  {
+    title: 'ATLETAS',
+    links: [
+      { label: 'Cadastro', to: ROUTES.cadastro },
+      { label: 'Baixar o app', to: ROUTES.app },
+      { label: 'Vitrine' },
+      { label: 'Histórias' },
+    ],
+  },
+  {
+    title: 'CLUBES',
+    links: [
+      { label: 'Entrar', to: ROUTES.entrar },
+      { label: 'Painel', to: ROUTES.painel },
+      { label: 'Scout' },
+      { label: 'Combine 2026' },
+    ],
+  },
+  {
+    title: 'EMPRESA',
+    links: [{ label: 'Sobre' }, { label: 'Imprensa' }, { label: 'Contato' }],
+  },
 ]
+
+const linkStyle = {
+  display: 'block',
+  fontFamily: fonts.text,
+  fontSize: 14,
+  color: colors.giz,
+  textDecoration: 'none',
+  padding: '4px 0',
+} as const
 
 /** Rodapé escuro em três colunas. */
 export function SiteFooter() {
@@ -36,7 +78,7 @@ export function SiteFooter() {
           </p>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, auto)', gap: 60 }}>
-          {FOOTER_COLUMNS.map(([title, links]) => (
+          {FOOTER_COLUMNS.map(({ title, links }) => (
             <div key={title}>
               <div
                 style={{
@@ -50,22 +92,18 @@ export function SiteFooter() {
               >
                 {title}
               </div>
-              {links.map((l) => (
-                <a
-                  key={l}
-                  href="#"
-                  style={{
-                    display: 'block',
-                    fontFamily: fonts.text,
-                    fontSize: 14,
-                    color: colors.giz,
-                    textDecoration: 'none',
-                    padding: '4px 0',
-                  }}
-                >
-                  {l}
-                </a>
-              ))}
+              {links.map((link) =>
+                link.to ? (
+                  <Link key={link.label} to={link.to} style={linkStyle}>
+                    {link.label}
+                  </Link>
+                ) : (
+                  // Sem página ainda — texto, não link falso que não leva a lugar nenhum.
+                  <span key={link.label} style={{ ...linkStyle, color: colors.cinzaOnDark }}>
+                    {link.label}
+                  </span>
+                ),
+              )}
             </div>
           ))}
         </div>
