@@ -23,6 +23,9 @@ export function HeroVideo() {
         // o vídeo correr por trás sem o texto ficar debaixo da barra.
         padding: 'calc(var(--nav-h) + 72px) 40px 56px',
         overflow: 'hidden',
+        // Contém o mix-blend-mode do granulado: sem isto ele mesclaria com o
+        // fundo da página em vez de ficar preso ao vídeo.
+        isolation: 'isolate',
         background: colors.tinta,
         color: colors.giz,
       }}
@@ -62,7 +65,10 @@ export function HeroVideo() {
         }}
       />
 
-      <div style={{ position: 'relative', zIndex: 2, width: '100%' }}>
+      {/* Granulado — acima do vídeo e do scrim, abaixo do conteúdo. */}
+      <div className="hero-grain" aria-hidden="true" />
+
+      <div style={{ position: 'relative', zIndex: 3, width: '100%' }}>
         <div
           style={{
             fontFamily: fonts.mono,
