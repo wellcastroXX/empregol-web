@@ -74,4 +74,11 @@ describe('AuthPage', () => {
 
     expect(screen.getByText('home')).toBeInTheDocument()
   })
+
+  it('traz o logotipo no topo, ligado à home', () => {
+    renderAt(ROUTES.entrar)
+
+    const marca = screen.getByRole('link', { name: /página inicial/ })
+    expect(marca).toHaveAttribute('href', ROUTES.home)
+  })
 })

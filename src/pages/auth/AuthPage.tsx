@@ -6,7 +6,7 @@ import { colors, fonts } from '@/shared/config/theme'
 
 import { AuthBrandPanel } from './components/AuthBrandPanel'
 import { AuthField } from './components/AuthField'
-import { BackLink } from './components/BackLink'
+import { AuthHeader } from './components/AuthHeader'
 
 type Mode = 'login' | 'signup'
 type Role = 'atleta' | 'clube' | 'agente'
@@ -58,7 +58,7 @@ export default function AuthPage() {
           width: '100%',
         }}
       >
-        <BackLink />
+        <AuthHeader />
 
         <div
           role="tablist"

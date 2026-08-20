@@ -34,7 +34,6 @@ export function BackLink() {
         border: 0,
         cursor: 'pointer',
         padding: '10px 12px 10px 0',
-        marginBottom: 20,
         fontFamily: fonts.mono,
         fontWeight: 500,
         fontSize: 11,
