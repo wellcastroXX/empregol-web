@@ -11,7 +11,7 @@ export function DashTopbar() {
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 24,
-        padding: '16px 32px',
+        padding: '16px var(--page-x)',
         borderBottom: `1px solid ${colors.osso}`,
         background: 'rgba(242, 239, 232, 0.85)',
         backdropFilter: 'blur(12px)',
@@ -50,6 +50,7 @@ export function DashTopbar() {
       <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
         <button
           type="button"
+          className="hide-md"
           style={{
             display: 'flex',
             alignItems: 'center',

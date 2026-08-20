@@ -8,15 +8,15 @@ export function OrigemSection() {
       id="origem"
       style={{
         background: colors.creme,
-        padding: '110px 40px',
+        padding: 'var(--section-y) var(--page-x)',
         borderTop: `1px solid ${colors.osso}`,
       }}
     >
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'minmax(0, 0.85fr) minmax(0, 1.15fr)',
-          gap: 72,
+          gridTemplateColumns: 'var(--cols-split-r)',
+          gap: 'var(--gap-lg)',
           alignItems: 'start',
         }}
       >

@@ -1,4 +1,5 @@
 import { act, render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, describe, expect, it } from 'vitest'
 
@@ -88,5 +89,31 @@ describe('SiteHeader', () => {
     const mortos = screen.getAllByRole('link').filter((link) => link.getAttribute('href') === '#')
 
     expect(mortos).toHaveLength(0)
+  })
+
+  it('abre e fecha o menu mobile, travando a rolagem do fundo', async () => {
+    const user = userEvent.setup()
+    renderHeader(true)
+
+    const botao = screen.getByRole('button', { name: 'Abrir menu' })
+    expect(botao).toHaveAttribute('aria-expanded', 'false')
+    expect(document.getElementById('menu-mobile')).toBeNull()
+
+    await user.click(botao)
+
+    expect(screen.getByRole('button', { name: 'Fechar menu' })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    )
+    const painel = document.getElementById('menu-mobile')
+    expect(painel).not.toBeNull()
+    // Os 5 itens de navegação mais os dois CTAs de conta.
+    expect(painel?.querySelectorAll('a')).toHaveLength(7)
+    expect(document.body.style.overflow).toBe('hidden')
+
+    await user.click(screen.getByRole('button', { name: 'Fechar menu' }))
+
+    expect(document.getElementById('menu-mobile')).toBeNull()
+    expect(document.body.style.overflow).not.toBe('hidden')
   })
 })

@@ -52,7 +52,9 @@ const linkStyle = {
 /** Rodapé escuro em três colunas. */
 export function SiteFooter() {
   return (
-    <footer style={{ background: colors.tinta, color: colors.giz, padding: '60px 40px 36px' }}>
+    <footer
+      style={{ background: colors.tinta, color: colors.giz, padding: '60px var(--page-x) 36px' }}
+    >
       <div
         style={{
           display: 'flex',
@@ -77,7 +79,9 @@ export function SiteFooter() {
             Recolocando atletas no jogo.
           </p>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, auto)', gap: 60 }}>
+        <div
+          style={{ display: 'grid', gridTemplateColumns: 'var(--cols-3)', gap: 'var(--gap-md)' }}
+        >
           {FOOTER_COLUMNS.map(({ title, links }) => (
             <div key={title}>
               <div

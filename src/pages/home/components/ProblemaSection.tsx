@@ -20,7 +20,7 @@ export function ProblemaSection() {
       id="problema"
       style={{
         background: colors.osso,
-        padding: '110px 40px',
+        padding: 'var(--section-y) var(--page-x)',
         borderTop: `1px solid ${colors.ossoRule}`,
         borderBottom: `1px solid ${colors.ossoRule}`,
       }}
@@ -58,8 +58,8 @@ export function ProblemaSection() {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-          gap: 48,
+          gridTemplateColumns: 'var(--cols-3)',
+          gap: 'var(--gap-md)',
           marginBottom: 56,
         }}
       >

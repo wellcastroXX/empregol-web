@@ -8,7 +8,7 @@ export function SobreSection() {
       id="sobre"
       style={{
         background: colors.creme,
-        padding: '110px 40px',
+        padding: 'var(--section-y) var(--page-x)',
         borderTop: `1px solid ${colors.osso}`,
       }}
     >
@@ -45,8 +45,8 @@ export function SobreSection() {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
-          gap: 72,
+          gridTemplateColumns: 'var(--cols-2)',
+          gap: 'var(--gap-lg)',
           alignItems: 'start',
         }}
       >

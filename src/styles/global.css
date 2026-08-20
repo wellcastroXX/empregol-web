@@ -9,10 +9,127 @@
   box-sizing: border-box;
 }
 
+/* ===== Escala responsiva ====================================================
+   O site é estilizado inline, e estilo inline não aceita media query. A saída
+   é o inline referenciar var(), e a media query redefinir a variável — o
+   layout responde sem nenhum componente precisar saber a largura da tela.
+   ========================================================================== */
 :root {
   /* Altura do nav fixo. O layout reserva esse espaço no <main>, e o hero da
      home o cancela para o vídeo passar por trás da barra. */
   --nav-h: 72px;
+
+  /* Respiro */
+  --page-x: 40px;
+  --section-y: 110px;
+  --gap-lg: 72px;
+  --gap-md: 40px;
+
+  /* Grades. Cada uma colapsa no ponto em que a coluna estreita deixa de caber. */
+  --cols-2: minmax(0, 1fr) minmax(0, 1fr);
+  --cols-3: repeat(3, minmax(0, 1fr));
+  --cols-4: repeat(4, minmax(0, 1fr));
+  --cols-split-l: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  --cols-split-r: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  --cols-hero: minmax(0, 1fr) auto;
+  --cols-hero-app: minmax(0, 1.15fr) minmax(0, 1fr);
+  --cols-suporte: auto minmax(0, 1fr) minmax(0, 1.6fr);
+  --cols-auth: minmax(0, 1.1fr) minmax(0, 1fr);
+  --cols-dash: 232px minmax(0, 1fr);
+  --cols-dash-main: minmax(0, 1.6fr) minmax(0, 1fr);
+  --cols-match: auto minmax(0, 1fr) auto auto auto;
+}
+
+@media (max-width: 1024px) {
+  :root {
+    --section-y: 88px;
+    --gap-lg: 48px;
+    --cols-4: repeat(2, minmax(0, 1fr));
+    --cols-dash: 200px minmax(0, 1fr);
+    --cols-dash-main: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 860px) {
+  :root {
+    --nav-h: 64px;
+    --page-x: 24px;
+    --section-y: 72px;
+    --gap-lg: 36px;
+    --gap-md: 24px;
+    --cols-2: minmax(0, 1fr);
+    --cols-3: minmax(0, 1fr);
+    --cols-split-l: minmax(0, 1fr);
+    --cols-split-r: minmax(0, 1fr);
+    --cols-hero: minmax(0, 1fr);
+    --cols-hero-app: minmax(0, 1fr);
+    --cols-suporte: minmax(0, 1fr);
+    --cols-auth: minmax(0, 1fr);
+    --cols-dash: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  :root {
+    --page-x: 18px;
+    --section-y: 56px;
+    --gap-lg: 28px;
+    --cols-4: minmax(0, 1fr);
+    --cols-match: auto minmax(0, 1fr) auto;
+  }
+}
+
+/* Some abaixo de 560px — usado onde a coluna extra deixa de caber sem
+   virar papinha (ex.: o campo em miniatura e os gols na linha do painel). */
+@media (max-width: 560px) {
+  .hide-sm {
+    display: none !important;
+  }
+}
+
+/* Some abaixo de 860px — o menu completo do nav e a busca do painel. */
+@media (max-width: 860px) {
+  .hide-md {
+    display: none !important;
+  }
+}
+
+@media (min-width: 861px) {
+  .only-md {
+    display: none !important;
+  }
+}
+
+/* Barra lateral do painel: coluna fixa no desktop; no estreito vira uma faixa
+   compacta no topo, com a navegação rolando na horizontal. Empilhada como
+   coluna, o usuário rolaria uma tela inteira de menu antes de ver o conteúdo. */
+@media (max-width: 860px) {
+  .dash-sidebar {
+    position: static !important;
+    min-height: 0 !important;
+    padding: 16px var(--page-x) !important;
+  }
+
+  .dash-sidebar nav {
+    flex-direction: row !important;
+    overflow-x: auto;
+    scrollbar-width: none;
+    gap: 8px !important;
+  }
+
+  .dash-sidebar nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .dash-sidebar nav button {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* Plano e usuário são secundários — não valem a rolagem no celular. */
+  .dash-aside-secondary {
+    display: none !important;
+  }
 }
 
 /* Alvo de âncora não pode nascer embaixo do nav fixo.

@@ -1,10 +1,13 @@
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 
 import { ROUTES } from '@/app/router/routes'
 
 import { colors, fonts } from '@/shared/config/theme'
 import { useScrolledPast } from '@/shared/lib/hooks/useScrolledPast'
 import { Wordmark } from '@/shared/ui/Wordmark'
+
+import { MobileMenuButton } from './MobileMenuButton'
 
 interface NavEntry {
   label: string
@@ -47,9 +50,30 @@ export interface SiteHeaderProps {
 /** Navegação superior do empregol.com — fixa, transparente no topo do hero. */
 export function SiteHeader({ active = '', overlay = false }: SiteHeaderProps) {
   const scrolled = useScrolledPast(SOLID_AT)
-  const transparent = overlay && !scrolled
+  const { key } = useLocation()
+  // Guarda a localização em que o menu foi aberto em vez de um booleano: assim
+  // qualquer navegação — inclusive voltar pelo botão do navegador — fecha o
+  // painel por derivação, sem efeito sincronizando estado.
+  const [openedAt, setOpenedAt] = useState<string | null>(null)
+  const menuOpen = openedAt === key
+  const toggleMenu = () => setOpenedAt((current) => (current === key ? null : key))
+  const closeMenu = () => setOpenedAt(null)
+
+  // Aberto, o menu cobre a tela: manter o fundo transparente deixaria o vídeo
+  // aparecendo atrás dos itens.
+  const transparent = overlay && !scrolled && !menuOpen
 
   const fg = transparent ? colors.giz : colors.tinta
+
+  // Trava a rolagem do fundo enquanto o painel está aberto.
+  useEffect(() => {
+    if (!menuOpen) return
+    const previous = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = previous
+    }
+  }, [menuOpen])
 
   return (
     <nav
@@ -63,7 +87,7 @@ export function SiteHeader({ active = '', overlay = false }: SiteHeaderProps) {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: '0 40px',
+        padding: '0 var(--page-x)',
         background: transparent ? 'transparent' : 'rgba(242, 239, 232, 0.85)',
         backdropFilter: transparent ? 'none' : 'blur(12px)',
         borderBottom: `1px solid ${transparent ? 'transparent' : colors.osso}`,
@@ -74,7 +98,7 @@ export function SiteHeader({ active = '', overlay = false }: SiteHeaderProps) {
         <HeaderWordmark cream={transparent} />
       </Link>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
+      <div className="hide-md" style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
         {NAV_ITEMS.map((item) => (
           <Link
             key={item.label}
@@ -135,7 +159,98 @@ export function SiteHeader({ active = '', overlay = false }: SiteHeaderProps) {
           </Link>
         </div>
       </div>
+
+      <MobileMenuButton open={menuOpen} onToggle={toggleMenu} color={fg} />
+
+      {menuOpen && <MobileMenu active={active} onNavigate={closeMenu} />}
     </nav>
+  )
+}
+
+/** Painel de navegação em tela cheia, abaixo do nav. */
+function MobileMenu({ active, onNavigate }: { active: NavItem | ''; onNavigate: () => void }) {
+  return (
+    <div
+      id="menu-mobile"
+      className="only-md"
+      style={{
+        position: 'fixed',
+        top: 'var(--nav-h)',
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: colors.creme,
+        borderTop: `1px solid ${colors.osso}`,
+        padding: 'var(--page-x)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 4,
+        overflowY: 'auto',
+        overscrollBehavior: 'contain',
+      }}
+    >
+      {NAV_ITEMS.map((item) => (
+        <Link
+          key={item.label}
+          to={item.to}
+          onClick={onNavigate}
+          style={{
+            fontFamily: fonts.display,
+            fontWeight: 600,
+            fontSize: 28,
+            letterSpacing: '-0.02em',
+            color: colors.tinta,
+            textDecoration: 'none',
+            padding: '14px 0',
+            borderBottom: `1px solid ${colors.osso}`,
+            opacity: active === item.label ? 1 : 0.9,
+          }}
+        >
+          {item.label}
+        </Link>
+      ))}
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 28 }}>
+        <Link
+          to={ROUTES.cadastro}
+          onClick={onNavigate}
+          style={{
+            background: colors.gramado,
+            color: colors.giz,
+            padding: '18px 22px',
+            borderRadius: 4,
+            fontFamily: fonts.text,
+            fontWeight: 500,
+            fontSize: 15,
+            letterSpacing: '0.04em',
+            textDecoration: 'none',
+            textAlign: 'center',
+            textTransform: 'uppercase',
+          }}
+        >
+          Cadastre-se ›
+        </Link>
+        <Link
+          to={ROUTES.entrar}
+          onClick={onNavigate}
+          style={{
+            color: colors.tinta,
+            padding: '18px 22px',
+            borderRadius: 4,
+            border: `1.5px solid ${colors.tinta}`,
+            fontFamily: fonts.text,
+            fontWeight: 500,
+            fontSize: 15,
+            letterSpacing: '0.04em',
+            textDecoration: 'none',
+            textAlign: 'center',
+            textTransform: 'uppercase',
+          }}
+        >
+          Entrar
+        </Link>
+      </div>
+    </div>
   )
 }
 

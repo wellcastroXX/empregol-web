@@ -41,7 +41,7 @@ export default function AuthPage() {
       style={{
         minHeight: '100vh',
         display: 'grid',
-        gridTemplateColumns: 'minmax(0, 1.1fr) minmax(0, 1fr)',
+        gridTemplateColumns: 'var(--cols-auth)',
         background: colors.creme,
       }}
     >
@@ -52,8 +52,9 @@ export default function AuthPage() {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          padding: '48px 56px',
+          padding: 'var(--section-y) var(--page-x)',
           maxWidth: 520,
+          width: '100%',
         }}
       >
         <div

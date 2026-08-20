@@ -24,7 +24,7 @@ export function HeroVideo() {
         justifyContent: 'flex-end',
         // O nav é fixo e transparente aqui: o topo compensa a altura dele para
         // o vídeo correr por trás sem o texto ficar debaixo da barra.
-        padding: 'calc(var(--nav-h) + 72px) 40px 56px',
+        padding: 'calc(var(--nav-h) + 72px) var(--page-x) 56px',
         overflow: 'hidden',
         // Contém o mix-blend-mode do granulado: sem isto ele mesclaria com o
         // fundo da página em vez de ficar preso ao vídeo.
@@ -109,8 +109,8 @@ export function HeroVideo() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'minmax(0, 1fr) auto',
-            gap: 48,
+            gridTemplateColumns: 'var(--cols-hero)',
+            gap: 'var(--gap-md)',
             alignItems: 'end',
             paddingTop: 28,
             borderTop: `1px solid ${colors.giz24}`,

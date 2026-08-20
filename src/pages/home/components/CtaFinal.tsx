@@ -24,15 +24,15 @@ export function CtaFinal() {
     <section
       style={{
         background: colors.creme,
-        padding: '110px 40px 120px',
+        padding: 'var(--section-y) var(--page-x)',
         borderTop: `1px solid ${colors.osso}`,
       }}
     >
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-          gap: 48,
+          gridTemplateColumns: 'var(--cols-2)',
+          gap: 'var(--gap-md)',
           marginBottom: 72,
         }}
       >

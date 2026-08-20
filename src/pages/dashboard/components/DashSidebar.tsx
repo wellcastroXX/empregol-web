@@ -27,6 +27,7 @@ export interface DashSidebarProps {
 export function DashSidebar({ active, onNavigate }: DashSidebarProps) {
   return (
     <aside
+      className="dash-sidebar"
       style={{
         background: colors.tinta,
         color: colors.giz,
@@ -142,9 +143,12 @@ export function DashSidebar({ active, onNavigate }: DashSidebarProps) {
         })}
       </nav>
 
-      <div style={{ flex: 1 }} />
+      <div className="dash-aside-secondary" style={{ flex: 1 }} />
 
-      <div style={{ background: colors.tintaElev, borderRadius: 8, padding: 14 }}>
+      <div
+        className="dash-aside-secondary"
+        style={{ background: colors.tintaElev, borderRadius: 8, padding: 14 }}
+      >
         <div
           style={{
             fontFamily: fonts.mono,
@@ -199,6 +203,7 @@ export function DashSidebar({ active, onNavigate }: DashSidebarProps) {
       </div>
 
       <div
+        className="dash-aside-secondary"
         style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 18, padding: '0 4px' }}
       >
         <span

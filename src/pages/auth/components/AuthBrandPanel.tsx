@@ -19,7 +19,7 @@ export function AuthBrandPanel({ mode }: AuthBrandPanelProps) {
       style={{
         background: colors.tinta,
         color: colors.giz,
-        padding: '48px 56px',
+        padding: 'calc(var(--section-y) * 0.5) var(--page-x)',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',

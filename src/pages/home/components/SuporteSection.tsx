@@ -48,13 +48,17 @@ export function SuporteSection() {
   return (
     <section
       id="suporte"
-      style={{ background: colors.tinta, color: colors.giz, padding: '110px 40px' }}
+      style={{
+        background: colors.tinta,
+        color: colors.giz,
+        padding: 'var(--section-y) var(--page-x)',
+      }}
     >
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.15fr)',
-          gap: 72,
+          gridTemplateColumns: 'var(--cols-2)',
+          gap: 'var(--gap-lg)',
           alignItems: 'end',
           marginBottom: 72,
         }}
@@ -114,8 +118,8 @@ export function SuporteSection() {
             key={item.n}
             style={{
               display: 'grid',
-              gridTemplateColumns: 'auto minmax(0, 1fr) minmax(0, 1.6fr)',
-              gap: 40,
+              gridTemplateColumns: 'var(--cols-suporte)',
+              gap: 'var(--gap-md)',
               alignItems: 'baseline',
               padding: '30px 0',
               borderTop: `1px solid ${colors.ruleDark}`,

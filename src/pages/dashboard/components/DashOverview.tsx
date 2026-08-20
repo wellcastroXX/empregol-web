@@ -34,11 +34,11 @@ const TAG_BG: Record<StatusVariant, string> = {
 /** Visão geral do painel: KPIs, matches, destaque, buscas salvas e atividade. */
 export function DashOverview() {
   return (
-    <main style={{ padding: '28px 32px 60px' }}>
+    <main style={{ padding: '28px var(--page-x) 60px' }}>
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+          gridTemplateColumns: 'var(--cols-4)',
           gap: 16,
           marginBottom: 28,
         }}
@@ -52,7 +52,7 @@ export function DashOverview() {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'minmax(0, 1.6fr) minmax(0, 1fr)',
+          gridTemplateColumns: 'var(--cols-dash-main)',
           gap: 16,
           marginBottom: 28,
         }}
@@ -198,7 +198,7 @@ export function DashOverview() {
         </section>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'var(--cols-2)', gap: 16 }}>
         <section style={cardStyle}>
           <h2
             style={{
@@ -383,7 +383,7 @@ function MatchRow({ match }: { match: ScoutMatch }) {
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: 'auto minmax(0, 1fr) auto auto auto',
+        gridTemplateColumns: 'var(--cols-match)',
         gap: 16,
         alignItems: 'center',
         padding: '12px 0',
@@ -443,7 +443,7 @@ function MatchRow({ match }: { match: ScoutMatch }) {
         </Eyebrow>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div className="hide-sm" style={{ textAlign: 'center' }}>
         <div style={{ fontFamily: fonts.mono, fontWeight: 500, fontSize: 15, color: colors.tinta }}>
           {match.gols}
         </div>
@@ -452,7 +452,7 @@ function MatchRow({ match }: { match: ScoutMatch }) {
         </Eyebrow>
       </div>
 
-      <div style={{ width: 40 }}>
+      <div className="hide-sm" style={{ width: 40 }}>
         <FormationPitch formation={match.formation} highlight={match.pos} size={30} />
       </div>
 

@@ -21,7 +21,7 @@ export default function DashboardPage() {
       style={{
         minHeight: '100vh',
         display: 'grid',
-        gridTemplateColumns: '232px minmax(0, 1fr)',
+        gridTemplateColumns: 'var(--cols-dash)',
         background: colors.creme,
       }}
     >

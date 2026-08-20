@@ -44,7 +44,7 @@ export default function DownloadPage() {
         style={{
           background: colors.tinta,
           color: colors.giz,
-          padding: 'calc(var(--nav-h) + 48px) 40px 0',
+          padding: 'calc(var(--nav-h) + 48px) var(--page-x) 0',
           position: 'relative',
           overflow: 'hidden',
           isolation: 'isolate',
@@ -55,8 +55,8 @@ export default function DownloadPage() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'minmax(0, 1.15fr) minmax(0, 1fr)',
-            gap: 60,
+            gridTemplateColumns: 'var(--cols-hero-app)',
+            gap: 'var(--gap-lg)',
             alignItems: 'end',
             position: 'relative',
             zIndex: 3,
@@ -146,7 +146,7 @@ export default function DownloadPage() {
       {/* O QUE FAZ NO APP — lista numerada, como o suporte contínuo da home */}
       <section
         style={{
-          padding: '90px 40px',
+          padding: 'var(--section-y) var(--page-x)',
           background: colors.osso,
           borderBottom: `1px solid ${colors.ossoRule}`,
         }}
@@ -154,7 +154,7 @@ export default function DownloadPage() {
         <Eyebrow color={colors.tinta} style={{ marginBottom: 28 }}>
           O · Q U E · T U · F A Z · N O · A P P
         </Eyebrow>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 20 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'var(--cols-4)', gap: 20 }}>
           {FEATURES.map(([num, title, body]) => (
             <div key={num} style={{ paddingTop: 14, borderTop: `1.5px solid ${colors.tinta}` }}>
               <div
@@ -198,12 +198,12 @@ export default function DownloadPage() {
       </section>
 
       {/* DISPONIBILIDADE + QR */}
-      <section style={{ padding: '90px 40px' }}>
+      <section style={{ padding: 'var(--section-y) var(--page-x)' }}>
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
-            gap: 60,
+            gridTemplateColumns: 'var(--cols-2)',
+            gap: 'var(--gap-lg)',
             alignItems: 'start',
           }}
         >
@@ -384,7 +384,13 @@ export default function DownloadPage() {
       </section>
 
       {/* FECHAMENTO */}
-      <section style={{ background: colors.gramado, color: colors.giz, padding: '90px 40px' }}>
+      <section
+        style={{
+          background: colors.gramado,
+          color: colors.giz,
+          padding: 'var(--section-y) var(--page-x)',
+        }}
+      >
         <div
           style={{
             display: 'flex',

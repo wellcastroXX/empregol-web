@@ -6,7 +6,11 @@ export function MissaoSection() {
   return (
     <section
       id="missao"
-      style={{ background: colors.tinta, color: colors.giz, padding: '110px 40px' }}
+      style={{
+        background: colors.tinta,
+        color: colors.giz,
+        padding: 'var(--section-y) var(--page-x)',
+      }}
     >
       <div
         style={{
@@ -44,8 +48,8 @@ export function MissaoSection() {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'minmax(0, 1.15fr) minmax(0, 0.85fr)',
-          gap: 72,
+          gridTemplateColumns: 'var(--cols-split-l)',
+          gap: 'var(--gap-lg)',
           alignItems: 'start',
           paddingTop: 44,
           borderTop: `1px solid ${colors.ruleDark}`,
