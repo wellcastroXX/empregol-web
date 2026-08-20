@@ -316,7 +316,7 @@ export default function DownloadPage() {
             </dl>
 
             <div style={{ display: 'flex', gap: 12, marginTop: 22 }}>
-              <StoreBadge store={platform === 'ios' ? 'apple' : 'google'} light />
+              <StoreBadge store={platform === 'ios' ? 'apple' : 'google'} />
             </div>
           </div>
 
@@ -415,8 +415,8 @@ export default function DownloadPage() {
             </h2>
           </div>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            <StoreBadge store="apple" onGreen />
-            <StoreBadge store="google" onGreen />
+            <StoreBadge store="apple" />
+            <StoreBadge store="google" />
           </div>
         </div>
       </section>

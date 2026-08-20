@@ -43,4 +43,24 @@ describe('DownloadPage', () => {
 
     expect(screen.getByRole('img', { name: /Espaço reservado para o QR code/ })).toBeInTheDocument()
   })
+
+  it('usa os badges oficiais das lojas', () => {
+    render(<DownloadPage />)
+
+    // Hero e fechamento trazem os dois; a seção de disponibilidade traz um.
+    expect(screen.getAllByAltText('Baixar na App Store')).toHaveLength(3)
+    expect(screen.getAllByAltText('Disponível no Google Play')).toHaveLength(2)
+  })
+
+  it('troca o badge junto com a plataforma escolhida', async () => {
+    const user = userEvent.setup()
+    render(<DownloadPage />)
+
+    expect(screen.getAllByAltText('Baixar na App Store')).toHaveLength(3)
+
+    await user.click(screen.getByRole('tab', { name: 'Android' }))
+
+    expect(screen.getAllByAltText('Baixar na App Store')).toHaveLength(2)
+    expect(screen.getAllByAltText('Disponível no Google Play')).toHaveLength(3)
+  })
 })
