@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { RouteFallback } from '@/shared/ui/RouteFallback'
 import { SiteLayout } from '@/shared/layout/SiteLayout'
 
+import { RequireAuth } from './RequireAuth'
 import { RootLayout } from './RootLayout'
 import { ROUTES } from './routes'
 
@@ -11,6 +12,8 @@ const HomePage = lazy(() => import('@/pages/home/HomePage'))
 const DownloadPage = lazy(() => import('@/pages/download/DownloadPage'))
 const AuthPage = lazy(() => import('@/pages/auth/AuthPage'))
 const DashboardPage = lazy(() => import('@/pages/dashboard/DashboardPage'))
+const VerifyEmailPage = lazy(() => import('@/pages/auth/VerifyEmailPage'))
+const ForgotPasswordPage = lazy(() => import('@/pages/auth/ForgotPasswordPage'))
 const NotFoundPage = lazy(() => import('@/pages/not-found/NotFoundPage'))
 
 /** Envolve o elemento da rota no fallback de carregamento do lazy. */
@@ -33,12 +36,18 @@ const router = createBrowserRouter([
         children: [{ path: ROUTES.app, element: lazyRoute(<DownloadPage />) }],
       },
       {
-        // Login e painel têm casca própria — sem nav e rodapé públicos.
+        // Telas de auth: casca própria, sem nav e rodapé públicos.
         children: [
           { path: ROUTES.entrar, element: lazyRoute(<AuthPage />) },
           { path: ROUTES.cadastro, element: lazyRoute(<AuthPage />) },
-          { path: ROUTES.painel, element: lazyRoute(<DashboardPage />) },
+          { path: ROUTES.verificarEmail, element: lazyRoute(<VerifyEmailPage />) },
+          { path: ROUTES.esqueciSenha, element: lazyRoute(<ForgotPasswordPage />) },
         ],
+      },
+      {
+        // Área logada — sem sessão, volta para o login.
+        element: <RequireAuth />,
+        children: [{ path: ROUTES.painel, element: lazyRoute(<DashboardPage />) }],
       },
       {
         // Demais rotas nascem em fundo claro — nav sempre sólido.

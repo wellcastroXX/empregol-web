@@ -1,25 +1,33 @@
-import { z } from 'zod'
-
 /**
  * Contrato das variáveis de ambiente do client.
- * Falha rápido no boot se algo estiver ausente/inválido — melhor quebrar aqui
- * do que descobrir uma URL de API vazia em produção.
+ *
+ * Validação escrita à mão de propósito: são dois campos, e usar um validador de
+ * schema aqui arrastava a biblioteca inteira para dentro do bundle (~60 kB) em
+ * troca de duas checagens.
  */
-const envSchema = z.object({
-  VITE_APP_NAME: z.string().min(1).default('empregol'),
-  VITE_API_URL: z.string().url().default('http://localhost:3000'),
-})
 
-const parsed = envSchema.safeParse(import.meta.env)
+function required(name: string, value: string | undefined, fallback: string): string {
+  const resolved = (value ?? '').trim() || fallback
+  if (!resolved) throw new Error(`Variável de ambiente ausente: ${name}`)
+  return resolved
+}
 
-if (!parsed.success) {
-  const issues = parsed.error.issues.map((i) => `  - ${i.path.join('.')}: ${i.message}`).join('\n')
-  throw new Error(`Variáveis de ambiente inválidas:\n${issues}`)
+function requiredUrl(name: string, value: string | undefined, fallback: string): string {
+  const resolved = required(name, value, fallback)
+  try {
+    new URL(resolved)
+  } catch {
+    throw new Error(
+      `Variável de ambiente inválida: ${name} precisa ser uma URL — recebido "${resolved}"`,
+    )
+  }
+  // Barra no fim duplicaria a barra do path em toda requisição.
+  return resolved.replace(/\/+$/, '')
 }
 
 export const env = {
-  appName: parsed.data.VITE_APP_NAME,
-  apiUrl: parsed.data.VITE_API_URL,
+  appName: required('VITE_APP_NAME', import.meta.env.VITE_APP_NAME, 'empregol'),
+  apiUrl: requiredUrl('VITE_API_URL', import.meta.env.VITE_API_URL, 'http://localhost:3000'),
   isDev: import.meta.env.DEV,
   isProd: import.meta.env.PROD,
 } as const

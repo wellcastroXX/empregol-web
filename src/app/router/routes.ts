@@ -7,6 +7,8 @@ export const ROUTES = {
   historias: '/historias',
   entrar: '/entrar',
   cadastro: '/cadastro',
+  verificarEmail: '/verificar-email',
+  esqueciSenha: '/esqueci-senha',
   painel: '/painel',
   app: '/app',
 } as const

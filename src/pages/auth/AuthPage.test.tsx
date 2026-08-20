@@ -1,18 +1,14 @@
-import { render, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 
 import { ROUTES } from '@/app/router/routes'
+import { renderWithProviders } from '@/test/render-with-providers'
 
 import AuthPage from './AuthPage'
 
-function renderAt(path: string) {
-  return render(
-    <MemoryRouter initialEntries={[path]}>
-      <AuthPage />
-    </MemoryRouter>,
-  )
+function renderAt(route: string) {
+  return renderWithProviders(<AuthPage />, { route })
 }
 
 describe('AuthPage', () => {
@@ -31,54 +27,98 @@ describe('AuthPage', () => {
     expect(screen.getByRole('tab', { name: 'Cadastrar' })).toHaveAttribute('aria-selected', 'true')
   })
 
-  it('pede o nome e o perfil apenas no cadastro', () => {
+  it('mostra no login apenas e-mail e senha', () => {
     renderAt(ROUTES.entrar)
-    expect(screen.queryByLabelText('Nome')).not.toBeInTheDocument()
 
-    renderAt(ROUTES.cadastro)
-    expect(screen.getAllByLabelText('Nome').length).toBeGreaterThan(0)
-    expect(screen.getByRole('button', { name: /Atleta/ })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByLabelText('E-mail')).toBeInTheDocument()
+    expect(screen.getByLabelText('Senha')).toBeInTheDocument()
+    expect(screen.queryByLabelText('CPF')).not.toBeInTheDocument()
   })
 
-  it('troca o rótulo do campo de nome quando o perfil é clube', async () => {
-    const user = userEvent.setup()
+  it('pede todos os campos que a API exige do atleta', () => {
     renderAt(ROUTES.cadastro)
 
-    expect(screen.getByPlaceholderText('Nome completo')).toBeInTheDocument()
+    for (const label of [
+      'Nome completo',
+      'E-mail',
+      'Senha',
+      'CPF',
+      'Nascimento',
+      'Telefone',
+      'Naturalidade',
+      'Posição',
+      'Pé dominante',
+      'Altura (cm)',
+      'Peso (kg)',
+      'Nível',
+    ]) {
+      expect(screen.getByLabelText(label)).toBeInTheDocument()
+    }
+  })
+
+  it('troca para o formulário de clube, que pede CNPJ em vez de CPF', async () => {
+    const user = userEvent.setup()
+    renderAt(ROUTES.cadastro)
 
     await user.click(screen.getByRole('button', { name: /Clube/ }))
 
-    expect(screen.getByPlaceholderText('Nome do clube')).toBeInTheDocument()
+    expect(screen.getByLabelText('Nome do clube')).toBeInTheDocument()
+    expect(screen.getByLabelText('CNPJ')).toBeInTheDocument()
+    expect(screen.queryByLabelText('CPF')).not.toBeInTheDocument()
   })
 
-  it('mostra os três eixos de credibilidade no painel da marca', () => {
-    renderAt(ROUTES.entrar)
-
-    expect(screen.getByText('2.847')).toBeInTheDocument()
-    expect(screen.getByText('312')).toBeInTheDocument()
-    expect(screen.getByText('89')).toBeInTheDocument()
-  })
-
-  it('oferece voltar para a página anterior', async () => {
+  it('pede CPF quando o perfil é agente', async () => {
     const user = userEvent.setup()
-    render(
-      <MemoryRouter initialEntries={[ROUTES.home, ROUTES.entrar]} initialIndex={1}>
-        <Routes>
-          <Route path={ROUTES.home} element={<p>home</p>} />
-          <Route path={ROUTES.entrar} element={<AuthPage />} />
-        </Routes>
-      </MemoryRouter>,
-    )
+    renderAt(ROUTES.cadastro)
 
-    await user.click(screen.getByRole('button', { name: /Voltar/ }))
+    await user.click(screen.getByRole('button', { name: /Agente/ }))
 
-    expect(screen.getByText('home')).toBeInTheDocument()
+    expect(screen.getByLabelText('CPF')).toBeInTheDocument()
+    expect(screen.queryByLabelText('CNPJ')).not.toBeInTheDocument()
+  })
+
+  it('valida no cliente antes de chamar a API', async () => {
+    const user = userEvent.setup()
+    renderAt(ROUTES.cadastro)
+
+    await user.click(screen.getByRole('button', { name: /Criar conta/ }))
+
+    expect(await screen.findByText('Nome deve ter no mínimo 3 caracteres')).toBeInTheDocument()
+    expect(screen.getByText('CPF deve conter 11 dígitos')).toBeInTheDocument()
+    expect(screen.getByText('Senha deve ter no mínimo 8 caracteres')).toBeInTheDocument()
+  })
+
+  it('aplica máscara de CPF enquanto digita', async () => {
+    const user = userEvent.setup()
+    renderAt(ROUTES.cadastro)
+
+    await user.type(screen.getByLabelText('CPF'), '12345678901')
+
+    expect(screen.getByLabelText('CPF')).toHaveValue('123.456.789-01')
   })
 
   it('traz o logotipo no topo, ligado à home', () => {
     renderAt(ROUTES.entrar)
 
-    const marca = screen.getByRole('link', { name: /página inicial/ })
-    expect(marca).toHaveAttribute('href', ROUTES.home)
+    expect(screen.getByRole('link', { name: /página inicial/ })).toHaveAttribute(
+      'href',
+      ROUTES.home,
+    )
+  })
+
+  it('manda quem já tem sessão para o painel', () => {
+    renderWithProviders(<AuthPage />, {
+      route: ROUTES.entrar,
+      user: {
+        id: 'u1',
+        email: 'a@b.com',
+        role: 'athlete',
+        nome: 'Lucas Henrique',
+        emailVerificado: true,
+      },
+    })
+
+    // Redirecionado: o formulário não chega a renderizar.
+    expect(screen.queryByRole('heading', { level: 1 })).not.toBeInTheDocument()
   })
 })

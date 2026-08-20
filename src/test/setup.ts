@@ -20,4 +20,7 @@ if (!window.matchMedia) {
 
 afterEach(() => {
   cleanup()
+  // A sessão vive em localStorage; sem limpar, um teste autenticado vazaria
+  // para o próximo.
+  globalThis.localStorage?.clear()
 })

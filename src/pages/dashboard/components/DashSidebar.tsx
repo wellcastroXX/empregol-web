@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 
 import { ROUTES } from '@/app/router/routes'
+import { useAuth } from '@/features/auth/ui/auth-context'
 import { colors, fonts } from '@/shared/config/theme'
 import { Wordmark } from '@/shared/ui/Wordmark'
 
@@ -24,7 +25,26 @@ export interface DashSidebarProps {
 }
 
 /** Coluna escura do painel: marca, clube, navegação, plano e usuário. */
+/** Iniciais para o avatar, a partir do nome real. */
+function initials(nome: string): string {
+  const parts = nome.trim().split(/\s+/).filter(Boolean)
+  if (parts.length === 0) return '--'
+  const first = parts[0]?.[0] ?? ''
+  const last = parts.length > 1 ? (parts[parts.length - 1]?.[0] ?? '') : ''
+  return (first + last).toUpperCase()
+}
+
+const ROLE_LABEL: Record<string, string> = {
+  athlete: 'ATLETA',
+  agent: 'AGENTE',
+  club: 'CLUBE',
+}
+
 export function DashSidebar({ active, onNavigate }: DashSidebarProps) {
+  const { user, signOut } = useAuth()
+  const nome = user?.nome ?? ''
+  const papel = ROLE_LABEL[user?.kind ?? user?.role ?? ''] ?? ''
+
   return (
     <aside
       className="dash-sidebar"
@@ -75,7 +95,7 @@ export function DashSidebar({ active, onNavigate }: DashSidebarProps) {
             flexShrink: 0,
           }}
         >
-          FL
+          {initials(nome)}
         </span>
         <span style={{ flex: 1, minWidth: 0 }}>
           <span
@@ -85,9 +105,12 @@ export function DashSidebar({ active, onNavigate }: DashSidebarProps) {
               fontWeight: 600,
               fontSize: 13,
               color: colors.giz,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
             }}
           >
-            Flamengo
+            {nome || 'Minha conta'}
           </span>
           <span
             style={{
@@ -100,7 +123,7 @@ export function DashSidebar({ active, onNavigate }: DashSidebarProps) {
               textTransform: 'uppercase',
             }}
           >
-            SCOUT · PRO
+            {papel}
           </span>
         </span>
         <span aria-hidden="true" style={{ color: colors.cinzaOnDark, fontSize: 14 }}>
@@ -202,54 +225,40 @@ export function DashSidebar({ active, onNavigate }: DashSidebarProps) {
         </a>
       </div>
 
-      <div
-        className="dash-aside-secondary"
-        style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 18, padding: '0 4px' }}
-      >
-        <span
+      <div className="dash-aside-secondary" style={{ marginTop: 18, padding: '0 4px' }}>
+        <div
           style={{
-            width: 30,
-            height: 30,
-            borderRadius: '50%',
-            background: colors.ruleDark,
-            color: colors.giz,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontFamily: fonts.display,
-            fontWeight: 600,
+            fontFamily: fonts.text,
             fontSize: 12,
-            flexShrink: 0,
+            color: colors.cinzaOnDark,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            marginBottom: 10,
           }}
         >
-          Ma
-        </span>
-        <span style={{ flex: 1, minWidth: 0 }}>
-          <span
-            style={{
-              display: 'block',
-              fontFamily: fonts.text,
-              fontWeight: 500,
-              fontSize: 12,
-              color: colors.giz,
-            }}
-          >
-            Marina Soares
-          </span>
-          <span
-            style={{
-              display: 'block',
-              fontFamily: fonts.mono,
-              fontWeight: 500,
-              fontSize: 9,
-              letterSpacing: '0.12em',
-              color: colors.cinzaOnDark,
-              textTransform: 'uppercase',
-            }}
-          >
-            HEAD DE SCOUTING
-          </span>
-        </span>
+          {user?.email}
+        </div>
+        <button
+          type="button"
+          onClick={signOut}
+          style={{
+            background: 'transparent',
+            border: `1px solid ${colors.ruleDark}`,
+            borderRadius: 4,
+            padding: '10px 12px',
+            width: '100%',
+            cursor: 'pointer',
+            fontFamily: fonts.mono,
+            fontWeight: 500,
+            fontSize: 10,
+            letterSpacing: '0.14em',
+            textTransform: 'uppercase',
+            color: colors.giz,
+          }}
+        >
+          Sair
+        </button>
       </div>
     </aside>
   )

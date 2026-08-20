@@ -1,9 +1,14 @@
+import { useAuth } from '@/features/auth/ui/auth-context'
 import { colors, fonts } from '@/shared/config/theme'
 
 import { DashIcon } from './DashIcon'
 
 /** Barra superior do painel: data, saudação e busca global. */
 export function DashTopbar() {
+  const { user } = useAuth()
+  // Primeiro nome basta na saudação; o nome completo fica na barra lateral.
+  const primeiroNome = user?.nome.trim().split(/\s+/)[0] ?? ''
+
   return (
     <header
       style={{
@@ -43,7 +48,8 @@ export function DashTopbar() {
             margin: '2px 0 0',
           }}
         >
-          Bom te ver, Marina<span style={{ color: colors.gramado }}>.</span>
+          {primeiroNome ? `Bom te ver, ${primeiroNome}` : 'Bom te ver'}
+          <span style={{ color: colors.gramado }}>.</span>
         </h1>
       </div>
 

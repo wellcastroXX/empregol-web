@@ -1,23 +1,41 @@
-import { render, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
+
+import { renderWithProviders, testUser } from '@/test/render-with-providers'
 
 import DashboardPage from './DashboardPage'
 
 function renderDashboard() {
-  return render(
-    <MemoryRouter>
-      <DashboardPage />
-    </MemoryRouter>,
-  )
+  return renderWithProviders(<DashboardPage />, { user: testUser })
 }
 
 describe('DashboardPage', () => {
-  it('saúda o usuário na barra superior', () => {
+  it('saúda o usuário logado pelo primeiro nome', () => {
     renderDashboard()
 
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Bom te ver, Marina')
+  })
+
+  it('mostra a conta autenticada na barra lateral', () => {
+    renderDashboard()
+
+    expect(screen.getByText('Marina Soares')).toBeInTheDocument()
+    expect(screen.getByText('CLUBE')).toBeInTheDocument()
+    expect(screen.getByText(testUser.email)).toBeInTheDocument()
+    // Iniciais derivadas do nome real, não fixas.
+    expect(screen.getByText('MS')).toBeInTheDocument()
+  })
+
+  it('oferece sair da conta', async () => {
+    const user = userEvent.setup()
+    renderDashboard()
+
+    expect(globalThis.localStorage.getItem('empregol.auth')).not.toBeNull()
+
+    await user.click(screen.getByRole('button', { name: 'Sair' }))
+
+    expect(globalThis.localStorage.getItem('empregol.auth')).toBeNull()
   })
 
   it('começa na visão geral e permite trocar de seção', async () => {

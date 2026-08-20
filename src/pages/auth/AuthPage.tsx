@@ -1,20 +1,25 @@
 import { useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { ROUTES } from '@/app/router/routes'
+import type { ContractorKind } from '@/features/auth/model/auth.types'
+import { useAuth } from '@/features/auth/ui/auth-context'
 import { colors, fonts } from '@/shared/config/theme'
 
+import { AthleteSignUpForm } from './components/AthleteSignUpForm'
 import { AuthBrandPanel } from './components/AuthBrandPanel'
-import { AuthField } from './components/AuthField'
 import { AuthHeader } from './components/AuthHeader'
+import { ContractorSignUpForm } from './components/ContractorSignUpForm'
+import { LoginForm } from './components/LoginForm'
 
 type Mode = 'login' | 'signup'
-type Role = 'atleta' | 'clube' | 'agente'
+/** Qual conta está sendo criada — atleta, agente ou clube. */
+type AccountType = 'atleta' | ContractorKind
 
-const ROLES: ReadonlyArray<readonly [Role, string, string]> = [
+const ACCOUNT_TYPES: ReadonlyArray<readonly [AccountType, string, string]> = [
   ['atleta', 'Atleta', '09'],
-  ['clube', 'Clube', 'FL'],
-  ['agente', 'Agente', 'R.'],
+  ['club', 'Clube', 'FL'],
+  ['agent', 'Agente', 'R.'],
 ]
 
 const MODES: ReadonlyArray<readonly [Mode, string]> = [
@@ -31,8 +36,14 @@ const MODES: ReadonlyArray<readonly [Mode, string]> = [
 export default function AuthPage() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
+  const { status } = useAuth()
   const mode: Mode = pathname === ROUTES.cadastro ? 'signup' : 'login'
-  const [role, setRole] = useState<Role>('atleta')
+  const [accountType, setAccountType] = useState<AccountType>('atleta')
+
+  // Já autenticado não tem o que fazer aqui.
+  if (status === 'authenticated') {
+    return <Navigate to={ROUTES.painel} replace />
+  }
 
   const goTo = (next: Mode) =>
     navigate(next === 'signup' ? ROUTES.cadastro : ROUTES.entrar, { replace: true })
@@ -56,7 +67,7 @@ export default function AuthPage() {
           // tela — no celular, sem o painel ao lado, o formulário começa em cima.
           justifyContent: 'var(--auth-justify)',
           padding: 'var(--auth-pad-y) var(--page-x)',
-          maxWidth: 520,
+          maxWidth: 560,
           width: '100%',
         }}
       >
@@ -136,161 +147,69 @@ export default function AuthPage() {
           )}
         </p>
 
-        <form
-          onSubmit={(event) => event.preventDefault()}
-          style={{ display: 'flex', flexDirection: 'column' }}
-        >
-          {mode === 'signup' && (
-            <fieldset style={{ border: 0, padding: 0, margin: '0 0 22px' }}>
-              <legend
-                style={{
-                  fontFamily: fonts.mono,
-                  fontWeight: 500,
-                  fontSize: 10,
-                  letterSpacing: '0.16em',
-                  textTransform: 'uppercase',
-                  color: colors.tinta,
-                  marginBottom: 10,
-                  padding: 0,
-                }}
-              >
-                Eu sou
-              </legend>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
-                {ROLES.map(([id, label, icon]) => (
-                  <button
-                    key={id}
-                    type="button"
-                    aria-pressed={role === id}
-                    onClick={() => setRole(id)}
-                    style={{
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                      padding: 14,
-                      background: role === id ? colors.tinta : colors.giz,
-                      color: role === id ? colors.giz : colors.tinta,
-                      border: `1px solid ${role === id ? colors.tinta : colors.osso}`,
-                      borderRadius: 6,
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontFamily: fonts.mono,
-                        fontWeight: 500,
-                        fontSize: 22,
-                        lineHeight: 1,
-                        marginBottom: 8,
-                      }}
-                    >
-                      {icon}
-                    </div>
-                    <div style={{ fontFamily: fonts.display, fontWeight: 600, fontSize: 15 }}>
-                      {label}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </fieldset>
-          )}
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            {mode === 'signup' && (
-              <AuthField
-                label="Nome"
-                placeholder={role === 'clube' ? 'Nome do clube' : 'Nome completo'}
-                autoComplete="name"
-              />
-            )}
-            <AuthField
-              label="E-mail"
-              placeholder="seu@email.com"
-              type="email"
-              autoComplete="email"
-            />
-            <AuthField
-              label="Senha"
-              placeholder="••••••••"
-              type="password"
-              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-            />
-            {mode === 'login' && (
-              <a
-                href="#"
-                style={{
-                  fontFamily: fonts.mono,
-                  fontWeight: 500,
-                  fontSize: 11,
-                  letterSpacing: '0.10em',
-                  textTransform: 'uppercase',
-                  color: colors.tinta,
-                  textDecoration: 'none',
-                  alignSelf: 'flex-start',
-                }}
-              >
-                Esqueci a senha ›
-              </a>
-            )}
-          </div>
-
-          <button
-            type="submit"
-            style={{
-              marginTop: 22,
-              background: colors.gramado,
-              color: colors.giz,
-              border: 0,
-              padding: '16px 20px',
-              borderRadius: 4,
-              cursor: 'pointer',
-              fontFamily: fonts.text,
-              fontWeight: 500,
-              fontSize: 14,
-              letterSpacing: '0.04em',
-              textTransform: 'uppercase',
-            }}
-          >
-            {mode === 'login' ? 'Entrar ›' : 'Criar conta ›'}
-          </button>
-        </form>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, margin: '22px 0' }}>
-          <div style={{ flex: 1, height: 1, background: colors.osso }} />
-          <span
-            style={{
-              fontFamily: fonts.mono,
-              fontWeight: 500,
-              fontSize: 10,
-              letterSpacing: '0.16em',
-              color: colors.cinza,
-            }}
-          >
-            OU
-          </span>
-          <div style={{ flex: 1, height: 1, background: colors.osso }} />
-        </div>
-
-        <div style={{ display: 'flex', gap: 10 }}>
-          {['Apple', 'Google'].map((provider) => (
-            <button
-              key={provider}
-              type="button"
+        {mode === 'signup' && (
+          <fieldset style={{ border: 0, padding: 0, margin: '0 0 22px' }}>
+            <legend
               style={{
-                flex: 1,
-                background: colors.giz,
-                border: `1px solid ${colors.osso}`,
-                borderRadius: 4,
-                padding: '13px 16px',
-                cursor: 'pointer',
-                fontFamily: fonts.text,
+                fontFamily: fonts.mono,
                 fontWeight: 500,
-                fontSize: 14,
+                fontSize: 10,
+                letterSpacing: '0.16em',
+                textTransform: 'uppercase',
                 color: colors.tinta,
+                marginBottom: 10,
+                padding: 0,
               }}
             >
-              {provider}
-            </button>
-          ))}
-        </div>
+              Eu sou
+            </legend>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+              {ACCOUNT_TYPES.map(([id, label, icon]) => (
+                <button
+                  key={id}
+                  type="button"
+                  aria-pressed={accountType === id}
+                  onClick={() => setAccountType(id)}
+                  style={{
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    padding: 14,
+                    background: accountType === id ? colors.tinta : colors.giz,
+                    color: accountType === id ? colors.giz : colors.tinta,
+                    border: `1px solid ${accountType === id ? colors.tinta : colors.osso}`,
+                    borderRadius: 6,
+                  }}
+                >
+                  <span
+                    style={{
+                      display: 'block',
+                      fontFamily: fonts.mono,
+                      fontWeight: 500,
+                      fontSize: 22,
+                      lineHeight: 1,
+                      marginBottom: 8,
+                    }}
+                  >
+                    {icon}
+                  </span>
+                  <span style={{ fontFamily: fonts.display, fontWeight: 600, fontSize: 15 }}>
+                    {label}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </fieldset>
+        )}
+
+        {mode === 'login' ? (
+          <LoginForm />
+        ) : accountType === 'atleta' ? (
+          <AthleteSignUpForm />
+        ) : (
+          // Remontar por tipo limpa o formulário ao alternar entre agente e
+          // clube — os campos obrigatórios (CPF/CNPJ) são diferentes.
+          <ContractorSignUpForm key={accountType} kind={accountType} />
+        )}
 
         <p
           style={{
