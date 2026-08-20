@@ -42,6 +42,10 @@
   /* Rodapé: marca + bloco de links, e as colunas de links por dentro. */
   --cols-footer: minmax(0, 1.3fr) minmax(0, 2fr);
   --cols-footer-links: repeat(3, minmax(0, 1fr));
+
+  /* Login: centralizado ao lado do painel escuro; colado no topo sem ele. */
+  --auth-justify: center;
+  --auth-pad-y: var(--section-y);
 }
 
 @media (max-width: 1024px) {
@@ -71,6 +75,8 @@
     --cols-auth: minmax(0, 1fr);
     --cols-dash: minmax(0, 1fr);
     --cols-footer: minmax(0, 1fr);
+    --auth-justify: flex-start;
+    --auth-pad-y: 28px;
   }
 }
 

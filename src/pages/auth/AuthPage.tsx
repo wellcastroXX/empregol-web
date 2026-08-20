@@ -52,8 +52,10 @@ export default function AuthPage() {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center',
-          padding: 'var(--section-y) var(--page-x)',
+          // Centralizar sobra espaço no topo quando o conteúdo é menor que a
+          // tela — no celular, sem o painel ao lado, o formulário começa em cima.
+          justifyContent: 'var(--auth-justify)',
+          padding: 'var(--auth-pad-y) var(--page-x)',
           maxWidth: 520,
           width: '100%',
         }}
