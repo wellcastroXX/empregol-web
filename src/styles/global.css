@@ -38,6 +38,10 @@
   --cols-dash: 232px minmax(0, 1fr);
   --cols-dash-main: minmax(0, 1.6fr) minmax(0, 1fr);
   --cols-match: auto minmax(0, 1fr) auto auto auto;
+
+  /* Rodapé: marca + bloco de links, e as colunas de links por dentro. */
+  --cols-footer: minmax(0, 1.3fr) minmax(0, 2fr);
+  --cols-footer-links: repeat(3, minmax(0, 1fr));
 }
 
 @media (max-width: 1024px) {
@@ -66,6 +70,7 @@
     --cols-suporte: minmax(0, 1fr);
     --cols-auth: minmax(0, 1fr);
     --cols-dash: minmax(0, 1fr);
+    --cols-footer: minmax(0, 1fr);
   }
 }
 
@@ -76,6 +81,7 @@
     --gap-lg: 28px;
     --cols-4: minmax(0, 1fr);
     --cols-match: auto minmax(0, 1fr) auto;
+    --cols-footer-links: repeat(2, minmax(0, 1fr));
   }
 }
 

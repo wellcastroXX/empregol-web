@@ -55,13 +55,14 @@ export function SiteFooter() {
     <footer
       style={{ background: colors.tinta, color: colors.giz, padding: '60px var(--page-x) 36px' }}
     >
+      {/* Grade em vez de flex com space-between: no estreito o flex empurrava a
+          marca e os links para posições inconsistentes conforme quebravam. */}
       <div
         style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: 36,
-          alignItems: 'flex-start',
+          display: 'grid',
+          gridTemplateColumns: 'var(--cols-footer)',
+          gap: 'var(--gap-lg)',
+          alignItems: 'start',
         }}
       >
         <div>
@@ -80,7 +81,12 @@ export function SiteFooter() {
           </p>
         </div>
         <div
-          style={{ display: 'grid', gridTemplateColumns: 'var(--cols-3)', gap: 'var(--gap-md)' }}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'var(--cols-footer-links)',
+            gap: 'var(--gap-md)',
+            rowGap: 32,
+          }}
         >
           {FOOTER_COLUMNS.map(({ title, links }) => (
             <div key={title}>
@@ -92,6 +98,8 @@ export function SiteFooter() {
                   letterSpacing: '0.18em',
                   color: colors.cinzaOnDark,
                   marginBottom: 12,
+                  paddingBottom: 10,
+                  borderBottom: `1px solid ${colors.ruleDark}`,
                 }}
               >
                 {title}

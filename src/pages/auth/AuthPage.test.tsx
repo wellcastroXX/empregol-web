@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 
 import { ROUTES } from '@/app/router/routes'
@@ -57,5 +57,21 @@ describe('AuthPage', () => {
     expect(screen.getByText('2.847')).toBeInTheDocument()
     expect(screen.getByText('312')).toBeInTheDocument()
     expect(screen.getByText('89')).toBeInTheDocument()
+  })
+
+  it('oferece voltar para a página anterior', async () => {
+    const user = userEvent.setup()
+    render(
+      <MemoryRouter initialEntries={[ROUTES.home, ROUTES.entrar]} initialIndex={1}>
+        <Routes>
+          <Route path={ROUTES.home} element={<p>home</p>} />
+          <Route path={ROUTES.entrar} element={<AuthPage />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    await user.click(screen.getByRole('button', { name: /Voltar/ }))
+
+    expect(screen.getByText('home')).toBeInTheDocument()
   })
 })

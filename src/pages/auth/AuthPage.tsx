@@ -6,6 +6,7 @@ import { colors, fonts } from '@/shared/config/theme'
 
 import { AuthBrandPanel } from './components/AuthBrandPanel'
 import { AuthField } from './components/AuthField'
+import { BackLink } from './components/BackLink'
 
 type Mode = 'login' | 'signup'
 type Role = 'atleta' | 'clube' | 'agente'
@@ -57,6 +58,8 @@ export default function AuthPage() {
           width: '100%',
         }}
       >
+        <BackLink />
+
         <div
           role="tablist"
           aria-label="Entrar ou cadastrar"

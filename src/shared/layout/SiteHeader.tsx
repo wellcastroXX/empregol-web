@@ -76,94 +76,99 @@ export function SiteHeader({ active = '', overlay = false }: SiteHeaderProps) {
   }, [menuOpen])
 
   return (
-    <nav
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 20,
-        height: 'var(--nav-h)',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '0 var(--page-x)',
-        background: transparent ? 'transparent' : 'rgba(242, 239, 232, 0.85)',
-        backdropFilter: transparent ? 'none' : 'blur(12px)',
-        borderBottom: `1px solid ${transparent ? 'transparent' : colors.osso}`,
-        transition: TRANSITION,
-      }}
-    >
-      <Link to="/" aria-label="Empregol — página inicial" style={{ display: 'block' }}>
-        <HeaderWordmark cream={transparent} />
-      </Link>
+    <>
+      <nav
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 20,
+          height: 'var(--nav-h)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '0 var(--page-x)',
+          background: transparent ? 'transparent' : 'rgba(242, 239, 232, 0.85)',
+          backdropFilter: transparent ? 'none' : 'blur(12px)',
+          borderBottom: `1px solid ${transparent ? 'transparent' : colors.osso}`,
+          transition: TRANSITION,
+        }}
+      >
+        <Link to="/" aria-label="Empregol — página inicial" style={{ display: 'block' }}>
+          <HeaderWordmark cream={transparent} />
+        </Link>
 
-      <div className="hide-md" style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
-        {NAV_ITEMS.map((item) => (
-          <Link
-            key={item.label}
-            to={item.to}
+        <div className="hide-md" style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
+          {NAV_ITEMS.map((item) => (
+            <Link
+              key={item.label}
+              to={item.to}
+              style={{
+                fontFamily: fonts.text,
+                fontSize: 14,
+                fontWeight: 500,
+                color: fg,
+                textDecoration: 'none',
+                opacity: active === item.label ? 1 : 0.85,
+                transition: TRANSITION,
+              }}
+            >
+              {item.label}
+            </Link>
+          ))}
+          <div
             style={{
-              fontFamily: fonts.text,
-              fontSize: 14,
-              fontWeight: 500,
-              color: fg,
-              textDecoration: 'none',
-              opacity: active === item.label ? 1 : 0.85,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 14,
+              paddingLeft: 16,
+              borderLeft: `1px solid ${transparent ? colors.giz24 : colors.osso}`,
               transition: TRANSITION,
             }}
           >
-            {item.label}
-          </Link>
-        ))}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 14,
-            paddingLeft: 16,
-            borderLeft: `1px solid ${transparent ? colors.giz24 : colors.osso}`,
-            transition: TRANSITION,
-          }}
-        >
-          <Link
-            to={ROUTES.entrar}
-            style={{
-              fontFamily: fonts.text,
-              fontSize: 14,
-              fontWeight: 500,
-              color: fg,
-              textDecoration: 'none',
-              transition: TRANSITION,
-            }}
-          >
-            ENTRAR
-          </Link>
-          <Link
-            to={ROUTES.cadastro}
-            style={{
-              // Invertido no topo: sobre o vídeo escuro, o botão claro é que vira o destaque.
-              background: transparent ? colors.giz : colors.tinta,
-              color: transparent ? colors.tinta : colors.giz,
-              padding: '10px 14px',
-              borderRadius: 4,
-              fontFamily: fonts.text,
-              fontSize: 13,
-              fontWeight: 500,
-              textDecoration: 'none',
-              letterSpacing: '0.02em',
-              transition: TRANSITION,
-            }}
-          >
-            CADASTRE-SE ›
-          </Link>
+            <Link
+              to={ROUTES.entrar}
+              style={{
+                fontFamily: fonts.text,
+                fontSize: 14,
+                fontWeight: 500,
+                color: fg,
+                textDecoration: 'none',
+                transition: TRANSITION,
+              }}
+            >
+              ENTRAR
+            </Link>
+            <Link
+              to={ROUTES.cadastro}
+              style={{
+                // Invertido no topo: sobre o vídeo escuro, o botão claro é que vira o destaque.
+                background: transparent ? colors.giz : colors.tinta,
+                color: transparent ? colors.tinta : colors.giz,
+                padding: '10px 14px',
+                borderRadius: 4,
+                fontFamily: fonts.text,
+                fontSize: 13,
+                fontWeight: 500,
+                textDecoration: 'none',
+                letterSpacing: '0.02em',
+                transition: TRANSITION,
+              }}
+            >
+              CADASTRE-SE ›
+            </Link>
+          </div>
         </div>
-      </div>
 
-      <MobileMenuButton open={menuOpen} onToggle={toggleMenu} color={fg} />
+        <MobileMenuButton open={menuOpen} onToggle={toggleMenu} color={fg} />
+      </nav>
 
+      {/* Fora do <nav> de propósito: o backdrop-filter da barra cria um
+          containing block, e o painel `position: fixed` colapsaria para a
+          altura dela em vez de cobrir a tela. */}
       {menuOpen && <MobileMenu active={active} onNavigate={closeMenu} />}
-    </nav>
+    </>
   )
 }
 
@@ -179,6 +184,9 @@ function MobileMenu({ active, onNavigate }: { active: NavItem | ''; onNavigate: 
         left: 0,
         right: 0,
         bottom: 0,
+        // Logo abaixo do nav (20): o painel cobre a página, mas a barra com o
+        // botão de fechar continua por cima.
+        zIndex: 19,
         background: colors.creme,
         borderTop: `1px solid ${colors.osso}`,
         padding: 'var(--page-x)',

@@ -16,6 +16,7 @@ export interface AuthBrandPanelProps {
 export function AuthBrandPanel({ mode }: AuthBrandPanelProps) {
   return (
     <div
+      className="hide-md"
       style={{
         background: colors.tinta,
         color: colors.giz,
