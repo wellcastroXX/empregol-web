@@ -7,10 +7,11 @@ import { Wordmark } from '@/shared/ui/Wordmark'
 import { BackLink } from './BackLink'
 
 /**
- * Topo da coluna do formulário: voltar à esquerda, marca à direita.
+ * Topo da coluna do formulário: marca à esquerda, voltar à direita.
  *
- * O logotipo só aparece abaixo de 860px. Acima disso o painel escuro ao lado
- * já traz a marca em tamanho editorial, e repeti-la aqui seria redundante.
+ * O logotipo só aparece abaixo de 860px — acima disso o painel escuro ao lado
+ * já traz a marca em tamanho editorial. Sem ele, o space-between deixa o
+ * voltar sozinho e alinhado à esquerda, que é o certo no desktop.
  */
 export function AuthHeader() {
   return (
@@ -25,10 +26,10 @@ export function AuthHeader() {
         borderBottom: `1px solid ${colors.osso}`,
       }}
     >
-      <BackLink />
       <Link to={ROUTES.home} className="only-md" aria-label="Empregol — página inicial">
         <Wordmark variant="dark" height={20} />
       </Link>
+      <BackLink />
     </header>
   )
 }
