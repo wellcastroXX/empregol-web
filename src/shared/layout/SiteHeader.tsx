@@ -6,14 +6,33 @@ import { colors, fonts } from '@/shared/config/theme'
 import { useScrolledPast } from '@/shared/lib/hooks/useScrolledPast'
 import { Wordmark } from '@/shared/ui/Wordmark'
 
-const NAV_ITEMS = ['Atletas', 'Clubes', 'Agentes', 'Histórias', 'Preço'] as const
+interface NavEntry {
+  label: string
+  /** Destino: âncora de seção da home (`/#id`) ou rota própria. */
+  to: string
+}
+
+/**
+ * Espelha as seções que a home realmente tem. A lista anterior vinha do kit de
+ * design da home antiga (Atletas, Clubes, Agentes, Preço) e apontava para
+ * páginas que nunca existiram.
+ */
+// `as const satisfies` em vez de anotar o tipo: anotar colapsaria `label` em
+// `string` e NavItem deixaria de restringir o que a rota pode marcar como ativo.
+const NAV_ITEMS = [
+  { label: 'A Empregol', to: `${ROUTES.home}#sobre` },
+  { label: 'Suporte', to: `${ROUTES.home}#suporte` },
+  { label: 'Origem', to: `${ROUTES.home}#origem` },
+  { label: 'Missão', to: `${ROUTES.home}#missao` },
+  { label: 'App', to: ROUTES.app },
+] as const satisfies readonly NavEntry[]
 
 /** Rolagem a partir da qual a barra assume o fundo sólido. */
 const SOLID_AT = 40
 
 const TRANSITION = 'background-color 240ms ease, border-color 240ms ease, color 240ms ease'
 
-export type NavItem = (typeof NAV_ITEMS)[number]
+export type NavItem = (typeof NAV_ITEMS)[number]['label']
 
 export interface SiteHeaderProps {
   active?: NavItem | ''
@@ -56,22 +75,22 @@ export function SiteHeader({ active = '', overlay = false }: SiteHeaderProps) {
       </Link>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
-        {NAV_ITEMS.map((i) => (
-          <a
-            key={i}
-            href="#"
+        {NAV_ITEMS.map((item) => (
+          <Link
+            key={item.label}
+            to={item.to}
             style={{
               fontFamily: fonts.text,
               fontSize: 14,
               fontWeight: 500,
               color: fg,
               textDecoration: 'none',
-              opacity: active === i ? 1 : 0.85,
+              opacity: active === item.label ? 1 : 0.85,
               transition: TRANSITION,
             }}
           >
-            {i}
-          </a>
+            {item.label}
+          </Link>
         ))}
         <div
           style={{

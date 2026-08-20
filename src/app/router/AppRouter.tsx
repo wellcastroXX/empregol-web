@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { RouteFallback } from '@/shared/ui/RouteFallback'
 import { SiteLayout } from '@/shared/layout/SiteLayout'
 
+import { RootLayout } from './RootLayout'
 import { ROUTES } from './routes'
 
 const HomePage = lazy(() => import('@/pages/home/HomePage'))
@@ -19,25 +20,32 @@ function lazyRoute(element: React.ReactNode) {
 
 const router = createBrowserRouter([
   {
-    // Rotas com hero escuro full-bleed: nav transparente até o primeiro scroll.
-    element: <SiteLayout active="Atletas" overlay />,
+    // Raiz comum a todas as rotas — ver RootLayout.
+    element: <RootLayout />,
     children: [
-      { path: ROUTES.home, element: lazyRoute(<HomePage />) },
-      { path: ROUTES.app, element: lazyRoute(<DownloadPage />) },
+      {
+        // Rotas com hero escuro full-bleed: nav transparente até o primeiro scroll.
+        element: <SiteLayout overlay />,
+        children: [{ path: ROUTES.home, element: lazyRoute(<HomePage />) }],
+      },
+      {
+        element: <SiteLayout active="App" overlay />,
+        children: [{ path: ROUTES.app, element: lazyRoute(<DownloadPage />) }],
+      },
+      {
+        // Login e painel têm casca própria — sem nav e rodapé públicos.
+        children: [
+          { path: ROUTES.entrar, element: lazyRoute(<AuthPage />) },
+          { path: ROUTES.cadastro, element: lazyRoute(<AuthPage />) },
+          { path: ROUTES.painel, element: lazyRoute(<DashboardPage />) },
+        ],
+      },
+      {
+        // Demais rotas nascem em fundo claro — nav sempre sólido.
+        element: <SiteLayout />,
+        children: [{ path: '*', element: lazyRoute(<NotFoundPage />) }],
+      },
     ],
-  },
-  {
-    // Login e painel têm casca própria — sem nav e rodapé públicos.
-    children: [
-      { path: ROUTES.entrar, element: lazyRoute(<AuthPage />) },
-      { path: ROUTES.cadastro, element: lazyRoute(<AuthPage />) },
-      { path: ROUTES.painel, element: lazyRoute(<DashboardPage />) },
-    ],
-  },
-  {
-    // Demais rotas nascem em fundo claro — nav sempre sólido.
-    element: <SiteLayout />,
-    children: [{ path: '*', element: lazyRoute(<NotFoundPage />) }],
   },
 ])
 

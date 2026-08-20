@@ -4,7 +4,10 @@ import { MediaPlaceholder } from '@/shared/ui/MediaPlaceholder'
 /** NOSSA MISSÃO — a declaração de propósito, sobre superfície escura. */
 export function MissaoSection() {
   return (
-    <section style={{ background: colors.tinta, color: colors.giz, padding: '110px 40px' }}>
+    <section
+      id="missao"
+      style={{ background: colors.tinta, color: colors.giz, padding: '110px 40px' }}
+    >
       <div
         style={{
           fontFamily: fonts.mono,

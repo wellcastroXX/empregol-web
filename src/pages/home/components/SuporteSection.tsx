@@ -46,7 +46,10 @@ const ITEMS: readonly SupportItem[] = [
 
 export function SuporteSection() {
   return (
-    <section style={{ background: colors.tinta, color: colors.giz, padding: '110px 40px' }}>
+    <section
+      id="suporte"
+      style={{ background: colors.tinta, color: colors.giz, padding: '110px 40px' }}
+    >
       <div
         style={{
           display: 'grid',

@@ -15,8 +15,11 @@
   --nav-h: 72px;
 }
 
-/* Alvo de âncora não pode nascer embaixo do nav fixo. */
-:target {
+/* Alvo de âncora não pode nascer embaixo do nav fixo.
+   Vale para :target (navegação nativa por hash) e para qualquer seção com id,
+   porque scrollIntoView() respeita scroll-margin mas não casa com :target. */
+:target,
+section[id] {
   scroll-margin-top: calc(var(--nav-h) + 24px);
 }
 

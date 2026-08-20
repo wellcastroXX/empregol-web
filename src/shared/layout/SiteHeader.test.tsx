@@ -7,7 +7,7 @@ import { SiteHeader } from './SiteHeader'
 function renderHeader(overlay: boolean) {
   return render(
     <MemoryRouter>
-      <SiteHeader active="Atletas" overlay={overlay} />
+      <SiteHeader active="App" overlay={overlay} />
     </MemoryRouter>,
   )
 }
@@ -64,5 +64,29 @@ describe('SiteHeader', () => {
 
     expect(screen.getByRole('link', { name: 'ENTRAR' })).toHaveAttribute('href', '/entrar')
     expect(screen.getByRole('link', { name: /CADASTRE-SE/ })).toHaveAttribute('href', '/cadastro')
+  })
+
+  it('aponta cada item para uma seção que existe na home', () => {
+    renderHeader(false)
+
+    const destinos: ReadonlyArray<readonly [string, string]> = [
+      ['A Empregol', '/#sobre'],
+      ['Suporte', '/#suporte'],
+      ['Origem', '/#origem'],
+      ['Missão', '/#missao'],
+      ['App', '/app'],
+    ]
+
+    for (const [label, href] of destinos) {
+      expect(screen.getByRole('link', { name: label })).toHaveAttribute('href', href)
+    }
+  })
+
+  it('não deixa nenhum item de navegação sem destino', () => {
+    renderHeader(false)
+
+    const mortos = screen.getAllByRole('link').filter((link) => link.getAttribute('href') === '#')
+
+    expect(mortos).toHaveLength(0)
   })
 })

@@ -5,6 +5,7 @@ import { MediaPlaceholder } from '@/shared/ui/MediaPlaceholder'
 export function OrigemSection() {
   return (
     <section
+      id="origem"
       style={{
         background: colors.creme,
         padding: '110px 40px',

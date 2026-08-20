@@ -17,6 +17,7 @@ const FIGURES: readonly Figure[] = [
 export function ProblemaSection() {
   return (
     <section
+      id="problema"
       style={{
         background: colors.osso,
         padding: '110px 40px',
