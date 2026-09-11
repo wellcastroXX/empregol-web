@@ -6,6 +6,17 @@ import { App } from '@/app/App'
 import { authApi } from '@/features/auth/api/auth-api'
 import type { ApiUser } from '@/features/auth/model/auth.types'
 
+vi.mock('@/features/athlete-dashboard/api/athlete-dashboard-api', () => ({
+  athleteDashboardApi: {
+    getDashboard: vi.fn().mockResolvedValue({
+      stats: { viewsToday: 0, viewsThisWeek: 0, pendingProposals: 0, daysOnPlatform: 1 },
+      latestProposal: null,
+      recentClubs: [],
+      whoViewedToday: [],
+    }),
+  },
+}))
+
 vi.mock('@/features/auth/api/auth-api', () => ({
   authApi: {
     register: vi.fn(),
@@ -71,7 +82,7 @@ describe('Fluxo de autenticação', () => {
     await user.click(screen.getByRole('button', { name: /Entrar/ }))
 
     await waitFor(() =>
-      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Bom te ver, Lucas'),
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Olá, Lucas'),
     )
     expect(window.location.pathname).toBe('/painel')
     expect(globalThis.localStorage.getItem('empregol.auth')).toContain('Lucas Henrique')
@@ -133,7 +144,7 @@ describe('Fluxo de autenticação', () => {
     renderAt('/painel')
 
     await waitFor(() =>
-      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Bom te ver, Lucas'),
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Olá, Lucas'),
     )
     // Não redirecionou para o login: a sessão foi lida antes do primeiro paint.
     expect(window.location.pathname).toBe('/painel')

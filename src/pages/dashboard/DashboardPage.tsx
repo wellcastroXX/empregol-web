@@ -1,7 +1,10 @@
 import { useState, type CSSProperties } from 'react'
 
+import { useAuth } from '@/features/auth/ui/auth-context'
+
 import { colors } from '@/shared/config/theme'
 
+import { AthletePanel } from './AthletePanel'
 import { DashSidebar, type DashSection } from './components/DashSidebar'
 import { DashTopbar } from './components/DashTopbar'
 import { ComingSoonSection } from './components/sections/ComingSoonSection'
@@ -20,7 +23,21 @@ const ASIDE_WIDTH = { expanded: '232px', collapsed: '76px' } as const
  * Casca própria — nada do nav e rodapé públicos entra aqui. Cada seção busca
  * seus próprios dados na empregol-api; não há mock.
  */
+/**
+ * Painel logado. Divide por papel, como o HomeScreen do app: contratante vê o
+ * scout (busca, shortlist, conversas); atleta vê o próprio dashboard. Sem a
+ * divisão, um atleta caía no painel de scout e recebia 403 nas rotas
+ * exclusivas de AGENT/CLUB.
+ */
 export default function DashboardPage() {
+  const { user } = useAuth()
+
+  if (user?.role === 'athlete') return <AthletePanel />
+
+  return <ScoutPanel />
+}
+
+function ScoutPanel() {
   const [section, setSection] = useState<DashSection>('VISÃO GERAL')
   const [collapsed, setCollapsed] = useState(false)
 
