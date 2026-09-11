@@ -180,7 +180,7 @@ export function ContractorSignUpForm({ kind }: ContractorSignUpFormProps) {
         />
       </div>
 
-      <SubmitButton loading={loading} loadingLabel="Criando conta...">
+      <SubmitButton loading={loading} loadingLabel="Criando conta..." style={{ borderRadius: 30 }}>
         Criar conta ›
       </SubmitButton>
     </form>

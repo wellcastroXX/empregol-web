@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 
-export type DashIconName = 'house' | 'search' | 'star' | 'chat' | 'bookmark' | 'chart'
+export type DashIconName = 'house' | 'search' | 'star' | 'chat' | 'bookmark' | 'chart' | 'user'
 
 const PATHS: Record<DashIconName, ReactNode> = {
   house: <path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1v-8.5z" />,
@@ -16,6 +16,12 @@ const PATHS: Record<DashIconName, ReactNode> = {
   chat: <path d="M3 12a9 9 0 1 1 4 7.5L3 21l1.5-4A8.96 8.96 0 0 1 3 12z" />,
   bookmark: <path d="M6 4h12v17l-6-4-6 4V4z" />,
   chart: <path d="M4 20V11M10 20V4M16 20v-7M22 20V8M3 21h18" />,
+  user: (
+    <>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1" />
+    </>
+  ),
 }
 
 export interface DashIconProps {

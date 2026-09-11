@@ -8,7 +8,7 @@ import { Wordmark } from '@/shared/ui/Wordmark'
 import { DashIcon, type DashIconName } from './DashIcon'
 
 export type DashSection =
-  'VISÃO GERAL' | 'BUSCAR' | 'SHORTLIST' | 'CONVERSAS' | 'BUSCAS SALVAS' | 'RELATÓRIOS'
+  'VISÃO GERAL' | 'BUSCAR' | 'SHORTLIST' | 'CONVERSAS' | 'BUSCAS SALVAS' | 'RELATÓRIOS' | 'PERFIL'
 
 const ITEMS: ReadonlyArray<readonly [DashSection, DashIconName]> = [
   ['VISÃO GERAL', 'house'],
@@ -17,14 +17,9 @@ const ITEMS: ReadonlyArray<readonly [DashSection, DashIconName]> = [
   ['CONVERSAS', 'chat'],
   ['BUSCAS SALVAS', 'bookmark'],
   ['RELATÓRIOS', 'chart'],
+  ['PERFIL', 'user'],
 ]
 
-export interface DashSidebarProps {
-  active: DashSection
-  onNavigate: (section: DashSection) => void
-}
-
-/** Coluna escura do painel: marca, clube, navegação, plano e usuário. */
 /** Iniciais para o avatar, a partir do nome real. */
 function initials(nome: string): string {
   const parts = nome.trim().split(/\s+/).filter(Boolean)
@@ -40,7 +35,20 @@ const ROLE_LABEL: Record<string, string> = {
   club: 'CLUBE',
 }
 
-export function DashSidebar({ active, onNavigate }: DashSidebarProps) {
+export interface DashSidebarProps {
+  active: DashSection
+  onNavigate: (section: DashSection) => void
+  collapsed: boolean
+  onToggleCollapsed: () => void
+}
+
+/** Coluna escura do painel: marca, conta, navegação, plano e sair. */
+export function DashSidebar({
+  active,
+  onNavigate,
+  collapsed,
+  onToggleCollapsed,
+}: DashSidebarProps) {
   const { user, signOut } = useAuth()
   const nome = user?.nome ?? ''
   const papel = ROLE_LABEL[user?.kind ?? user?.role ?? ''] ?? ''
@@ -54,22 +62,78 @@ export function DashSidebar({ active, onNavigate }: DashSidebarProps) {
         padding: '24px 16px',
         display: 'flex',
         flexDirection: 'column',
-        minHeight: '100vh',
-        position: 'sticky',
+        // Fixa: a navegação fica sempre à mão, independente da rolagem do
+        // conteúdo. A largura vem do grid da página, via --cols-dash.
+        position: 'fixed',
         top: 0,
+        bottom: 0,
+        left: 0,
+        width: 'var(--dash-aside-w)',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        transition: 'width 240ms ease, padding 240ms ease',
+        zIndex: 15,
       }}
     >
-      <Link to={ROUTES.home} style={{ padding: '0 8px 24px', display: 'block' }}>
-        <Wordmark variant="cream" height={20} />
-      </Link>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: collapsed ? 'center' : 'space-between',
+          gap: 8,
+          padding: '0 4px 20px',
+        }}
+      >
+        {!collapsed && (
+          <Link to={ROUTES.home} style={{ display: 'block' }}>
+            <Wordmark variant="cream" height={20} />
+          </Link>
+        )}
+        <button
+          type="button"
+          onClick={onToggleCollapsed}
+          aria-label={collapsed ? 'Expandir menu' : 'Retrair menu'}
+          aria-expanded={!collapsed}
+          style={{
+            width: 32,
+            height: 32,
+            flexShrink: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'transparent',
+            border: `1px solid ${colors.ruleDark}`,
+            borderRadius: 30,
+            cursor: 'pointer',
+            color: colors.cinzaOnDark,
+          }}
+        >
+          <span
+            aria-hidden="true"
+            style={{
+              display: 'block',
+              fontSize: 15,
+              lineHeight: 1,
+              // A seta gira em vez de trocar de glifo: a transição fica contínua.
+              transform: collapsed ? 'rotate(180deg)' : 'none',
+              transition: 'transform 240ms ease',
+            }}
+          >
+            ‹
+          </span>
+        </button>
+      </div>
 
       <button
         type="button"
+        onClick={() => onNavigate('PERFIL')}
+        title={collapsed ? nome : undefined}
         style={{
           display: 'flex',
           alignItems: 'center',
           gap: 10,
-          padding: '10px 8px',
+          padding: collapsed ? '10px 0' : '10px 8px',
+          justifyContent: collapsed ? 'center' : 'flex-start',
           marginBottom: 18,
           background: colors.tintaElev,
           border: 0,
@@ -97,38 +161,37 @@ export function DashSidebar({ active, onNavigate }: DashSidebarProps) {
         >
           {initials(nome)}
         </span>
-        <span style={{ flex: 1, minWidth: 0 }}>
-          <span
-            style={{
-              display: 'block',
-              fontFamily: fonts.display,
-              fontWeight: 600,
-              fontSize: 13,
-              color: colors.giz,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {nome || 'Minha conta'}
+        {!collapsed && (
+          <span style={{ flex: 1, minWidth: 0 }}>
+            <span
+              style={{
+                display: 'block',
+                fontFamily: fonts.display,
+                fontWeight: 600,
+                fontSize: 13,
+                color: colors.giz,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {nome || 'Minha conta'}
+            </span>
+            <span
+              style={{
+                display: 'block',
+                fontFamily: fonts.mono,
+                fontWeight: 500,
+                fontSize: 9,
+                letterSpacing: '0.14em',
+                color: colors.cinzaOnDark,
+                textTransform: 'uppercase',
+              }}
+            >
+              {papel}
+            </span>
           </span>
-          <span
-            style={{
-              display: 'block',
-              fontFamily: fonts.mono,
-              fontWeight: 500,
-              fontSize: 9,
-              letterSpacing: '0.14em',
-              color: colors.cinzaOnDark,
-              textTransform: 'uppercase',
-            }}
-          >
-            {papel}
-          </span>
-        </span>
-        <span aria-hidden="true" style={{ color: colors.cinzaOnDark, fontSize: 14 }}>
-          ⌄
-        </span>
+        )}
       </button>
 
       <nav
@@ -143,12 +206,14 @@ export function DashSidebar({ active, onNavigate }: DashSidebarProps) {
               type="button"
               aria-current={on ? 'page' : undefined}
               onClick={() => onNavigate(label)}
+              title={collapsed ? label : undefined}
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: 12,
                 cursor: 'pointer',
-                padding: '11px 12px',
+                padding: collapsed ? '11px 0' : '11px 12px',
+                justifyContent: collapsed ? 'center' : 'flex-start',
                 borderRadius: 6,
                 border: 0,
                 textAlign: 'left',
@@ -157,96 +222,96 @@ export function DashSidebar({ active, onNavigate }: DashSidebarProps) {
                 fontFamily: fonts.text,
                 fontWeight: 500,
                 fontSize: 13.5,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
               }}
             >
               <DashIcon name={icon} />
-              {label}
+              {!collapsed && label}
             </button>
           )
         })}
       </nav>
 
-      <div className="dash-aside-secondary" style={{ flex: 1 }} />
+      {/* Plano e sair sobem logo após o menu em vez de colarem no rodapé:
+          com a barra fixa, o espaçador empurrava os dois para fora da vista
+          em telas baixas. */}
+      {!collapsed && (
+        <div
+          className="dash-aside-secondary"
+          style={{ background: colors.tintaElev, borderRadius: 8, padding: 14, marginTop: 24 }}
+        >
+          <div
+            style={{
+              fontFamily: fonts.mono,
+              fontWeight: 500,
+              fontSize: 9,
+              letterSpacing: '0.14em',
+              color: colors.gramado,
+              textTransform: 'uppercase',
+              marginBottom: 6,
+            }}
+          >
+            PLANO PRO
+          </div>
+          <p
+            style={{
+              fontFamily: fonts.text,
+              fontSize: 12,
+              color: colors.gizMuted,
+              lineHeight: 1.4,
+              margin: '0 0 10px',
+            }}
+          >
+            Busca ilimitada de atletas e shortlist sem teto.
+          </p>
+          <a
+            href="#"
+            style={{
+              display: 'inline-block',
+              fontFamily: fonts.mono,
+              fontWeight: 500,
+              fontSize: 10,
+              letterSpacing: '0.12em',
+              color: colors.giz,
+              textDecoration: 'none',
+              borderBottom: `1.5px solid ${colors.giz}`,
+              paddingBottom: 1,
+            }}
+          >
+            VER PLANO ELITE ›
+          </a>
+        </div>
+      )}
 
       <div
         className="dash-aside-secondary"
-        style={{ background: colors.tintaElev, borderRadius: 8, padding: 14 }}
+        style={{ marginTop: 16, padding: collapsed ? 0 : '0 4px' }}
       >
-        <div
-          style={{
-            fontFamily: fonts.mono,
-            fontWeight: 500,
-            fontSize: 9,
-            letterSpacing: '0.14em',
-            color: colors.gramado,
-            textTransform: 'uppercase',
-            marginBottom: 6,
-          }}
-        >
-          PLANO PRO
-        </div>
-        <p
-          style={{
-            fontFamily: fonts.text,
-            fontSize: 12,
-            color: colors.gizMuted,
-            lineHeight: 1.4,
-            margin: '0 0 10px',
-          }}
-        >
-          43 de 50 buscas usadas este mês.
-        </p>
-        <div
-          role="progressbar"
-          aria-valuenow={43}
-          aria-valuemin={0}
-          aria-valuemax={50}
-          aria-label="Buscas usadas no mês"
-          style={{ height: 4, background: colors.ruleDark, borderRadius: 999, overflow: 'hidden' }}
-        >
-          <div style={{ height: '100%', width: '86%', background: colors.gramado }} />
-        </div>
-        <a
-          href="#"
-          style={{
-            display: 'inline-block',
-            marginTop: 12,
-            fontFamily: fonts.mono,
-            fontWeight: 500,
-            fontSize: 10,
-            letterSpacing: '0.12em',
-            color: colors.giz,
-            textDecoration: 'none',
-            borderBottom: `1.5px solid ${colors.giz}`,
-            paddingBottom: 1,
-          }}
-        >
-          VER PLANO ELITE ›
-        </a>
-      </div>
-
-      <div className="dash-aside-secondary" style={{ marginTop: 18, padding: '0 4px' }}>
-        <div
-          style={{
-            fontFamily: fonts.text,
-            fontSize: 12,
-            color: colors.cinzaOnDark,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            marginBottom: 10,
-          }}
-        >
-          {user?.email}
-        </div>
+        {!collapsed && (
+          <div
+            style={{
+              fontFamily: fonts.text,
+              fontSize: 12,
+              color: colors.cinzaOnDark,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              marginBottom: 10,
+            }}
+          >
+            {user?.email}
+          </div>
+        )}
         <button
           type="button"
           onClick={signOut}
+          title={collapsed ? 'Sair' : undefined}
           style={{
             background: 'transparent',
             border: `1px solid ${colors.ruleDark}`,
-            borderRadius: 4,
-            padding: '10px 12px',
+            borderRadius: 30,
+            padding: collapsed ? '10px 0' : '10px 12px',
             width: '100%',
             cursor: 'pointer',
             fontFamily: fonts.mono,
@@ -257,7 +322,7 @@ export function DashSidebar({ active, onNavigate }: DashSidebarProps) {
             color: colors.giz,
           }}
         >
-          Sair
+          {collapsed ? '⏻' : 'Sair'}
         </button>
       </div>
     </aside>

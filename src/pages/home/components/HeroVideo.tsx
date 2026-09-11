@@ -155,7 +155,7 @@ export function HeroVideo() {
               background: colors.gramado,
               color: colors.giz,
               padding: '18px 26px',
-              borderRadius: 4,
+              borderRadius: 30,
               fontFamily: fonts.text,
               fontWeight: 500,
               fontSize: 14,

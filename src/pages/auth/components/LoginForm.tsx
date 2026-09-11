@@ -82,7 +82,7 @@ export function LoginForm() {
         </Link>
       </div>
 
-      <SubmitButton loading={loading} loadingLabel="Entrando...">
+      <SubmitButton loading={loading} loadingLabel="Entrando..." style={{ borderRadius: 30 }}>
         Entrar ›
       </SubmitButton>
     </form>

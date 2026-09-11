@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 
 import { colors, fonts } from '@/shared/config/theme'
 
@@ -35,6 +35,8 @@ export interface SubmitButtonProps {
   children: ReactNode
   loading?: boolean
   loadingLabel?: string
+  /** Ajustes pontuais de aparência. Mesclado por último, então sobrescreve. */
+  style?: CSSProperties
 }
 
 /** Botão principal do formulário. Desabilita e troca o rótulo enquanto envia. */
@@ -42,6 +44,7 @@ export function SubmitButton({
   children,
   loading = false,
   loadingLabel = 'Enviando...',
+  style,
 }: SubmitButtonProps) {
   return (
     <button
@@ -62,6 +65,7 @@ export function SubmitButton({
         letterSpacing: '0.04em',
         textTransform: 'uppercase',
         transition: 'background-color 160ms ease',
+        ...style,
       }}
     >
       {loading ? loadingLabel : children}

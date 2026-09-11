@@ -85,7 +85,7 @@ export function CtaFinal() {
       <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
         <Link
           to={ROUTES.cadastro}
-          style={{ ...ctaBase, background: colors.gramado, color: colors.giz }}
+          style={{ ...ctaBase, background: colors.gramado, color: colors.giz, borderRadius: 30 }}
         >
           Cadastre-se agora ›
         </Link>
@@ -97,6 +97,7 @@ export function CtaFinal() {
             ...ctaBase,
             background: 'transparent',
             color: colors.tinta,
+            borderRadius: 30,
             border: `1.5px solid ${colors.tinta}`,
           }}
         >
