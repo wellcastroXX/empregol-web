@@ -14,6 +14,7 @@ const AuthPage = lazy(() => import('@/pages/auth/AuthPage'))
 const DashboardPage = lazy(() => import('@/pages/dashboard/DashboardPage'))
 const VerifyEmailPage = lazy(() => import('@/pages/auth/VerifyEmailPage'))
 const ForgotPasswordPage = lazy(() => import('@/pages/auth/ForgotPasswordPage'))
+const ResetPasswordPage = lazy(() => import('@/pages/auth/ResetPasswordPage'))
 const NotFoundPage = lazy(() => import('@/pages/not-found/NotFoundPage'))
 
 /** Envolve o elemento da rota no fallback de carregamento do lazy. */
@@ -42,6 +43,7 @@ const router = createBrowserRouter([
           { path: ROUTES.cadastro, element: lazyRoute(<AuthPage />) },
           { path: ROUTES.verificarEmail, element: lazyRoute(<VerifyEmailPage />) },
           { path: ROUTES.esqueciSenha, element: lazyRoute(<ForgotPasswordPage />) },
+          { path: ROUTES.redefinirSenha, element: lazyRoute(<ResetPasswordPage />) },
         ],
       },
       {

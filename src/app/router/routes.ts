@@ -9,6 +9,7 @@ export const ROUTES = {
   cadastro: '/cadastro',
   verificarEmail: '/verificar-email',
   esqueciSenha: '/esqueci-senha',
+  redefinirSenha: '/redefinir-senha',
   painel: '/painel',
   app: '/app',
 } as const

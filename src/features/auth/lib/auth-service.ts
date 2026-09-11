@@ -111,6 +111,15 @@ export const authService = {
    * genérico de propósito (não revela se o e-mail existe), então dispara nos
    * dois endpoints e ignora falhas individuais.
    */
+  /** Redefine a senha com o token recebido por e-mail. */
+  async resetPassword(token: string, password: string): Promise<void> {
+    try {
+      await authApi.resetPassword(token, password)
+    } catch (err) {
+      throw toAuthError(err)
+    }
+  },
+
   async requestPasswordReset(email: string): Promise<void> {
     const normalized = email.trim().toLowerCase()
     await Promise.allSettled([

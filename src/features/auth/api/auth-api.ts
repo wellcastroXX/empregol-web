@@ -38,6 +38,17 @@ export const authApi = {
     })
   },
 
+  /**
+   * Redefine a senha a partir do token do e-mail. O token identifica o usuário
+   * no banco, então o endpoint independe do papel — usamos o de atletas.
+   */
+  resetPassword(token: string, password: string) {
+    return apiRequest<ApiMessage>('/auth/athletes/reset-password', {
+      method: 'POST',
+      body: { token, password },
+    })
+  },
+
   /** Perfil do usuário logado, para revalidar a sessão restaurada. */
   me(role: UserRole) {
     return apiRequest<ApiEnvelope<Record<string, unknown>>>(`/${segment(role)}/me`)
