@@ -54,6 +54,12 @@ describe('AuthPage', () => {
     ]) {
       expect(screen.getByLabelText(label)).toBeInTheDocument()
     }
+
+    expect(screen.getByLabelText('Link do seu perfil esportivo')).toHaveAttribute(
+      'placeholder',
+      'OGol/Transfermarkt ou outro',
+    )
+    expect(screen.getByRole('option', { name: 'Outro / Prefiro não informar' })).toBeInTheDocument()
   })
 
   it('troca para o formulário de clube, que pede CNPJ em vez de CPF', async () => {

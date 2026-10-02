@@ -18,6 +18,7 @@ const emptyForm = {
   birthDate: '',
   phone: '',
   naturalidade: '',
+  sportsProfileUrl: '',
   position: '',
   dominantFoot: '',
   gender: '',
@@ -43,6 +44,16 @@ function validate(form: FormState): Errors {
   if (!form.birthDate) errors.birthDate = 'Informe a data de nascimento'
   if (onlyDigits(form.phone).length < 10) errors.phone = 'Telefone inválido'
   if (form.naturalidade.trim().length < 2) errors.naturalidade = 'Informe a naturalidade'
+  if (form.sportsProfileUrl.trim()) {
+    try {
+      const profileUrl = new URL(form.sportsProfileUrl.trim())
+      if (!['http:', 'https:'].includes(profileUrl.protocol)) {
+        errors.sportsProfileUrl = 'Informe um link válido começando com http:// ou https://'
+      }
+    } catch {
+      errors.sportsProfileUrl = 'Informe um link válido começando com http:// ou https://'
+    }
+  }
   if (!form.position) errors.position = 'Selecione a posição'
   if (!form.dominantFoot) errors.dominantFoot = 'Selecione o pé dominante'
   if (!form.level) errors.level = 'Selecione o nível'
@@ -90,6 +101,9 @@ export function AthleteSignUpForm() {
         birthDate: form.birthDate,
         phone: form.phone,
         naturalidade: form.naturalidade.trim(),
+        ...(form.sportsProfileUrl.trim()
+          ? { sportsProfileUrl: form.sportsProfileUrl.trim() }
+          : {}),
         position: form.position,
         dominantFoot: form.dominantFoot as DominantFoot,
         height: Number(form.height),
@@ -174,6 +188,16 @@ export function AthleteSignUpForm() {
             error={errors.naturalidade}
           />
         </div>
+
+        <AuthField
+          label="Link do seu perfil esportivo"
+          value={form.sportsProfileUrl}
+          onChange={set('sportsProfileUrl')}
+          placeholder="OGol/Transfermarkt ou outro"
+          type="url"
+          hint="Opcional"
+          error={errors.sportsProfileUrl}
+        />
 
         <div style={{ display: 'grid', gridTemplateColumns: 'var(--cols-2)', gap: 14 }}>
           <AuthSelect

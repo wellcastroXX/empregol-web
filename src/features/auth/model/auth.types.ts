@@ -7,7 +7,7 @@ export type ContractorKind = 'agent' | 'club'
 
 export type DominantFoot = 'LEFT' | 'RIGHT' | 'BOTH'
 export type AthleteLevel = 'PROFESSIONAL' | 'AMATEUR' | 'YOUTH'
-export type Gender = 'MALE' | 'FEMALE'
+export type Gender = 'MALE' | 'FEMALE' | 'OTHER'
 
 export type AuthStatus = 'loading' | 'authenticated' | 'unauthenticated'
 
@@ -61,6 +61,7 @@ export interface AthleteRegisterPayload {
   weight: number
   level: AthleteLevel
   gender?: Gender
+  sportsProfileUrl?: string
   expectedSalary?: number
   videoUrl?: string
 }

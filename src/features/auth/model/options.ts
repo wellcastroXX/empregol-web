@@ -41,4 +41,5 @@ export const LEVELS: ReadonlyArray<Option<AthleteLevel>> = [
 export const GENDERS: ReadonlyArray<Option<Gender>> = [
   { value: 'MALE', label: 'Masculino' },
   { value: 'FEMALE', label: 'Feminino' },
+  { value: 'OTHER', label: 'Outro / Prefiro não informar' },
 ]

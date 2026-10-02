@@ -26,7 +26,6 @@ describe('HomePage', () => {
     const eyebrows = [
       /O · Q U E · É · A · E M P R E G O L/,
       /S U P O R T E · C O N T Í N U O/,
-      /P O R · Q U E · A · E M P R E G O L · N A S C E U/,
       /O · T A M A N H O · D O · P R O B L E M A/,
       /N O S S A · M I S S Ã O/,
     ]
@@ -34,6 +33,11 @@ describe('HomePage', () => {
     for (const eyebrow of eyebrows) {
       expect(screen.getByText(eyebrow)).toBeInTheDocument()
     }
+
+    expect(document.querySelector('#origem')?.textContent).toContain(
+      'P O R · Q U E · A · E M P R E G O L · N A S C E U',
+    )
+    expect(screen.getByText('N A S C E U')).toHaveStyle({ whiteSpace: 'nowrap' })
   })
 
   it('lista os cinco eixos de suporte contínuo', () => {

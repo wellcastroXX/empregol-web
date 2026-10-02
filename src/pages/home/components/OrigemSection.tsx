@@ -40,7 +40,8 @@ export function OrigemSection() {
               marginBottom: 28,
             }}
           >
-            P O R · Q U E · A · E M P R E G O L · N A S C E U
+            P O R · Q U E · A · E M P R E G O L ·{' '}
+            <span style={{ whiteSpace: 'nowrap' }}>N A S C E U</span>
           </div>
 
           <h2
