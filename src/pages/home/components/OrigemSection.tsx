@@ -22,7 +22,7 @@ export function OrigemSection() {
         }}
       >
         {/* Mídia à esquerda — inverte o ritmo da seção anterior */}
-        <div style={{ position: 'sticky', top: 108 }}>
+        <div style={{ top: 108 }}>
           <MediaPlaceholder
             src={HygorProfilePhoto}
             alt="Hygor, fundador da Empregol"
