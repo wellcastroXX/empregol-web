@@ -1,4 +1,4 @@
-import { colors, fonts } from '@/shared/config/theme'
+import { colors } from '@/shared/config/theme'
 
 export interface MediaPlaceholderProps {
   /** Proporção do bloco, no formato CSS `aspect-ratio` (ex.: '4 / 5'). */
@@ -8,6 +8,14 @@ export interface MediaPlaceholderProps {
   /** Altura fixa, quando o bloco precisa acompanhar a coluna ao lado. */
   height?: number | string
   surface?: 'light' | 'dark'
+  /* URL/PATCH da imagem que será exibida */
+  src?: string
+
+  /* Texto alternativo da imagem. */
+  alt?: string
+
+  /* Como a imagem deve se comportar dentro do bloco */
+  objectFit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down'
 }
 
 /**
@@ -20,13 +28,22 @@ export function MediaPlaceholder({
   label,
   height,
   surface = 'light',
+  objectFit = 'cover',
+  src,
+  alt,
 }: MediaPlaceholderProps) {
   const dark = surface === 'dark'
 
   return (
-    <div
-      role="img"
-      aria-label={label ? `Espaço reservado para imagem: ${label}` : 'Espaço reservado para imagem'}
+     <div
+      role={src ? undefined : 'img'}
+      aria-label={
+        src
+          ? undefined
+          : label
+            ? `Espaço reservado para imagem: ${label}`
+            : 'Espaço reservado para imagem'
+      }
       style={{
         width: '100%',
         aspectRatio: height ? undefined : ratio,
@@ -37,21 +54,25 @@ export function MediaPlaceholder({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 24,
         overflow: 'hidden',
       }}
     >
-      {label && (
+      {src ? (
+        <img
+          src={src}
+          alt={alt ?? label ?? ''}
+          style={{
+            width: '100%',
+            height: '100%',
+            display: 'block',
+            objectFit,
+          }}
+        />
+      ) : (
         <span
           style={{
-            fontFamily: fonts.mono,
-            fontWeight: 500,
-            fontSize: 10,
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
-            color: dark ? colors.cinzaOnDark : colors.cinza,
+            padding: 24,
             textAlign: 'center',
-            lineHeight: 1.6,
           }}
         >
           {label}

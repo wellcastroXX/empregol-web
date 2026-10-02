@@ -1,5 +1,6 @@
 import { colors, fonts } from '@/shared/config/theme'
 import { MediaPlaceholder } from '@/shared/ui/MediaPlaceholder'
+import HygorProfilePhoto from '@/assets/images/others/IMG_8894.JPG.jpeg'
 
 /** POR QUE A EMPREGOL NASCEU — a origem, contada pelos fundadores. */
 export function OrigemSection() {
@@ -23,8 +24,11 @@ export function OrigemSection() {
         {/* Mídia à esquerda — inverte o ritmo da seção anterior */}
         <div style={{ position: 'sticky', top: 108 }}>
           <MediaPlaceholder
-            ratio="4 / 5"
-            label="Retrato dos fundadores · vertical · preto e branco"
+            src={HygorProfilePhoto}
+            alt="Hygor, fundador da Empregol"
+            ratio="1 / 1"
+            surface="dark"
+            label="Atleta fora de campo · retrato quadrado"
           />
         </div>
 

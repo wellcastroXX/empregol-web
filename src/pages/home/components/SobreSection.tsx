@@ -1,5 +1,6 @@
 import { colors, fonts } from '@/shared/config/theme'
 import { MediaPlaceholder } from '@/shared/ui/MediaPlaceholder'
+import AfterGamePhoto from '@/assets/images/others/IMG_8898.JPG.jpeg'
 
 /** O QUE É A EMPREGOL — declaração de posicionamento em tipo grande. */
 export function SobreSection() {
@@ -80,9 +81,12 @@ export function SobreSection() {
         </div>
 
         <MediaPlaceholder
-          ratio="4 / 3"
-          label="Atleta em treino · plano aberto · imagem horizontal"
-        />
+            src={AfterGamePhoto}
+            alt="Atleta comemorando"
+            ratio="1 / 1"
+            surface="dark"
+            label="Atleta comemorando"
+          />
       </div>
     </section>
   )

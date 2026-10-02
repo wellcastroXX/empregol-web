@@ -1,5 +1,6 @@
 import { colors, fonts } from '@/shared/config/theme'
 import { MediaPlaceholder } from '@/shared/ui/MediaPlaceholder'
+import AfterScorePhoto from '@/assets/images/others/IMG_8900.JPG.jpeg'
 
 /** NOSSA MISSÃO — a declaração de propósito, sobre superfície escura. */
 export function MissaoSection() {
@@ -88,6 +89,8 @@ export function MissaoSection() {
         </div>
 
         <MediaPlaceholder
+          src={AfterScorePhoto}
+          alt="Atletas após o gol"
           ratio="1 / 1"
           surface="dark"
           label="Atleta fora de campo · retrato quadrado"

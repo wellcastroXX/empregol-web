@@ -27,10 +27,10 @@ const REQUIREMENTS: Record<Platform, ReadonlyArray<readonly [string, string]>> =
 }
 
 const FEATURES = [
-  ['001', 'Monta tua vitrine', 'Posição, físico, estatísticas e vídeos. Tudo editável na mão.'],
-  ['002', 'Vê quem te olhou', '312 clubes passaram no teu perfil essa semana. Sabe quais.'],
-  ['003', 'Recebe propostas', 'Convite de teste, data e local — direto no chat com o clube.'],
-  ['004', 'Sobe vídeo do treino', 'Grava, publica e aparece na frente na próxima janela.'],
+  ['001', 'Monte sua vitrine', 'Posição, físico, estatísticas e vídeos. Tudo editável na palma da mão.'],
+  ['002', 'Veja quem olhou seu perfil', '312 clubes passaram pelo seu perfil essa semana. Saiba quais.'],
+  ['003', 'Receba propostas', 'Convite de teste, data e local — direto no chat com o clube.'],
+  ['004', 'Suba vídeo do treino', 'Grave, publique e apareça em destaque na próxima janela.'],
 ] as const
 
 /** empregol.com/app — landing de download do aplicativo. */
@@ -80,7 +80,7 @@ export default function DownloadPage() {
             >
               Tua vitrine
               <br />
-              no bolso<span style={{ color: colors.gramado }}>..</span>
+              no bolso<span style={{ color: colors.gramado }}>...</span>
             </h1>
 
             <p
@@ -93,7 +93,7 @@ export default function DownloadPage() {
                 maxWidth: 440,
               }}
             >
-              Recebe propostas, vê quem te olhou e sobe vídeo direto do treino. Baixa grátis —
+              Receba propostas, veja quem te olhou e suba vídeos direto do treino. Baixe grátis —
               cadastro em 4 minutos.
             </p>
 
@@ -152,7 +152,7 @@ export default function DownloadPage() {
         }}
       >
         <Eyebrow color={colors.tinta} style={{ marginBottom: 28 }}>
-          O · Q U E · T U · F A Z · N O · A P P
+          O · Q U E · V O C Ê · F A Z · N O · A P P
         </Eyebrow>
         <div style={{ display: 'grid', gridTemplateColumns: 'var(--cols-4)', gap: 20 }}>
           {FEATURES.map(([num, title, body]) => (
@@ -345,7 +345,7 @@ export default function DownloadPage() {
                 margin: '26px 0 8px',
               }}
             >
-              Baixa em 10 segundos<span style={{ color: colors.gramado }}>.</span>
+              Baixe em 10 segundos<span style={{ color: colors.gramado }}>.</span>
             </h3>
             <p
               style={{
@@ -357,7 +357,7 @@ export default function DownloadPage() {
                 lineHeight: 1.55,
               }}
             >
-              O QR te leva direto pra loja certa — iOS ou Android, ele reconhece.
+              O QR te leva direto para a loja certa.
             </p>
             <div
               style={{
@@ -376,7 +376,7 @@ export default function DownloadPage() {
                   color: colors.giz,
                 }}
               >
-                EMPREGOL.COM/APP
+                EMPREGOL.CO/APP
               </span>
             </div>
           </div>
@@ -417,7 +417,7 @@ export default function DownloadPage() {
             >
               O próximo pode
               <br />
-              ser você<span style={{ color: colors.tinta }}>..</span>
+              ser você<span style={{ color: colors.tinta }}>.</span>
             </h2>
           </div>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>

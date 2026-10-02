@@ -15,7 +15,7 @@ describe('DownloadPage', () => {
     render(<DownloadPage />)
 
     for (const title of [
-      'Monta tua vitrine',
+      'Monte tua vitrine',
       'Vê quem te olhou',
       'Recebe propostas',
       'Sobe vídeo do treino',
