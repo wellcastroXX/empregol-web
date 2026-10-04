@@ -22,7 +22,7 @@ describe('Navegação e rolagem', () => {
     await user.click(screen.getByRole('link', { name: 'App' }))
 
     await waitFor(() =>
-      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Tua vitrine/),
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Sua vitrine/),
     )
     expect(window.scrollTo).toHaveBeenCalledWith(expect.objectContaining({ top: 0 }))
   })

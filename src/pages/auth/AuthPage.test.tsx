@@ -15,7 +15,7 @@ describe('AuthPage', () => {
   it('abre em modo login na rota /entrar', () => {
     renderAt(ROUTES.entrar)
 
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Entra de novo')
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Entre de novo')
     expect(screen.getByRole('tab', { name: 'Entrar' })).toHaveAttribute('aria-selected', 'true')
     expect(screen.getByText(/Esqueci a senha/)).toBeInTheDocument()
   })
@@ -23,7 +23,7 @@ describe('AuthPage', () => {
   it('abre em modo cadastro na rota /cadastro', () => {
     renderAt(ROUTES.cadastro)
 
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Cria tua conta')
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Crie sua conta')
     expect(screen.getByRole('tab', { name: 'Cadastrar' })).toHaveAttribute('aria-selected', 'true')
   })
 

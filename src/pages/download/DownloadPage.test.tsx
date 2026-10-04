@@ -8,17 +8,17 @@ describe('DownloadPage', () => {
   it('abre com a manchete do app', () => {
     render(<DownloadPage />)
 
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Tua vitrine.*no bolso/s)
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Sua vitrine.*no bolso/s)
   })
 
   it('lista os quatro usos do app', () => {
     render(<DownloadPage />)
 
     for (const title of [
-      'Monte tua vitrine',
-      'Vê quem te olhou',
-      'Recebe propostas',
-      'Sobe vídeo do treino',
+      'Monte sua vitrine',
+      'Veja quem olhou seu perfil',
+      'Receba propostas',
+      'Suba vídeo do treino',
     ]) {
       expect(screen.getByText(title)).toBeInTheDocument()
     }

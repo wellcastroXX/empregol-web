@@ -123,7 +123,7 @@ export default function AuthPage() {
             margin: '0 0 6px',
           }}
         >
-          {mode === 'login' ? 'Entra de novo' : 'Cria tua conta'}
+          {mode === 'login' ? 'Entre de novo' : 'Crie sua conta'}
           <span style={{ color: colors.gramado }}>.</span>
         </h1>
 
@@ -134,14 +134,14 @@ export default function AuthPage() {
             <>
               Novo aqui?{' '}
               <Link to={ROUTES.cadastro} replace style={{ color: colors.tinta, fontWeight: 500 }}>
-                Cadastra-te ›
+                Cadastre-se ›
               </Link>
             </>
           ) : (
             <>
               Já tem conta?{' '}
               <Link to={ROUTES.entrar} replace style={{ color: colors.tinta, fontWeight: 500 }}>
-                Entra ›
+                Entre ›
               </Link>
             </>
           )}
