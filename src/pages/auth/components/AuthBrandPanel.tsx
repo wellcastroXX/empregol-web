@@ -54,13 +54,13 @@ export function AuthBrandPanel({ mode }: AuthBrandPanelProps) {
         >
           {mode === 'login' ? (
             <>
-              Volta
+              Volte
               <br />
               pro campo<span style={{ color: colors.gramado }}>.</span>
             </>
           ) : (
             <>
-              Entra
+              Entre
               <br />
               pro jogo<span style={{ color: colors.gramado }}>.</span>
             </>
@@ -78,7 +78,7 @@ export function AuthBrandPanel({ mode }: AuthBrandPanelProps) {
           }}
         >
           {mode === 'login'
-            ? '312 clubes olham hoje. Entra e vê quem te procurou.'
+            ? '312 clubes olham hoje. Entre e veja quem te procurou.'
             : 'Cadastro em 4 minutos. Apareça pra quem decide a próxima janela.'}
         </p>
 

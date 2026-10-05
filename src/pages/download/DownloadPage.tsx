@@ -78,7 +78,7 @@ export default function DownloadPage() {
                 textTransform: 'uppercase',
               }}
             >
-              Tua vitrine
+              Sua vitrine
               <br />
               no bolso<span style={{ color: colors.gramado }}>...</span>
             </h1>
@@ -220,7 +220,7 @@ export default function DownloadPage() {
                 margin: '0 0 26px',
               }}
             >
-              Roda no teu celular<span style={{ color: colors.gramado }}>.</span>
+              Roda no seu celular<span style={{ color: colors.gramado }}>.</span>
             </h2>
 
             <div
@@ -333,7 +333,7 @@ export default function DownloadPage() {
             }}
           >
             <Eyebrow surface="dark" style={{ marginBottom: 20 }}>
-              A P O N T A · A · C Â M E R A
+              A P O N T E · A · C Â M E R A
             </Eyebrow>
             <QrPlaceholder />
             <h3

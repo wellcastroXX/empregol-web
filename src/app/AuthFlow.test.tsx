@@ -62,7 +62,7 @@ describe('Fluxo de autenticação', () => {
     renderAt('/painel')
 
     await waitFor(() =>
-      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Entra de novo'),
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Entre de novo'),
     )
     expect(window.location.pathname).toBe('/entrar')
   })

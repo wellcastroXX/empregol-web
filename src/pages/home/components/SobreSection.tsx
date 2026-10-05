@@ -75,7 +75,7 @@ export function SobreSection() {
               margin: 0,
             }}
           >
-            Não somos só uma vitrine de currículos. Somos rede de apoio, visibilidade e carreira —
+            Não somos só uma vitrine de currículos. Somos uma rede de apoio, visibilidade e carreira —
             do primeiro teste até o topo.
           </p>
         </div>

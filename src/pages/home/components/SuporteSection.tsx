@@ -40,7 +40,7 @@ const ITEMS: readonly SupportItem[] = [
     n: '005',
     title: 'Financeiro',
     description:
-      'Educação financeira e planejamento de carreira, incluindo empreender — dentro ou fora das quatro linhas.',
+      'Educação financeira e planejamento de carreira, incluindo o empreendedorismo — dentro ou fora das quatro linhas.',
   },
 ]
 
