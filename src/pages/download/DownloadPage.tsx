@@ -114,7 +114,6 @@ export default function DownloadPage() {
             >
               <RatingStat value="4,8" label="app store" stars />
               <RatingStat value="4,7" label="google play" stars />
-              <RatingStat value="2.847" label="atletas ativos" />
             </div>
           </div>
 
@@ -402,7 +401,7 @@ export default function DownloadPage() {
         >
           <div>
             <Eyebrow color="rgba(251,250,245,0.75)" style={{ marginBottom: 14 }}>
-              8 9 · E M P R E G A D O S · E S T A · S E M A N A
+              E M P R E G O L · P L A T A F O R M A · D O · A T L E T A
             </Eyebrow>
             <h2
               style={{

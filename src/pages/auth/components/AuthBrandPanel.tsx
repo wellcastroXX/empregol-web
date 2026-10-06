@@ -2,12 +2,6 @@ import { colors, fonts } from '@/shared/config/theme'
 import { Eyebrow } from '@/shared/ui/Eyebrow'
 import { Wordmark } from '@/shared/ui/Wordmark'
 
-const STATS = [
-  ['2.847', 'atletas livres'],
-  ['312', 'clubes ativos'],
-  ['89', 'empregos / semana'],
-] as const
-
 export interface AuthBrandPanelProps {
   mode: 'login' | 'signup'
 }
@@ -84,32 +78,29 @@ export function AuthBrandPanel({ mode }: AuthBrandPanelProps) {
 
         <div
           style={{
-            display: 'flex',
-            gap: 36,
             marginTop: 40,
             paddingTop: 24,
             borderTop: `1px solid ${colors.ruleDark}`,
+            maxWidth: 400,
           }}
         >
-          {STATS.map(([value, label]) => (
-            <div key={label}>
-              <div
-                style={{
-                  fontFamily: fonts.mono,
-                  fontWeight: 500,
-                  fontSize: 28,
-                  lineHeight: 1,
-                  color: colors.giz,
-                  fontFeatureSettings: '"tnum" 1',
-                }}
-              >
-                {value}
-              </div>
-              <Eyebrow surface="dark" size={10} style={{ marginTop: 6, letterSpacing: '0.14em' }}>
-                {label}
-              </Eyebrow>
-            </div>
-          ))}
+          <p
+            style={{
+              fontFamily: fonts.text,
+              fontStyle: 'italic',
+              fontSize: 15,
+              lineHeight: 1.55,
+              color: colors.gizMuted,
+              margin: 0,
+            }}
+          >
+            “E, tendo mandado que a multidão se assentasse sobre a relva, pegando os cinco pães e os
+            dois peixes, erguendo os olhos para o céu, os abençoou. Depois, tendo partido os pães,
+            deu-os aos discípulos, e estes deram às multidões.”
+          </p>
+          <Eyebrow surface="dark" size={10} style={{ marginTop: 12, letterSpacing: '0.14em' }}>
+            M A T E U S · 1 4 : 1 9
+          </Eyebrow>
         </div>
       </div>
 
