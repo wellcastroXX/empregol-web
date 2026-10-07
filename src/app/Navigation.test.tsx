@@ -5,6 +5,7 @@ import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { createMemoryRouter, RouterProvider } from 'react-router-dom'
 
 import { App } from '@/app/App'
+import { AppProviders } from '@/app/providers/AppProviders'
 import { ROUTE_CONFIG } from '@/app/router/routeConfig'
 
 describe('Navegação e rolagem', () => {
@@ -47,7 +48,12 @@ describe('Navegação e rolagem', () => {
 
   it('manda /suporte para a seção da home', async () => {
     const router = createMemoryRouter(ROUTE_CONFIG, { initialEntries: ['/suporte'] })
-    render(<RouterProvider router={router} />)
+    // Com os providers: o DocumentTitle da raiz consulta o contexto de auth.
+    render(
+      <AppProviders>
+        <RouterProvider router={router} />
+      </AppProviders>,
+    )
 
     await waitFor(() => expect(router.state.location.pathname).toBe('/'))
     expect(router.state.location.hash).toBe('#suporte')

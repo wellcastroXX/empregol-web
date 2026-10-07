@@ -7,6 +7,7 @@ import { Navigate, type RouteObject } from 'react-router-dom'
 import { RouteFallback } from '@/shared/ui/RouteFallback'
 import { SiteLayout } from '@/shared/layout/SiteLayout'
 
+import { DEFAULT_TITLE, type RouteTitleContext } from './DocumentTitle'
 import { RequireAuth } from './RequireAuth'
 import { RootLayout } from './RootLayout'
 import { ROUTES } from './routes'
@@ -39,26 +40,68 @@ export const ROUTE_CONFIG: RouteObject[] = [
       {
         // Rotas com hero escuro full-bleed: nav transparente até o primeiro scroll.
         element: <SiteLayout overlay />,
-        children: [{ path: ROUTES.home, element: lazyRoute(<HomePage />) }],
+        children: [
+          {
+            path: ROUTES.home,
+            element: lazyRoute(<HomePage />),
+            handle: { title: DEFAULT_TITLE },
+          },
+        ],
       },
       {
         element: <SiteLayout active="App" overlay />,
-        children: [{ path: ROUTES.app, element: lazyRoute(<DownloadPage />) }],
+        children: [
+          {
+            path: ROUTES.app,
+            element: lazyRoute(<DownloadPage />),
+            handle: { title: 'Baixe o app Empregol — Sua vitrine no bolso.' },
+          },
+        ],
       },
       {
         // Telas de auth: casca própria, sem nav e rodapé públicos.
         children: [
-          { path: ROUTES.entrar, element: lazyRoute(<AuthPage />) },
-          { path: ROUTES.cadastro, element: lazyRoute(<AuthPage />) },
-          { path: ROUTES.verificarEmail, element: lazyRoute(<VerifyEmailPage />) },
-          { path: ROUTES.esqueciSenha, element: lazyRoute(<ForgotPasswordPage />) },
-          { path: ROUTES.redefinirSenha, element: lazyRoute(<ResetPasswordPage />) },
+          {
+            path: ROUTES.entrar,
+            element: lazyRoute(<AuthPage />),
+            handle: { title: 'Entrar — Empregol' },
+          },
+          {
+            path: ROUTES.cadastro,
+            element: lazyRoute(<AuthPage />),
+            handle: { title: 'Cadastre-se — Empregol' },
+          },
+          {
+            path: ROUTES.verificarEmail,
+            element: lazyRoute(<VerifyEmailPage />),
+            handle: { title: 'Verificar e-mail — Empregol' },
+          },
+          {
+            path: ROUTES.esqueciSenha,
+            element: lazyRoute(<ForgotPasswordPage />),
+            handle: { title: 'Esqueci a senha — Empregol' },
+          },
+          {
+            path: ROUTES.redefinirSenha,
+            element: lazyRoute(<ResetPasswordPage />),
+            handle: { title: 'Redefinir senha — Empregol' },
+          },
         ],
       },
       {
         // Área logada — sem sessão, volta para o login.
         element: <RequireAuth />,
-        children: [{ path: ROUTES.painel, element: lazyRoute(<DashboardPage />) }],
+        children: [
+          {
+            path: ROUTES.painel,
+            element: lazyRoute(<DashboardPage />),
+            // O painel se divide por papel: o atleta veria "Painel do clube".
+            handle: {
+              title: ({ role }: RouteTitleContext) =>
+                role === 'athlete' ? 'Painel do atleta — Empregol' : 'Painel do clube — Empregol',
+            },
+          },
+        ],
       },
       {
         // `/suporte` não é página: a seção vive na home. Redireciona para a
@@ -70,8 +113,16 @@ export const ROUTE_CONFIG: RouteObject[] = [
         // Demais rotas nascem em fundo claro — nav sempre sólido.
         element: <SiteLayout />,
         children: [
-          { path: ROUTES.politicaPrivacidade, element: lazyRoute(<PoliticaPrivacidadePage />) },
-          { path: '*', element: lazyRoute(<NotFoundPage />) },
+          {
+            path: ROUTES.politicaPrivacidade,
+            element: lazyRoute(<PoliticaPrivacidadePage />),
+            handle: { title: 'Termos de uso e privacidade — Empregol' },
+          },
+          {
+            path: '*',
+            element: lazyRoute(<NotFoundPage />),
+            handle: { title: 'Página não encontrada — Empregol' },
+          },
         ],
       },
     ],
