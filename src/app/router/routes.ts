@@ -12,6 +12,9 @@ export const ROUTES = {
   redefinirSenha: '/redefinir-senha',
   painel: '/painel',
   app: '/app',
+  /** Atalho para a seção de suporte da home — redireciona para `/#suporte`. */
+  suporte: '/suporte',
+  politicaPrivacidade: '/politica-de-privacidade',
 } as const
 
 export type RouteKey = keyof typeof ROUTES

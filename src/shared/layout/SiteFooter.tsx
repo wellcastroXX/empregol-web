@@ -1,13 +1,16 @@
 import { Link } from 'react-router-dom'
 
 import { ROUTES } from '@/app/router/routes'
+import { WHATSAPP_URL } from '@/shared/config/contact'
 import { colors, fonts } from '@/shared/config/theme'
 import { Wordmark } from '@/shared/ui/Wordmark'
 
 interface FooterLink {
   label: string
-  /** Rota interna. Sem isso o item ainda não tem página e fica inerte. */
+  /** Rota interna. Sem isso nem `href`, o item ainda não tem página e fica inerte. */
   to?: string
+  /** Destino externo — abre em aba nova (ex.: a conversa no WhatsApp). */
+  href?: string
 }
 
 interface FooterColumn {
@@ -36,9 +39,37 @@ const FOOTER_COLUMNS: readonly FooterColumn[] = [
   },
   {
     title: 'EMPRESA',
-    links: [{ label: 'Sobre' }, { label: 'Imprensa' }, { label: 'Contato' }],
+    links: [
+      { label: 'Sobre', to: `${ROUTES.home}#sobre` },
+      { label: 'Suporte', to: ROUTES.suporte },
+      { label: 'Imprensa' },
+      { label: 'Contato', href: WHATSAPP_URL },
+      { label: 'Termos e privacidade', to: ROUTES.politicaPrivacidade },
+    ],
   },
 ]
+
+/** Item do rodapé: externo abre em aba nova, interno vai pelo router, e o que
+ *  ainda não tem destino fica como texto — não link falso. */
+function FooterItem({ link }: { link: FooterLink }) {
+  if (link.href) {
+    return (
+      <a href={link.href} target="_blank" rel="noopener noreferrer" style={linkStyle}>
+        {link.label}
+      </a>
+    )
+  }
+
+  if (link.to) {
+    return (
+      <Link to={link.to} style={linkStyle}>
+        {link.label}
+      </Link>
+    )
+  }
+
+  return <span style={{ ...linkStyle, color: colors.cinzaOnDark }}>{link.label}</span>
+}
 
 const linkStyle = {
   display: 'block',
@@ -104,18 +135,9 @@ export function SiteFooter() {
               >
                 {title}
               </div>
-              {links.map((link) =>
-                link.to ? (
-                  <Link key={link.label} to={link.to} style={linkStyle}>
-                    {link.label}
-                  </Link>
-                ) : (
-                  // Sem página ainda — texto, não link falso que não leva a lugar nenhum.
-                  <span key={link.label} style={{ ...linkStyle, color: colors.cinzaOnDark }}>
-                    {link.label}
-                  </span>
-                ),
-              )}
+              {links.map((link) => (
+                <FooterItem key={link.label} link={link} />
+              ))}
             </div>
           ))}
         </div>
