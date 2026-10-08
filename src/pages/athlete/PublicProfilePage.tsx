@@ -9,6 +9,7 @@ import {
 } from '@/features/athlete-profile/ui/PublicAthleteProfile'
 import { useAuth } from '@/features/auth/ui/auth-context'
 import { scoutApi } from '@/features/scout/api/scout-api'
+import { useFavorites, useToggleFavorite } from '@/features/scout/lib/queries'
 import { colors, fonts } from '@/shared/config/theme'
 import { Eyebrow } from '@/shared/ui/Eyebrow'
 import { useDocumentTitle } from '@/shared/lib/hooks/useDocumentTitle'
@@ -171,6 +172,40 @@ function ModeButton({
   )
 }
 
+/**
+ * Estrela da shortlist.
+ *
+ * O estado vem de `/favorites`, porque o perfil não diz se este contratante já
+ * favoritou o atleta — a rota pública é anônima e nem saberia quem pergunta.
+ */
+function FavoriteButton({ athleteId }: { athleteId: string }) {
+  const favorites = useFavorites()
+  const toggle = useToggleFavorite()
+  const saved = favorites.data?.some((athlete) => athlete.id === athleteId) ?? false
+
+  return (
+    <button
+      type="button"
+      onClick={() => toggle.mutate(athleteId)}
+      disabled={favorites.isLoading || toggle.isPending}
+      aria-pressed={saved}
+      aria-label={saved ? 'Remover da shortlist' : 'Salvar na shortlist'}
+      title={saved ? 'Na sua shortlist' : 'Salvar na shortlist'}
+      style={{
+        background: saved ? colors.giz : 'transparent',
+        color: saved ? colors.tinta : colors.giz,
+        border: `1.5px solid ${saved ? colors.giz : colors.ruleDark}`,
+        width: 52,
+        borderRadius: 4,
+        fontSize: 18,
+        cursor: toggle.isPending ? 'progress' : 'pointer',
+      }}
+    >
+      ★
+    </button>
+  )
+}
+
 /** Ações do hero, como no kit: proposta ainda não, conversa sim. */
 function ContractorActions({ athleteId, onOpened }: { athleteId: string; onOpened: () => void }) {
   const [opening, setOpening] = useState(false)
@@ -227,8 +262,9 @@ function ContractorActions({ athleteId, onOpened }: { athleteId: string; onOpene
             letterSpacing: '0.04em',
           }}
         >
-          FAZER PROPOSTA
+          CONVIDAR PARA TESTE
         </button>
+        <FavoriteButton athleteId={athleteId} />
       </div>
       {error && (
         <p

@@ -6,6 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { athleteProfileApi } from '@/features/athlete-profile/api/athlete-profile-api'
 import type { AthleteProfile } from '@/features/athlete-profile/model/athlete-profile.types'
 import type { AuthUser } from '@/features/auth/model/auth.types'
+import { scoutApi } from '@/features/scout/api/scout-api'
 import { ApiError } from '@/shared/lib/http/api-client'
 import { renderWithProviders, testUser } from '@/test/render-with-providers'
 
@@ -17,7 +18,7 @@ vi.mock('@/features/athlete-profile/api/athlete-profile-api', () => ({
   athleteProfileApi: { getById: vi.fn(), getPublicBySlug: vi.fn() },
 }))
 vi.mock('@/features/scout/api/scout-api', () => ({
-  scoutApi: { openConversation: vi.fn() },
+  scoutApi: { openConversation: vi.fn(), listFavorites: vi.fn(), toggleFavorite: vi.fn() },
 }))
 
 vi.mock('react-router-dom', async () => {
@@ -59,6 +60,7 @@ beforeEach(() => {
   vi.clearAllMocks()
   vi.mocked(athleteProfileApi.getPublicBySlug).mockResolvedValue(publicProfile)
   vi.mocked(athleteProfileApi.getById).mockResolvedValue(fullProfile)
+  vi.mocked(scoutApi.listFavorites).mockResolvedValue([])
 })
 
 /** O nome quebra em duas linhas no hero, então o texto do h1 vem concatenado. */
@@ -86,14 +88,25 @@ describe('PublicProfilePage', () => {
     expect(screen.queryByRole('button', { name: /Como visitante/i })).not.toBeInTheDocument()
   })
 
-  it('dá ao contratante a ficha completa e as duas ações', async () => {
+  it('dá ao contratante a ficha completa e as três ações do kit', async () => {
     renderWithProviders(<PublicProfilePage />, { user: testUser })
 
     await waitFor(() => expect(athleteProfileApi.getById).toHaveBeenCalledWith('ath-1'))
 
     expect(await screen.findByText('R$ 9.000')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /FAZER PROPOSTA/ })).toBeDisabled()
+    expect(screen.getByRole('button', { name: /CONVIDAR PARA TESTE/ })).toBeDisabled()
     expect(screen.getByRole('button', { name: /ENVIAR MENSAGEM/ })).toBeEnabled()
+    expect(screen.getByRole('button', { name: /shortlist/i })).toBeInTheDocument()
+  })
+
+  it('marca a estrela quando o atleta já está na shortlist', async () => {
+    vi.mocked(scoutApi.listFavorites).mockResolvedValue([
+      { ...publicProfile, availability: 'FREE', agencyStatus: 'UNREPRESENTED' } as never,
+    ])
+    renderWithProviders(<PublicProfilePage />, { user: testUser })
+
+    const star = await screen.findByRole('button', { name: /shortlist/i })
+    await waitFor(() => expect(star).toHaveAttribute('aria-pressed', 'true'))
   })
 
   it('deixa o contratante conferir como o perfil aparece de fora', async () => {

@@ -85,7 +85,7 @@ export function PublicAthleteProfile({ athlete, audience, actions }: PublicAthle
             minWidth: 0,
           }}
         >
-          <Videos media={athlete.media ?? []} />
+          <Videos media={athlete.media ?? []} thumb={athlete.avatarUrl} />
           <Career seasons={athlete.seasonStats ?? []} />
         </div>
 
@@ -144,13 +144,15 @@ function Hero({ athlete, actions }: { athlete: AthleteProfile; actions?: ReactNo
             display: 'grid',
             gridTemplateColumns: 'var(--cols-profile-hero)',
             gap: 'var(--gap-profile)',
-            alignItems: 'end',
+            // Alinhado ao topo, não à base: sem as ações (visitante deslogado)
+            // a coluna encurta, e com `end` o nome descia junto com ela.
+            alignItems: 'start',
           }}
         >
           <Portrait athlete={athlete} />
 
           <div style={{ minWidth: 0 }}>
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 22 }}>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
               <Tag background={colors.gramado} color={colors.giz}>
                 <span
                   style={{ width: 6, height: 6, borderRadius: '50%', background: 'currentColor' }}
@@ -219,10 +221,12 @@ function Hero({ athlete, actions }: { athlete: AthleteProfile; actions?: ReactNo
   )
 }
 
-/** Retrato do kit. Sem foto, o número da camisa segura o bloco sozinho. */
+/**
+ * Retrato do kit, com a posição sobreposta. O kit usa o número da camisa, mas
+ * a posição diz mais a quem está avaliando o atleta — e todo atleta tem uma,
+ * enquanto o número é opcional no cadastro.
+ */
 function Portrait({ athlete }: { athlete: AthleteProfile }) {
-  const jersey = athlete.jerseyNumber != null ? String(athlete.jerseyNumber).padStart(2, '0') : null
-
   return (
     <div
       style={{
@@ -242,24 +246,22 @@ function Portrait({ athlete }: { athlete: AthleteProfile }) {
           style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
         />
       )}
-      {jersey && (
-        <div
-          style={{
-            position: 'absolute',
-            top: 16,
-            left: 18,
-            fontFamily: fonts.mono,
-            fontWeight: 500,
-            fontSize: athlete.avatarUrl ? 72 : 'clamp(72px, 18vw, 140px)',
-            lineHeight: 0.9,
-            letterSpacing: '-0.04em',
-            color: colors.giz,
-            textShadow: athlete.avatarUrl ? '0 2px 8px rgba(0,0,0,.45)' : 'none',
-          }}
-        >
-          {jersey}
-        </div>
-      )}
+      <div
+        style={{
+          position: 'absolute',
+          top: 16,
+          left: 18,
+          fontFamily: fonts.mono,
+          fontWeight: 500,
+          fontSize: athlete.avatarUrl ? 64 : 'clamp(64px, 16vw, 120px)',
+          lineHeight: 0.9,
+          letterSpacing: '-0.04em',
+          color: colors.giz,
+          textShadow: athlete.avatarUrl ? '0 2px 8px rgba(0,0,0,.45)' : 'none',
+        }}
+      >
+        {athlete.position}
+      </div>
     </div>
   )
 }
@@ -374,7 +376,7 @@ function SectionHead({
 }
 
 /** Vídeos e fotos do atleta. O kit usa um destaque grande + dois menores. */
-function Videos({ media }: { media: readonly AthleteMedia[] }) {
+function Videos({ media, thumb }: { media: readonly AthleteMedia[]; thumb?: string | null }) {
   const [first, ...rest] = media
   if (!first) return null
 
@@ -396,11 +398,11 @@ function Videos({ media }: { media: readonly AthleteMedia[] }) {
           gap: 14,
         }}
       >
-        <MediaTile item={first} big />
+        <MediaTile item={first} thumb={thumb} big />
         {rest.length > 0 && (
           <div style={{ display: 'grid', gap: 14, gridAutoRows: '1fr' }}>
             {rest.slice(0, 2).map((item) => (
-              <MediaTile key={item.id} item={item} />
+              <MediaTile key={item.id} item={item} thumb={thumb} />
             ))}
           </div>
         )}
@@ -409,15 +411,24 @@ function Videos({ media }: { media: readonly AthleteMedia[] }) {
   )
 }
 
-/** Miniatura do YouTube, quando o link é de lá — não há thumbnail na API. */
-function youtubeThumb(url: string): string | null {
-  const match = /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/.exec(url)
-  return match ? `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg` : null
-}
-
-function MediaTile({ item, big = false }: { item: AthleteMedia; big?: boolean }) {
+/**
+ * Ladrilho de mídia.
+ *
+ * O fundo é sempre a foto do perfil, como no kit — a API não guarda miniatura
+ * de vídeo, e misturar capa do YouTube com foto própria deixava a grade
+ * descasada. A foto do próprio item só aparece quando ele é uma foto.
+ */
+function MediaTile({
+  item,
+  thumb,
+  big = false,
+}: {
+  item: AthleteMedia
+  thumb?: string | null
+  big?: boolean
+}) {
   const isPhoto = item.mediaType === 'PHOTO'
-  const thumb = isPhoto ? item.url : youtubeThumb(item.url)
+  const background = isPhoto ? item.url : thumb
 
   return (
     <a
@@ -434,9 +445,9 @@ function MediaTile({ item, big = false }: { item: AthleteMedia; big?: boolean })
         textDecoration: 'none',
       }}
     >
-      {thumb && (
+      {background && (
         <img
-          src={thumb}
+          src={background}
           alt=""
           style={{
             position: 'absolute',
