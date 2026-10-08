@@ -5,6 +5,7 @@ import { Eyebrow } from '@/shared/ui/Eyebrow'
 import { Wordmark } from '@/shared/ui/Wordmark'
 
 import { PanelEmpty, PanelError, PanelLoading } from './components/PanelState'
+import { ShowcaseCard } from './components/ShowcaseCard'
 
 const CONTRACTOR_LABEL = { AGENT: 'AGENTE', CLUB: 'CLUBE' } as const
 
@@ -112,6 +113,8 @@ export function AthletePanel() {
               <StatCard value={stats?.pendingProposals ?? 0} label="propostas" />
               <StatCard value={`${stats?.daysOnPlatform ?? 0}d`} label="na vitrine" />
             </div>
+
+            <ShowcaseCard />
 
             <section style={{ ...cardStyle, marginBottom: 16 }}>
               <Eyebrow size={10} style={{ letterSpacing: '0.16em', marginBottom: 12 }}>

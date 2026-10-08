@@ -5,6 +5,7 @@ import { useAuth } from '@/features/auth/ui/auth-context'
 import { colors } from '@/shared/config/theme'
 
 import { AthletePanel } from './AthletePanel'
+import { AthleteProfileHost } from './components/AthleteProfileDrawer'
 import { DashSidebar, type DashSection } from './components/DashSidebar'
 import { DashTopbar } from './components/DashTopbar'
 import { ComingSoonSection } from './components/sections/ComingSoonSection'
@@ -60,7 +61,11 @@ function ScoutPanel() {
       <div className="dash-main" style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         <DashTopbar />
         <main style={{ padding: '28px var(--page-x) 60px' }}>
-          <SectionContent section={section} onNavigate={setSection} />
+          {/* A gaveta de perfil vive aqui: as três seções com lista de atletas
+              compartilham a mesma, em vez de cada uma montar a sua. */}
+          <AthleteProfileHost onNavigate={setSection}>
+            <SectionContent section={section} onNavigate={setSection} />
+          </AthleteProfileHost>
         </main>
       </div>
     </div>

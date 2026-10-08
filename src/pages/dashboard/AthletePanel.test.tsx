@@ -1,4 +1,5 @@
 import { screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { athleteDashboardApi } from '@/features/athlete-dashboard/api/athlete-dashboard-api'
@@ -9,7 +10,7 @@ import { renderWithProviders } from '@/test/render-with-providers'
 import DashboardPage from './DashboardPage'
 
 vi.mock('@/features/athlete-dashboard/api/athlete-dashboard-api', () => ({
-  athleteDashboardApi: { getDashboard: vi.fn() },
+  athleteDashboardApi: { getDashboard: vi.fn(), getMyProfile: vi.fn(), setPublicProfile: vi.fn() },
 }))
 vi.mock('@/features/scout/api/scout-api', () => ({
   scoutApi: {
@@ -52,6 +53,10 @@ beforeEach(() => {
       },
     ],
   })
+  vi.mocked(athleteDashboardApi.getMyProfile).mockResolvedValue({
+    publicProfile: false,
+    slug: null,
+  })
 })
 
 describe('Painel do atleta', () => {
@@ -72,5 +77,40 @@ describe('Painel do atleta', () => {
     expect(scoutApi.exploreAthletes).not.toHaveBeenCalled()
     expect(scoutApi.listFavorites).not.toHaveBeenCalled()
     expect(scoutApi.myProfile).not.toHaveBeenCalled()
+  })
+
+  it('com a vitrine fechada, explica que o clube continua enxergando o perfil', async () => {
+    renderWithProviders(<DashboardPage />, { user: athlete })
+
+    expect(
+      await screen.findByText(/continua aparecendo normalmente para clubes e agentes/),
+    ).toBeInTheDocument()
+    // Fica desabilitado enquanto /athletes/me não respondeu.
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: /Abrir vitrine pública/i })).toBeEnabled(),
+    )
+  })
+
+  it('mostra o link para compartilhar quando a vitrine está aberta', async () => {
+    vi.mocked(athleteDashboardApi.getMyProfile).mockResolvedValue({
+      publicProfile: true,
+      slug: 'wellington-castro',
+    })
+    renderWithProviders(<DashboardPage />, { user: athlete })
+
+    expect(await screen.findByText(/\/p\/wellington-castro/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Fechar vitrine/i })).toBeInTheDocument()
+  })
+
+  it('exibe a recusa da API ao tentar abrir sendo menor de 18', async () => {
+    const user = userEvent.setup()
+    vi.mocked(athleteDashboardApi.setPublicProfile).mockRejectedValue(
+      new Error('A vitrine pública está disponível a partir dos 18 anos.'),
+    )
+    renderWithProviders(<DashboardPage />, { user: athlete })
+
+    await user.click(await screen.findByRole('button', { name: /Abrir vitrine pública/i }))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('a partir dos 18 anos')
   })
 })

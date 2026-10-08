@@ -21,6 +21,7 @@ const ForgotPasswordPage = lazy(() => import('@/pages/auth/ForgotPasswordPage'))
 const ResetPasswordPage = lazy(() => import('@/pages/auth/ResetPasswordPage'))
 const NotFoundPage = lazy(() => import('@/pages/not-found/NotFoundPage'))
 const PoliticaPrivacidadePage = lazy(() => import('@/pages/legal/PoliticaPrivacidadePage'))
+const PublicProfilePage = lazy(() => import('@/pages/athlete/PublicProfilePage'))
 
 /** Envolve o elemento da rota no fallback de carregamento do lazy. */
 function lazyRoute(element: React.ReactNode) {
@@ -113,6 +114,12 @@ export const ROUTE_CONFIG: RouteObject[] = [
         // Demais rotas nascem em fundo claro — nav sempre sólido.
         element: <SiteLayout />,
         children: [
+          {
+            path: ROUTES.perfilPublico,
+            element: lazyRoute(<PublicProfilePage />),
+            // A página refina para o nome do atleta assim que os dados chegam.
+            handle: { title: 'Perfil do atleta — Empregol' },
+          },
           {
             path: ROUTES.politicaPrivacidade,
             element: lazyRoute(<PoliticaPrivacidadePage />),

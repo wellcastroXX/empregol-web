@@ -1,12 +1,18 @@
-import { screen, waitFor } from '@testing-library/react'
+import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { athleteProfileApi } from '@/features/athlete-profile/api/athlete-profile-api'
+import type { AthleteProfile } from '@/features/athlete-profile/model/athlete-profile.types'
 import { scoutApi } from '@/features/scout/api/scout-api'
 import type { AthleteCard, Conversation } from '@/features/scout/model/scout.types'
 import { renderWithProviders, testUser } from '@/test/render-with-providers'
 
 import DashboardPage from './DashboardPage'
+
+vi.mock('@/features/athlete-profile/api/athlete-profile-api', () => ({
+  athleteProfileApi: { getById: vi.fn() },
+}))
 
 vi.mock('@/features/scout/api/scout-api', () => ({
   scoutApi: {
@@ -36,6 +42,42 @@ const athlete: AthleteCard = {
   isFavorited: false,
 }
 
+const profile: AthleteProfile = {
+  id: 'ath-1',
+  fullName: 'Lucas Henrique',
+  position: 'ATA',
+  positions: ['ATA'],
+  dominantFoot: 'RIGHT',
+  level: 'PROFESSIONAL',
+  availability: 'FREE',
+  agencyStatus: 'UNREPRESENTED',
+  birthDate: '1999-03-10T00:00:00.000Z',
+  naturalidade: 'Salvador - BA',
+  height: 1.8,
+  weight: 75,
+  jerseyNumber: 9,
+  lastClub: 'Vitória',
+  goals: 12,
+  assists: 4,
+  expectedSalary: '8500',
+  seasonStats: [
+    {
+      id: 'season-1',
+      year: 2025,
+      goals: 12,
+      assists: 4,
+      gamesPlayed: 28,
+      minutesPlayed: 2100,
+      position: 'ATA',
+      height: 1.8,
+      weight: 75,
+      dominantFoot: 'RIGHT',
+      lastClub: 'Vitória',
+    },
+  ],
+  media: [],
+}
+
 const conversation: Conversation = {
   id: 'conv-1',
   lastMessageAt: '2026-05-24T12:00:00.000Z',
@@ -60,6 +102,7 @@ beforeEach(() => {
   })
   vi.mocked(scoutApi.listFavorites).mockResolvedValue([])
   vi.mocked(scoutApi.listConversations).mockResolvedValue([conversation])
+  vi.mocked(athleteProfileApi.getById).mockResolvedValue(profile)
 })
 
 describe('DashboardPage', () => {
@@ -144,6 +187,71 @@ describe('DashboardPage', () => {
     await user.click(screen.getByRole('button', { name: 'Sair' }))
 
     expect(globalThis.localStorage.getItem('empregol.auth')).toBeNull()
+  })
+
+  it('abre o perfil do atleta ao clicar na linha', async () => {
+    const user = userEvent.setup()
+    renderDashboard()
+
+    await user.click(
+      await screen.findByRole('button', { name: /Abrir o perfil de Lucas Henrique/ }),
+    )
+
+    const drawer = await screen.findByRole('dialog')
+    await waitFor(() => expect(athleteProfileApi.getById).toHaveBeenCalledWith('ath-1'))
+    // Dado que só existe no perfil, não na linha da busca.
+    expect(await within(drawer).findByText('Salvador - BA', { exact: false })).toBeInTheDocument()
+    expect(within(drawer).getByText('2025')).toBeInTheDocument()
+  })
+
+  it('deixa a proposta desabilitada e a conversa ativa', async () => {
+    const user = userEvent.setup()
+    renderDashboard()
+
+    await user.click(
+      await screen.findByRole('button', { name: /Abrir o perfil de Lucas Henrique/ }),
+    )
+    const drawer = await screen.findByRole('dialog')
+
+    expect(within(drawer).getByRole('button', { name: 'Proposta' })).toBeDisabled()
+    await waitFor(() =>
+      expect(within(drawer).getByRole('button', { name: 'Conversar' })).toBeEnabled(),
+    )
+  })
+
+  it('abre a conversa pela API e leva para a seção de conversas', async () => {
+    const user = userEvent.setup()
+    vi.mocked(scoutApi.openConversation).mockResolvedValue(conversation)
+    renderDashboard()
+
+    await user.click(
+      await screen.findByRole('button', { name: /Abrir o perfil de Lucas Henrique/ }),
+    )
+    const drawer = await screen.findByRole('dialog')
+    await waitFor(() =>
+      expect(within(drawer).getByRole('button', { name: 'Conversar' })).toBeEnabled(),
+    )
+
+    await user.click(within(drawer).getByRole('button', { name: 'Conversar' }))
+
+    await waitFor(() => expect(scoutApi.openConversation).toHaveBeenCalledWith('ath-1'))
+    // A gaveta fecha e o painel troca de seção.
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+    expect(await screen.findByText('Bom dia')).toBeInTheDocument()
+  })
+
+  it('fecha o perfil pelo Esc', async () => {
+    const user = userEvent.setup()
+    renderDashboard()
+
+    await user.click(
+      await screen.findByRole('button', { name: /Abrir o perfil de Lucas Henrique/ }),
+    )
+    expect(await screen.findByRole('dialog')).toBeInTheDocument()
+
+    await user.keyboard('{Escape}')
+
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
   })
 
   it('mostra o erro da API quando a busca falha', async () => {

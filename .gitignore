@@ -35,3 +35,7 @@ coverage
 # Master de video em 4K (135MB) — acima do limite do GitHub.
 # Versionamos so o hero.mp4 comprimido; o master fica fora do repo.
 src/assets/videos/*-uhd_*.mp4
+
+# Config local do Claude Code — este repo é PÚBLICO e o settings.json
+# guarda comandos aprovados, que podem conter credenciais.
+.claude/

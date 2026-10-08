@@ -15,7 +15,14 @@ export const ROUTES = {
   /** Atalho para a seção de suporte da home — redireciona para `/#suporte`. */
   suporte: '/suporte',
   politicaPrivacidade: '/politica-de-privacidade',
+  /** Vitrine pública do atleta. Use `perfilPublicoDe` para montar o endereço. */
+  perfilPublico: '/p/:slug',
 } as const
+
+/** `/p/wellington-castro` — o link que o atleta compartilha. */
+export function perfilPublicoDe(slug: string): string {
+  return `/p/${slug}`
+}
 
 export type RouteKey = keyof typeof ROUTES
 export type RoutePath = (typeof ROUTES)[RouteKey]
