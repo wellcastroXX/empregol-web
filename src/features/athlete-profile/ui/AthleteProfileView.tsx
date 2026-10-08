@@ -1,7 +1,10 @@
+import { useState } from 'react'
+
 import { colors, fonts } from '@/shared/config/theme'
 import { Eyebrow } from '@/shared/ui/Eyebrow'
 
 import type { AthleteProfile, SeasonStat } from '../model/athlete-profile.types'
+import { MediaLightbox } from './MediaLightbox'
 
 /**
  * Quem está olhando.
@@ -60,6 +63,9 @@ export function AthleteProfileView({ athlete, audience }: AthleteProfileViewProp
   const pretension = audience === 'contractor' ? salary(athlete.expectedSalary) : null
   const seasons = athlete.seasonStats ?? []
   const media = athlete.media ?? []
+  // Mesma modal da vitrine pública: o vídeo toca aqui dentro, sem jogar o
+  // clube para outra aba e fazer ele perder a gaveta.
+  const [playing, setPlaying] = useState<number | null>(null)
 
   return (
     <div>
@@ -138,16 +144,21 @@ export function AthleteProfileView({ athlete, audience }: AthleteProfileViewProp
       {media.length > 0 && (
         <Block title="M Í D I A">
           <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-            {media.map((item) => (
+            {media.map((item, index) => (
               <li
                 key={item.id}
                 style={{ borderTop: `1px solid ${colors.osso}`, padding: '10px 0' }}
               >
-                <a
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  type="button"
+                  onClick={() => setPlaying(index)}
                   style={{
+                    background: 'transparent',
+                    border: 0,
+                    padding: 0,
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    textDecoration: 'underline',
                     fontFamily: fonts.text,
                     fontSize: 14,
                     fontWeight: 500,
@@ -155,7 +166,7 @@ export function AthleteProfileView({ athlete, audience }: AthleteProfileViewProp
                   }}
                 >
                   {item.title}
-                </a>
+                </button>
                 <Eyebrow size={9.5} style={{ letterSpacing: '0.12em', marginTop: 3 }}>
                   {[item.mediaType, String(item.year), item.gameInfo].filter(Boolean).join(' · ')}
                 </Eyebrow>
@@ -163,6 +174,15 @@ export function AthleteProfileView({ athlete, audience }: AthleteProfileViewProp
             ))}
           </ul>
         </Block>
+      )}
+
+      {playing != null && (
+        <MediaLightbox
+          items={media}
+          index={playing}
+          onIndexChange={setPlaying}
+          onClose={() => setPlaying(null)}
+        />
       )}
 
       {athlete.additionalInfo && (

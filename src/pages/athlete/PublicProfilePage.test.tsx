@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react'
+import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type * as RouterDom from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -161,6 +161,51 @@ describe('PublicProfilePage', () => {
     expect(screen.getByText('assistências')).toBeInTheDocument()
     expect(screen.queryByText('jogos')).not.toBeInTheDocument()
     expect(screen.queryByText('minutos')).not.toBeInTheDocument()
+  })
+
+  it('toca o vídeo numa modal, sem mandar o visitante para outra aba', async () => {
+    const user = userEvent.setup()
+    vi.mocked(athleteProfileApi.getPublicBySlug).mockResolvedValue({
+      ...publicProfile,
+      media: [
+        {
+          id: 'm1',
+          mediaType: 'VIDEO',
+          url: 'https://api.empregol.co/uploads/lance.mp4',
+          title: 'Lance de falta',
+          year: 2026,
+          category: 'TREINO',
+        },
+        {
+          id: 'm2',
+          mediaType: 'VIDEO',
+          url: 'https://api.empregol.co/uploads/tela.mp4',
+          title: 'Tela',
+          year: 2026,
+        },
+      ],
+    })
+    renderWithProviders(<PublicProfilePage />)
+
+    const tile = await screen.findByRole('button', { name: /Abrir Lance de falta/ })
+    // O ladrilho é botão, não link: nada de target="_blank".
+    expect(tile.tagName).toBe('BUTTON')
+
+    await user.click(tile)
+
+    const modal = await screen.findByRole('dialog', { name: 'Lance de falta' })
+    expect(within(modal).getByText('1 / 2')).toBeInTheDocument()
+    // O player nativo recebe o arquivo da própria API.
+    expect(modal.querySelector('video')).toHaveAttribute(
+      'src',
+      'https://api.empregol.co/uploads/lance.mp4',
+    )
+
+    await user.click(within(modal).getByRole('button', { name: /Próximo/ }))
+    expect(await screen.findByRole('dialog', { name: 'Tela' })).toBeInTheDocument()
+
+    await user.keyboard('{Escape}')
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
   })
 
   it('explica quando a vitrine está fechada, sem entregar que o atleta existe', async () => {

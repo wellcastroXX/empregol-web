@@ -1,9 +1,10 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 
 import { DOMINANT_FEET, LEVELS, POSITIONS } from '@/features/auth/model/options'
 import { colors, fonts } from '@/shared/config/theme'
 
 import type { AthleteMedia, AthleteProfile, SeasonStat } from '../model/athlete-profile.types'
+import { MediaLightbox } from './MediaLightbox'
 import { PositionPitch } from './PositionPitch'
 
 /**
@@ -377,8 +378,14 @@ function SectionHead({
 
 /** Vídeos e fotos do atleta. O kit usa um destaque grande + dois menores. */
 function Videos({ media, thumb }: { media: readonly AthleteMedia[]; thumb?: string | null }) {
+  // Índice do item aberto na modal; `null` com a modal fechada.
+  const [playing, setPlaying] = useState<number | null>(null)
   const [first, ...rest] = media
   if (!first) return null
+
+  // Só os itens exibidos entram na navegação da modal, para o "2 / 3" bater
+  // com o que está na tela.
+  const shown = [first, ...rest.slice(0, 2)]
 
   return (
     <section>
@@ -398,15 +405,24 @@ function Videos({ media, thumb }: { media: readonly AthleteMedia[]; thumb?: stri
           gap: 14,
         }}
       >
-        <MediaTile item={first} thumb={thumb} big />
+        <MediaTile item={first} thumb={thumb} onOpen={() => setPlaying(0)} big />
         {rest.length > 0 && (
           <div style={{ display: 'grid', gap: 14, gridAutoRows: '1fr' }}>
-            {rest.slice(0, 2).map((item) => (
-              <MediaTile key={item.id} item={item} thumb={thumb} />
+            {rest.slice(0, 2).map((item, i) => (
+              <MediaTile key={item.id} item={item} thumb={thumb} onOpen={() => setPlaying(i + 1)} />
             ))}
           </div>
         )}
       </div>
+
+      {playing != null && (
+        <MediaLightbox
+          items={shown}
+          index={playing}
+          onIndexChange={setPlaying}
+          onClose={() => setPlaying(null)}
+        />
+      )}
     </section>
   )
 }
@@ -421,28 +437,34 @@ function Videos({ media, thumb }: { media: readonly AthleteMedia[]; thumb?: stri
 function MediaTile({
   item,
   thumb,
+  onOpen,
   big = false,
 }: {
   item: AthleteMedia
   thumb?: string | null
+  onOpen: () => void
   big?: boolean
 }) {
   const isPhoto = item.mediaType === 'PHOTO'
   const background = isPhoto ? item.url : thumb
 
   return (
-    <a
-      href={item.url}
-      target="_blank"
-      rel="noopener noreferrer"
+    <button
+      type="button"
+      onClick={onOpen}
+      aria-label={`Abrir ${item.title}`}
       style={{
         position: 'relative',
         display: 'block',
+        width: '100%',
+        padding: 0,
+        border: 0,
+        textAlign: 'left',
         borderRadius: 6,
         overflow: 'hidden',
         background: colors.tinta,
         minHeight: big ? 320 : 150,
-        textDecoration: 'none',
+        cursor: 'pointer',
       }}
     >
       {background && (
@@ -535,7 +557,7 @@ function MediaTile({
           {item.year}
         </span>
       </div>
-    </a>
+    </button>
   )
 }
 
