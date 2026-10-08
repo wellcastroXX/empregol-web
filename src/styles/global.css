@@ -41,6 +41,19 @@
   --cols-dash-main: minmax(0, 1.6fr) minmax(0, 1fr);
   --cols-match: auto minmax(0, 1fr) auto auto auto;
 
+  /* Perfil público do atleta (/p/<slug>) */
+  --cols-profile-hero: auto minmax(0, 1fr);
+  --cols-profile-main: minmax(0, 1.5fr) minmax(0, 1fr);
+  --cols-profile-videos: minmax(0, 1.4fr) minmax(0, 1fr);
+  --cols-profile-similar: repeat(4, minmax(0, 1fr));
+  /* A faixa de números fica em UMA linha em qualquer largura — quebrar "gols"
+     e "assistências" em linhas separadas é o que mais empobrece no celular.
+     Quem se ajusta é o corpo do número, via clamp. */
+  --cols-profile-stats: repeat(var(--profile-stats-n, 4), minmax(0, 1fr));
+  --gap-profile: 48px;
+  --gap-profile-stats: 32px;
+  --profile-portrait: 340px;
+
   /* Rodapé: marca + bloco de links, e as colunas de links por dentro. */
   --cols-footer: minmax(0, 1.3fr) minmax(0, 2fr);
   --cols-footer-links: repeat(3, minmax(0, 1fr));
@@ -57,6 +70,10 @@
     --cols-4: repeat(2, minmax(0, 1fr));
     --dash-aside-w: 200px;
     --cols-dash-main: minmax(0, 1fr);
+    --cols-profile-main: minmax(0, 1fr);
+    --cols-profile-similar: repeat(2, minmax(0, 1fr));
+    --gap-profile: 36px;
+    --profile-portrait: 260px;
   }
 }
 
@@ -79,6 +96,10 @@
     --cols-footer: minmax(0, 1fr);
     --auth-justify: flex-start;
     --auth-pad-y: 28px;
+    --cols-profile-hero: minmax(0, 1fr);
+    --cols-profile-videos: minmax(0, 1fr);
+    --gap-profile-stats: 14px;
+    --profile-portrait: 100%;
   }
 }
 
@@ -90,6 +111,7 @@
     --cols-4: minmax(0, 1fr);
     --cols-match: auto minmax(0, 1fr) auto;
     --cols-footer-links: repeat(2, minmax(0, 1fr));
+    --gap-profile-stats: 10px;
   }
 }
 

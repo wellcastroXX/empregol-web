@@ -61,23 +61,28 @@ beforeEach(() => {
   vi.mocked(athleteProfileApi.getById).mockResolvedValue(fullProfile)
 })
 
+/** O nome quebra em duas linhas no hero, então o texto do h1 vem concatenado. */
+function heroName(): HTMLElement {
+  return screen.getByRole('heading', { level: 1 })
+}
+
 describe('PublicProfilePage', () => {
   it('abre a ficha para visitante deslogado, pela rota pública', async () => {
     renderWithProviders(<PublicProfilePage />)
 
-    expect(await screen.findByRole('heading', { name: 'Wellington Castro' })).toBeInTheDocument()
+    await waitFor(() => expect(heroName()).toHaveTextContent(/Wellington\s*Castro/))
     expect(athleteProfileApi.getPublicBySlug).toHaveBeenCalledWith('wellington-castro')
-    expect(screen.getByText(/24 anos/)).toBeInTheDocument()
+    expect(screen.getByText(/24 ANOS/)).toBeInTheDocument()
   })
 
   it('não busca a ficha por id nem oferece ações a quem não é contratante', async () => {
     renderWithProviders(<PublicProfilePage />, { user: athleteUser })
 
-    await screen.findByRole('heading', { name: 'Wellington Castro' })
+    await waitFor(() => expect(heroName()).toHaveTextContent(/Wellington\s*Castro/))
 
     // Buscar por id registraria uma visualização que não houve.
     expect(athleteProfileApi.getById).not.toHaveBeenCalled()
-    expect(screen.queryByRole('button', { name: 'Conversar' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /ENVIAR MENSAGEM/ })).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Como visitante/i })).not.toBeInTheDocument()
   })
 
@@ -86,22 +91,63 @@ describe('PublicProfilePage', () => {
 
     await waitFor(() => expect(athleteProfileApi.getById).toHaveBeenCalledWith('ath-1'))
 
-    expect(await screen.findByText('R$ 9.000,00')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Proposta' })).toBeDisabled()
-    expect(screen.getByRole('button', { name: 'Conversar' })).toBeEnabled()
+    expect(await screen.findByText('R$ 9.000')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /FAZER PROPOSTA/ })).toBeDisabled()
+    expect(screen.getByRole('button', { name: /ENVIAR MENSAGEM/ })).toBeEnabled()
   })
 
   it('deixa o contratante conferir como o perfil aparece de fora', async () => {
     const user = userEvent.setup()
     renderWithProviders(<PublicProfilePage />, { user: testUser })
 
-    expect(await screen.findByText('R$ 9.000,00')).toBeInTheDocument()
+    expect(await screen.findByText('R$ 9.000')).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: /Como visitante/i }))
 
     // No modo visitante some a pretensão salarial e somem as ações.
-    await waitFor(() => expect(screen.queryByText('R$ 9.000,00')).not.toBeInTheDocument())
-    expect(screen.queryByRole('button', { name: 'Conversar' })).not.toBeInTheDocument()
+    await waitFor(() => expect(screen.queryByText('R$ 9.000')).not.toBeInTheDocument())
+    expect(screen.queryByRole('button', { name: /ENVIAR MENSAGEM/ })).not.toBeInTheDocument()
+  })
+
+  it('esconde o que o atleta não preencheu, em vez de mostrar traço', async () => {
+    vi.mocked(athleteProfileApi.getPublicBySlug).mockResolvedValue({
+      ...publicProfile,
+      goals: null,
+      assists: null,
+      gamesThisSeason: null,
+      minutesPlayed: null,
+      seasonStats: [],
+      media: [],
+      additionalInfo: null,
+      lastClub: null,
+    })
+    renderWithProviders(<PublicProfilePage />)
+
+    await waitFor(() => expect(heroName()).toHaveTextContent(/Wellington\s*Castro/))
+
+    // Sem números, sem temporada e sem vídeo, as seções inteiras somem.
+    expect(screen.queryByText('gols')).not.toBeInTheDocument()
+    expect(screen.queryByText('Jogadas.')).not.toBeInTheDocument()
+    expect(screen.queryByText('Por onde passou.')).not.toBeInTheDocument()
+    // O que tem dado continua: ficha técnica e posição.
+    expect(screen.getByText('Naturalidade')).toBeInTheDocument()
+    expect(screen.getByText('Atacante')).toBeInTheDocument()
+  })
+
+  it('monta a faixa de números só com o que existe', async () => {
+    vi.mocked(athleteProfileApi.getPublicBySlug).mockResolvedValue({
+      ...publicProfile,
+      goals: 9,
+      assists: 3,
+      gamesThisSeason: null,
+      minutesPlayed: null,
+    })
+    renderWithProviders(<PublicProfilePage />)
+
+    expect(await screen.findByText('gols')).toBeInTheDocument()
+    expect(screen.getByText('assistências')).toBeInTheDocument()
+    expect(screen.queryByText('jogos')).not.toBeInTheDocument()
+    expect(screen.queryByText('minutos')).not.toBeInTheDocument()
   })
 
   it('explica quando a vitrine está fechada, sem entregar que o atleta existe', async () => {

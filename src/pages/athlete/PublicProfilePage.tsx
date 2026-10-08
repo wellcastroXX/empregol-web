@@ -4,9 +4,9 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ROUTES } from '@/app/router/routes'
 import { useAthleteProfile, usePublicAthleteProfile } from '@/features/athlete-profile/lib/queries'
 import {
-  AthleteProfileView,
+  PublicAthleteProfile,
   type ProfileAudience,
-} from '@/features/athlete-profile/ui/AthleteProfileView'
+} from '@/features/athlete-profile/ui/PublicAthleteProfile'
 import { useAuth } from '@/features/auth/ui/auth-context'
 import { scoutApi } from '@/features/scout/api/scout-api'
 import { colors, fonts } from '@/shared/config/theme'
@@ -85,28 +85,48 @@ export default function PublicProfilePage() {
   }
 
   return (
-    <Shell>
+    <>
+      {/* Faixa no mesmo tom do hero: a troca de modo é ferramenta de quem está
+          logado, não parte do perfil. */}
       {isContractor && (
-        <div style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
-          <ModeButton
-            active={audience === 'contractor'}
-            onClick={() => setAudience('contractor')}
-            label="Como clube"
-          />
-          <ModeButton
-            active={audience === 'public'}
-            onClick={() => setAudience('public')}
-            label="Como visitante"
-          />
+        <div style={{ background: colors.tinta }}>
+          <div
+            style={{
+              maxWidth: 1280,
+              margin: '0 auto',
+              padding: '16px var(--page-x) 0',
+              display: 'flex',
+              gap: 8,
+              flexWrap: 'wrap',
+            }}
+          >
+            <ModeButton
+              active={audience === 'contractor'}
+              onClick={() => setAudience('contractor')}
+              label="Como clube"
+            />
+            <ModeButton
+              active={audience === 'public'}
+              onClick={() => setAudience('public')}
+              label="Como visitante"
+            />
+          </div>
         </div>
       )}
 
-      <AthleteProfileView athlete={profile} audience={audience} />
-
-      {isContractor && audience === 'contractor' && athleteId && (
-        <ContractorActions athleteId={athleteId} onOpened={() => void navigate(ROUTES.painel)} />
-      )}
-    </Shell>
+      <PublicAthleteProfile
+        athlete={profile}
+        audience={audience}
+        actions={
+          isContractor && audience === 'contractor' && athleteId ? (
+            <ContractorActions
+              athleteId={athleteId}
+              onOpened={() => void navigate(ROUTES.painel)}
+            />
+          ) : null
+        }
+      />
+    </>
   )
 }
 
@@ -133,11 +153,11 @@ function ModeButton({
       onClick={onClick}
       aria-pressed={active}
       style={{
-        background: active ? colors.tinta : 'transparent',
-        color: active ? colors.giz : colors.tinta,
-        border: `1px solid ${colors.tinta}`,
+        background: active ? colors.giz : 'transparent',
+        color: active ? colors.tinta : colors.giz,
+        border: `1px solid ${active ? colors.giz : colors.ruleDark}`,
         borderRadius: 30,
-        padding: '9px 16px',
+        padding: '8px 14px',
         cursor: 'pointer',
         fontFamily: fonts.mono,
         fontWeight: 500,
@@ -151,7 +171,7 @@ function ModeButton({
   )
 }
 
-/** Mesmas ações da gaveta do painel: proposta ainda não, conversa sim. */
+/** Ações do hero, como no kit: proposta ainda não, conversa sim. */
 function ContractorActions({ athleteId, onOpened }: { athleteId: string; onOpened: () => void }) {
   const [opening, setOpening] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -169,64 +189,60 @@ function ContractorActions({ athleteId, onOpened }: { athleteId: string; onOpene
   }
 
   return (
-    <div style={{ marginTop: 36, paddingTop: 20, borderTop: `1.5px solid ${colors.tinta}` }}>
+    <div style={{ marginTop: 30 }}>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+        <button
+          type="button"
+          onClick={() => void startConversation()}
+          disabled={opening}
+          style={{
+            background: colors.gramado,
+            color: colors.giz,
+            border: 0,
+            padding: '16px 22px',
+            borderRadius: 4,
+            cursor: opening ? 'progress' : 'pointer',
+            fontFamily: fonts.text,
+            fontWeight: 500,
+            fontSize: 14,
+            letterSpacing: '0.04em',
+          }}
+        >
+          {opening ? 'ABRINDO...' : 'ENVIAR MENSAGEM ›'}
+        </button>
+        <button
+          type="button"
+          disabled
+          title="Propostas ainda não estão disponíveis no site — em breve."
+          style={{
+            background: 'transparent',
+            color: colors.cinzaOnDark,
+            border: `1.5px solid ${colors.ruleDark}`,
+            padding: '15px 22px',
+            borderRadius: 4,
+            cursor: 'not-allowed',
+            fontFamily: fonts.text,
+            fontWeight: 500,
+            fontSize: 14,
+            letterSpacing: '0.04em',
+          }}
+        >
+          FAZER PROPOSTA
+        </button>
+      </div>
       {error && (
         <p
           role="alert"
           style={{
             fontFamily: fonts.text,
             fontSize: 13,
-            color: colors.statusEmpregado,
-            margin: '0 0 12px',
+            color: colors.statusWarn,
+            margin: '12px 0 0',
           }}
         >
           {error}
         </p>
       )}
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-        <button
-          type="button"
-          disabled
-          title="Propostas ainda não estão disponíveis no site — em breve."
-          style={{
-            flex: '1 1 180px',
-            background: 'transparent',
-            color: colors.cinza,
-            border: `1.5px solid ${colors.osso}`,
-            borderRadius: 30,
-            padding: '14px 18px',
-            cursor: 'not-allowed',
-            fontFamily: fonts.mono,
-            fontWeight: 500,
-            fontSize: 11,
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
-          }}
-        >
-          Proposta
-        </button>
-        <button
-          type="button"
-          onClick={() => void startConversation()}
-          disabled={opening}
-          style={{
-            flex: '1 1 180px',
-            background: colors.gramado,
-            color: colors.giz,
-            border: 0,
-            borderRadius: 30,
-            padding: '14px 18px',
-            cursor: opening ? 'progress' : 'pointer',
-            fontFamily: fonts.mono,
-            fontWeight: 500,
-            fontSize: 11,
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
-          }}
-        >
-          {opening ? 'Abrindo...' : 'Conversar'}
-        </button>
-      </div>
     </div>
   )
 }
