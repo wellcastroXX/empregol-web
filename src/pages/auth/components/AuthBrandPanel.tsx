@@ -78,7 +78,7 @@ export function AuthBrandPanel({ mode }: AuthBrandPanelProps) {
           }}
         >
           {mode === 'login'
-            ? '312 clubes olham hoje. Entre e veja quem te procurou.'
+            ? 'Entre e veja quem te procurou.'
             : 'Cadastro em 4 minutos. Apareça pra quem decide a próxima janela.'}
         </p>
 
