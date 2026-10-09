@@ -18,7 +18,13 @@ export function AuthBrandPanel({ mode }: AuthBrandPanelProps) {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        position: 'relative',
+        // Fixo na altura da tela: o formulário ao lado muda de tamanho conforme o tipo de
+        // conta (atleta, clube, agente) e, se o painel esticasse junto, o texto pulava de
+        // lugar. Assim ele fica igual em /entrar e /cadastro e não rola com o formulário.
+        position: 'sticky',
+        top: 0,
+        height: '100vh',
+        alignSelf: 'start',
         overflow: 'hidden',
         // Contém o granulado, no mesmo esquema do hero da home.
         isolation: 'isolate',
