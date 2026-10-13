@@ -16,10 +16,10 @@ type Mode = 'login' | 'signup'
 /** Qual conta está sendo criada — atleta, agente ou clube. */
 type AccountType = 'atleta' | ContractorKind
 
-const ACCOUNT_TYPES: ReadonlyArray<readonly [AccountType, string, string]> = [
-  ['atleta', 'Atleta', '09'],
-  ['club', 'Clube', 'FL'],
-  ['agent', 'Agente', 'R.'],
+const ACCOUNT_TYPES: ReadonlyArray<readonly [AccountType, string]> = [
+  ['atleta', 'Atleta'],
+  ['club', 'Clube'],
+  ['agent', 'Agente'],
 ]
 
 const MODES: ReadonlyArray<readonly [Mode, string]> = [
@@ -164,7 +164,7 @@ export default function AuthPage() {
               Eu sou
             </legend>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
-              {ACCOUNT_TYPES.map(([id, label, icon]) => (
+              {ACCOUNT_TYPES.map(([id, label]) => (
                 <button
                   key={id}
                   type="button"
@@ -180,18 +180,6 @@ export default function AuthPage() {
                     borderRadius: 6,
                   }}
                 >
-                  <span
-                    style={{
-                      display: 'block',
-                      fontFamily: fonts.mono,
-                      fontWeight: 500,
-                      fontSize: 22,
-                      lineHeight: 1,
-                      marginBottom: 8,
-                    }}
-                  >
-                    {icon}
-                  </span>
                   <span style={{ fontFamily: fonts.display, fontWeight: 600, fontSize: 15 }}>
                     {label}
                   </span>
