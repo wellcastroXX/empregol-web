@@ -61,7 +61,7 @@ export function SobreSection() {
               margin: '0 0 22px',
             }}
           >
-            Conectamos jogadores da base e profissionais — homens e mulheres — a clubes, agentes e
+            Conectamos jogadores da base e profissionais — homens e mulheres — a clubes, agências e
             marcas, com um diferencial que ninguém mais oferece:{' '}
             <strong>o atleta continua na plataforma mesmo depois de contratado</strong>, com acesso
             contínuo a suporte jurídico, nutricional, psicológico, físico e financeiro.

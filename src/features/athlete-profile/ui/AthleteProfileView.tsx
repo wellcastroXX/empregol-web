@@ -10,14 +10,14 @@ import { MediaLightbox } from './MediaLightbox'
  * Quem está olhando.
  *
  * `public` é a vitrine aberta: ficha esportiva e vídeos, sem pretensão salarial
- * nem contato. `contractor` é o clube ou agente autenticado, que vê a ficha
+ * nem contato. `contractor` é o clube ou Agência autenticado, que vê a ficha
  * completa para decidir se aborda o atleta.
  */
 export type ProfileAudience = 'public' | 'contractor'
 
 const AVAILABILITY_LABEL = { FREE: 'LIVRE', EMPLOYED: 'EMPREGADO' } as const
 const AVAILABILITY_BG = { FREE: colors.gramado, EMPLOYED: colors.statusEmpregado } as const
-const AGENCY_LABEL = { REPRESENTED: 'COM AGENTE', UNREPRESENTED: 'SEM AGENTE' } as const
+const AGENCY_LABEL = { REPRESENTED: 'COM AGÊNCIA', UNREPRESENTED: 'SEM AGÊNCIA' } as const
 
 const FOOT_LABEL: Record<string, string> = {
   RIGHT: 'Destro',

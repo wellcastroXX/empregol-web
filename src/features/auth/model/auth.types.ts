@@ -2,7 +2,7 @@
 
 export type UserRole = 'athlete' | 'contractor'
 
-/** Um contratante é agente (pessoa física) ou clube (pessoa jurídica). */
+/** Um contratante é agências (pessoa física) ou clube (pessoa jurídica). */
 export type ContractorKind = 'agent' | 'club'
 
 export type DominantFoot = 'LEFT' | 'RIGHT' | 'BOTH'

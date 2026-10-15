@@ -768,7 +768,7 @@ function SalaryCard({ athlete, audience }: { athlete: AthleteProfile; audience: 
           margin: '12px 0 0',
         }}
       >
-        Visível para você porque está logado como clube ou agente. Quem abre o link de fora não vê
+        Visível para você porque está logado como clube ou agência. Quem abre o link de fora não vê
         este valor.
       </p>
     </Card>

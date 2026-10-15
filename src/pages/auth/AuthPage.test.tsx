@@ -73,11 +73,11 @@ describe('AuthPage', () => {
     expect(screen.queryByLabelText('CPF')).not.toBeInTheDocument()
   })
 
-  it('pede CPF quando o perfil é agente', async () => {
+  it('pede CPF quando o perfil é agência', async () => {
     const user = userEvent.setup()
     renderAt(ROUTES.cadastro)
 
-    await user.click(screen.getByRole('button', { name: /Agente/ }))
+    await user.click(screen.getByRole('button', { name: /Agência/ }))
 
     expect(screen.getByLabelText('CPF')).toBeInTheDocument()
     expect(screen.queryByLabelText('CNPJ')).not.toBeInTheDocument()
