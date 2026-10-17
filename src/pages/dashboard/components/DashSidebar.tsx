@@ -31,7 +31,7 @@ function initials(nome: string): string {
 
 const ROLE_LABEL: Record<string, string> = {
   athlete: 'ATLETA',
-  agent: 'AGENTE',
+  agent: 'AGÊNCIA',
   club: 'CLUBE',
 }
 

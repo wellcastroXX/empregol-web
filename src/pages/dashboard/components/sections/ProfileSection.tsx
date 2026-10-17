@@ -12,7 +12,7 @@ const cardStyle = {
   padding: '22px 24px',
 } as const
 
-const TYPE_LABEL = { AGENT: 'Agente', CLUB: 'Clube' } as const
+const TYPE_LABEL = { AGENT: 'Agência', CLUB: 'Clube' } as const
 
 /** Perfil do contratante logado, lido de `/contractors/me`. */
 export function ProfileSection() {

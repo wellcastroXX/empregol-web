@@ -78,7 +78,7 @@ export default function PublicProfilePage() {
           aberto ao público<span style={{ color: colors.gramado }}>.</span>
         </h1>
         <p style={{ fontFamily: fonts.text, fontSize: 16, lineHeight: 1.6, maxWidth: 520 }}>
-          Ou o endereço está errado, ou o atleta ainda não abriu a vitrine. Clubes e agentes
+          Ou o endereço está errado, ou o atleta ainda não abriu a vitrine. Clubes e agências
           cadastrados encontram todos os atletas pela busca do painel.
         </p>
       </Shell>

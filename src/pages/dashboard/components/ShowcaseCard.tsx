@@ -56,7 +56,7 @@ export function ShowcaseCard() {
       >
         {isPublic
           ? 'Sua ficha está aberta: qualquer pessoa com o link vê suas temporadas e seus vídeos. Pretensão salarial e dados de contato continuam fora dela.'
-          : 'Sua vitrine está fechada — seu perfil continua aparecendo normalmente para clubes e agentes aprovados, só não tem link aberto na internet. Reabrir devolve o mesmo endereço de antes.'}
+          : 'Sua vitrine está fechada — seu perfil continua aparecendo normalmente para clubes e agências aprovadas, só não tem link aberto na internet. Reabrir devolve o mesmo endereço de antes.'}
       </p>
 
       {isPublic && url && (

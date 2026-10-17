@@ -139,7 +139,7 @@ export function HeroVideo() {
                 margin: 0,
               }}
             >
-              Somos a plataforma que conecta atletas de futebol sem contrato ativo a clubes, agentes
+              Somos a plataforma que conecta atletas de futebol sem contrato ativo a clubes, agências
               e marcas — dando visibilidade, oportunidade e apoio a quem o mercado deixou de
               enxergar.
             </p>

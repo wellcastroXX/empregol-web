@@ -61,7 +61,7 @@ export function CtaFinal() {
             borderTop: `1.5px solid ${colors.tinta}`,
           }}
         >
-          Se você é <strong>clube ou agente</strong>, o talento que falta no seu time pode estar
+          Se você é <strong>clube ou agência</strong>, o talento que falta no seu time pode estar
           aqui.
         </p>
       </div>

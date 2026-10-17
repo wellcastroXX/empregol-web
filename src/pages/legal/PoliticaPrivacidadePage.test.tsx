@@ -44,7 +44,7 @@ describe('PoliticaPrivacidadePage', () => {
 
     // 8.1 — a cláusula que afasta a Empregol das negociações entre Usuários.
     expect(
-      screen.getByText(/não atua como agente, intermediário/, { selector: 'strong' }),
+      screen.getByText(/não atua como agência, intermediário/, { selector: 'strong' }),
     ).toBeInTheDocument()
   })
 

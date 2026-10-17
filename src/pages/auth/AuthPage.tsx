@@ -13,13 +13,13 @@ import { ContractorSignUpForm } from './components/ContractorSignUpForm'
 import { LoginForm } from './components/LoginForm'
 
 type Mode = 'login' | 'signup'
-/** Qual conta está sendo criada — atleta, agente ou clube. */
+/** Qual conta está sendo criada — atleta, agência ou clube. */
 type AccountType = 'atleta' | ContractorKind
 
 const ACCOUNT_TYPES: ReadonlyArray<readonly [AccountType, string]> = [
   ['atleta', 'Atleta'],
   ['club', 'Clube'],
-  ['agent', 'Agente'],
+  ['agent', 'Agência'],
 ]
 
 const MODES: ReadonlyArray<readonly [Mode, string]> = [

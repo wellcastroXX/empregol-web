@@ -7,7 +7,7 @@ import { Wordmark } from '@/shared/ui/Wordmark'
 import { PanelEmpty, PanelError, PanelLoading } from './components/PanelState'
 import { ShowcaseCard } from './components/ShowcaseCard'
 
-const CONTRACTOR_LABEL = { AGENT: 'AGENTE', CLUB: 'CLUBE' } as const
+const CONTRACTOR_LABEL = { AGENT: 'AGÊNCIA', CLUB: 'CLUBE' } as const
 
 const cardStyle = {
   background: colors.giz,

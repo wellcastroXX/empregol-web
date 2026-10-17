@@ -83,7 +83,7 @@ describe('Painel do atleta', () => {
     renderWithProviders(<DashboardPage />, { user: athlete })
 
     expect(
-      await screen.findByText(/continua aparecendo normalmente para clubes e agentes/),
+      await screen.findByText(/continua aparecendo normalmente para clubes e agências/),
     ).toBeInTheDocument()
     // Fica desabilitado enquanto /athletes/me não respondeu.
     await waitFor(() =>

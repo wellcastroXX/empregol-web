@@ -86,10 +86,10 @@ export const SECTIONS: readonly LegalSection[] = [
               'Entidade de prática desportiva, profissional ou amadora, regularmente constituída.',
             ],
             [
-              'Agente',
-              'Agente esportivo, intermediário ou empresário, pessoa natural ou jurídica, habilitado na forma da Cláusula 3.4.',
+              'Agência',
+              'Agência esportiva, intermediária ou empresária, pessoa natural ou jurídica, habilitada na forma da Cláusula 3.4.',
             ],
-            ['Contratante', 'Clube ou Agente, quando utiliza a Plataforma para buscar Atletas.'],
+            ['Contratante', 'Clube ou Agência, quando utiliza a Plataforma para buscar Atletas.'],
             [
               'Responsável Legal',
               'Pai, mãe, tutor ou guardião que representa ou assiste o Atleta menor de 18 anos.',
@@ -129,7 +129,7 @@ export const SECTIONS: readonly LegalSection[] = [
         items: [
           '(a) Atletas a partir de 14 (quatorze) anos completos;',
           '(b) Clubes profissionais e amadores regularmente constituídos;',
-          '(c) Agentes e empresários que possuam credenciamento e qualificação para a atividade, na forma da Cláusula 3.4.',
+          '(c) Agências e empresários que possuam credenciamento e qualificação para a atividade, na forma da Cláusula 3.4.',
         ],
       },
       {
@@ -152,7 +152,7 @@ export const SECTIONS: readonly LegalSection[] = [
       },
       {
         kind: 'p',
-        text: '3.4. **Agentes.** O cadastro de Agente exige a comprovação, conforme o caso, de: (i) licença ou registro válido perante a Confederação Brasileira de Futebol (CBF), a FIFA ou a entidade de administração do desporto competente; ou (ii) enquadramento nas hipóteses legais de dispensa de registro, como parente em primeiro grau, cônjuge ou advogado do Atleta, quando expressamente outorgado (art. 95, § 1º, da Lei nº 14.597/2023). O Agente obriga-se a manter seu credenciamento válido e a informar imediatamente qualquer suspensão, cassação ou vencimento.',
+        text: '3.4. **Agências.** O cadastro de Agência exige a comprovação, conforme o caso, de: (i) licença ou registro válido perante a Confederação Brasileira de Futebol (CBF), a FIFA ou a entidade de administração do desporto competente; ou (ii) enquadramento nas hipóteses legais de dispensa de registro, como parente em primeiro grau, cônjuge ou advogado do Atleta, quando expressamente outorgado (art. 95, § 1º, da Lei nº 14.597/2023). A Agência obriga-se a manter seu credenciamento válido e a informar imediatamente qualquer suspensão, cassação ou vencimento.',
       },
       {
         kind: 'p',
@@ -160,7 +160,7 @@ export const SECTIONS: readonly LegalSection[] = [
       },
       {
         kind: 'p',
-        text: '3.6. **Observância da legislação esportiva.** Agentes e Clubes devem atuar na Plataforma, inclusive em suas relações com Atletas menores de 18 anos e seus Responsáveis Legais, com observância da Lei nº 9.615/1998, no que vigente, e dos regulamentos da CBF e da FIFA sobre intermediários e menores, sendo exclusivamente responsáveis pelo seu cumprimento.',
+        text: '3.6. **Observância da legislação esportiva.** Agências e Clubes devem atuar na Plataforma, inclusive em suas relações com Atletas menores de 18 anos e seus Responsáveis Legais, com observância da Lei nº 9.615/1998, no que vigente, e dos regulamentos da CBF e da FIFA sobre intermediários e menores, sendo exclusivamente responsáveis pelo seu cumprimento.',
       },
       {
         kind: 'p',
@@ -271,7 +271,7 @@ export const SECTIONS: readonly LegalSection[] = [
       },
       {
         kind: 'p',
-        text: '6.2. **Atos ilícitos e enganosos.** O Usuário não pode utilizar a Plataforma para fazer algo ilícito, enganoso, fraudulento, ou com finalidade ilegal ou não autorizada, incluindo prometer vagas, testes ou contratos inexistentes, cobrar valores indevidos de Atletas ou de seus responsáveis, ou se passar por outra pessoa, clube ou agente.',
+        text: '6.2. **Atos ilícitos e enganosos.** O Usuário não pode utilizar a Plataforma para fazer algo ilícito, enganoso, fraudulento, ou com finalidade ilegal ou não autorizada, incluindo prometer vagas, testes ou contratos inexistentes, cobrar valores indevidos de Atletas ou de seus responsáveis, ou se passar por outra pessoa, clube ou agência.',
       },
       { kind: 'p', text: '6.3. **Uso técnico indevido.** O Usuário não pode:' },
       {
@@ -341,11 +341,11 @@ export const SECTIONS: readonly LegalSection[] = [
     blocks: [
       {
         kind: 'p',
-        text: '8.1. **Natureza do Serviço.** A Empregol é uma plataforma tecnológica de aproximação entre Atletas, Clubes e Agentes. **A Empregol não atua como agente, intermediário, procurador, empregador ou parceiro de nenhum Usuário, não participa nem é parte de quaisquer negociações, propostas, testes, contratos de trabalho, de representação ou de transferência celebrados entre Usuários, e não recebe comissão sobre eles.**',
+        text: '8.1. **Natureza do Serviço.** A Empregol é uma plataforma tecnológica de aproximação entre Atletas, Clubes e Agências. **A Empregol não atua como agência, intermediário, procurador, empregador ou parceiro de nenhum Usuário, não participa nem é parte de quaisquer negociações, propostas, testes, contratos de trabalho, de representação ou de transferência celebrados entre Usuários, e não recebe comissão sobre eles.**',
       },
       {
         kind: 'p',
-        text: '8.2. **Ausência de garantia de resultado.** **A Empregol não garante que o Atleta será contratado, avaliado ou contatado, nem que o Clube ou o Agente encontrará o Atleta que pretende.** A visibilidade, a prioridade de exibição e os alertas descritos nos Planos não asseguram qualquer resultado.',
+        text: '8.2. **Ausência de garantia de resultado.** **A Empregol não garante que o Atleta será contratado, avaliado ou contatado, nem que o Clube ou a Agência encontrará o Atleta que pretende.** A visibilidade, a prioridade de exibição e os alertas descritos nos Planos não asseguram qualquer resultado.',
       },
       {
         kind: 'p',
@@ -548,9 +548,9 @@ export const ANEXO: LegalSection = {
         rows: [
           ['Atleta Básico', 'R$ 39,90', 'R$ 29,90', 'R$ 179,40', 'R$ 24,90', 'R$ 298,80'],
           ['Atleta Premium', 'R$ 79,90', 'R$ 59,90', 'R$ 359,40', 'R$ 49,90', 'R$ 598,80'],
-          ['Agente/Clube Gratuito', 'Sem custo', '—', '—', '—', '—'],
+          ['Agência/Clube Gratuito', 'Sem custo', '—', '—', '—', '—'],
           [
-            'Agente/Clube Pago',
+            'Agências/Clube Pago',
             'R$ 199,90',
             'R$ 169,90',
             'R$ 1.019,40',
@@ -571,10 +571,10 @@ export const ANEXO: LegalSection = {
             'Sim',
             'Sim',
           ],
-          ['Visibilidade nas buscas de Agentes e Clubes com cadastro aprovado', 'Sim', 'Sim'],
+          ['Visibilidade nas buscas de Agências e Clubes com cadastro aprovado', 'Sim', 'Sim'],
           ['Upload de vídeos, estatísticas e histórico esportivo', 'Sim', 'Sim'],
           ['Recebimento de contato inicial dentro da Plataforma', 'Sim', 'Sim'],
-          ['Prioridade de exibição nas buscas de Agentes e Clubes', 'Não', 'Sim'],
+          ['Prioridade de exibição nas buscas de Agências e Clubes', 'Não', 'Sim'],
           [
             'Contratação de sessões com Parceiros (saúde mental, jurídico, financeiro, personal trainer, entre outros) a valor corporativo reduzido, pagas à parte pelo Atleta',
             'Não',
@@ -583,7 +583,7 @@ export const ANEXO: LegalSection = {
         ],
       },
     },
-    { kind: 'subtitle', text: 'C. Planos de Agentes e Clubes' },
+    { kind: 'subtitle', text: 'C. Planos de Agências e Clubes' },
     {
       kind: 'table',
       table: {
