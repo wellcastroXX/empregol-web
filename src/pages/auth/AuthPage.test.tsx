@@ -73,14 +73,33 @@ describe('AuthPage', () => {
     expect(screen.queryByLabelText('CPF')).not.toBeInTheDocument()
   })
 
-  it('pede CPF quando o perfil é agência', async () => {
+  it('pede CNPJ e razão social quando o perfil é agência', async () => {
     const user = userEvent.setup()
     renderAt(ROUTES.cadastro)
 
     await user.click(screen.getByRole('button', { name: /Agência/ }))
 
-    expect(screen.getByLabelText('CPF')).toBeInTheDocument()
-    expect(screen.queryByLabelText('CNPJ')).not.toBeInTheDocument()
+    expect(screen.getByLabelText('Nome da agência')).toBeInTheDocument()
+    expect(screen.getByLabelText('CNPJ')).toBeInTheDocument()
+    expect(screen.getByLabelText('Razão social')).toBeInTheDocument()
+    // Agência é pessoa jurídica: o CPF saiu do cadastro de contratante.
+    expect(screen.queryByLabelText('CPF')).not.toBeInTheDocument()
+  })
+
+  it('cobra a razão social da agência, mas deixa o clube seguir sem ela', async () => {
+    const user = userEvent.setup()
+    renderAt(ROUTES.cadastro)
+
+    await user.click(screen.getByRole('button', { name: /Agência/ }))
+    await user.click(screen.getByRole('button', { name: /Criar conta/ }))
+
+    expect(await screen.findByText('Razão social é obrigatória para agências')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /Clube/ }))
+    await user.click(screen.getByRole('button', { name: /Criar conta/ }))
+
+    await screen.findByText('CNPJ deve conter 14 dígitos')
+    expect(screen.queryByText('Razão social é obrigatória para agências')).not.toBeInTheDocument()
   })
 
   it('valida no cliente antes de chamar a API', async () => {

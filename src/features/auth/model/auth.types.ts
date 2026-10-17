@@ -72,10 +72,10 @@ export interface ContractorRegisterPayload {
   password: string
   name: string
   phone: string
-  /** Obrigatório para agente. */
   cpf?: string
-  /** Obrigatório para clube. */
+  /** Obrigatório para agência e para clube. */
   cnpj?: string
+  /** Razão social — obrigatória para agência, opcional para clube. */
   companyName?: string
   socialMedia?: string
   additionalInfo?: string

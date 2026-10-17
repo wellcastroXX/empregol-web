@@ -4,17 +4,18 @@ import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/app/router/routes'
 import type { ContractorKind } from '@/features/auth/model/auth.types'
 import { useAuth } from '@/features/auth/ui/auth-context'
-import { maskCnpj, maskCpf, maskPhone, onlyDigits } from '@/shared/lib/masks'
+import { maskCnpj, maskPhone, onlyDigits } from '@/shared/lib/masks'
 
 import { AuthAlert, SubmitButton } from './AuthControls'
 import { AuthField } from './AuthField'
 
+// Sem CPF: desde que agente virou agência, os dois tipos de contratante são
+// pessoa jurídica, e a API passou a exigir CNPJ dos dois.
 const emptyForm = {
   name: '',
   email: '',
   password: '',
   phone: '',
-  cpf: '',
   cnpj: '',
   companyName: '',
   socialMedia: '',
@@ -35,12 +36,13 @@ function validate(form: FormState, kind: ContractorKind): Errors {
   if (form.password.length < 8) errors.password = 'Senha deve ter no mínimo 8 caracteres'
   if (onlyDigits(form.phone).length < 10) errors.phone = 'Telefone inválido'
 
-  // A API exige CPF para agente e CNPJ para clube.
-  if (kind === 'agent' && onlyDigits(form.cpf).length !== 11) {
-    errors.cpf = 'CPF deve conter 11 dígitos'
-  }
-  if (kind === 'club' && onlyDigits(form.cnpj).length !== 14) {
+  // Espelha o superRefine de auth-contractor.dto.ts: CNPJ vale para os dois, e
+  // a razão social é exigida só da agência.
+  if (onlyDigits(form.cnpj).length !== 14) {
     errors.cnpj = 'CNPJ deve conter 14 dígitos'
+  }
+  if (kind === 'agent' && form.companyName.trim().length < 2) {
+    errors.companyName = 'Razão social é obrigatória para agências'
   }
   if (form.socialMedia && !/^https?:\/\/\S+$/.test(form.socialMedia)) {
     errors.socialMedia = 'Informe uma URL completa, começando por https://'
@@ -83,7 +85,7 @@ export function ContractorSignUpForm({ kind }: ContractorSignUpFormProps) {
         password: form.password,
         name: form.name.trim(),
         phone: form.phone,
-        ...(isClub ? { cnpj: form.cnpj } : { cpf: form.cpf }),
+        cnpj: form.cnpj,
         ...(form.companyName.trim() ? { companyName: form.companyName.trim() } : {}),
         ...(form.socialMedia.trim() ? { socialMedia: form.socialMedia.trim() } : {}),
       })
@@ -101,11 +103,11 @@ export function ContractorSignUpForm({ kind }: ContractorSignUpFormProps) {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         <AuthField
-          label={isClub ? 'Nome do clube' : 'Nome completo'}
+          label={isClub ? 'Nome do clube' : 'Nome da agência'}
           value={form.name}
           onChange={set('name')}
-          placeholder={isClub ? 'Nome do clube' : 'Nome completo'}
-          autoComplete={isClub ? 'organization' : 'name'}
+          placeholder={isClub ? 'Nome do clube' : 'Como a agência é conhecida'}
+          autoComplete="organization"
           error={errors.name}
         />
         <AuthField
@@ -138,36 +140,25 @@ export function ContractorSignUpForm({ kind }: ContractorSignUpFormProps) {
             autoComplete="tel"
             error={errors.phone}
           />
-          {isClub ? (
-            <AuthField
-              label="CNPJ"
-              value={form.cnpj}
-              onChange={(v) => set('cnpj')(maskCnpj(v))}
-              placeholder="00.000.000/0000-00"
-              inputMode="numeric"
-              error={errors.cnpj}
-            />
-          ) : (
-            <AuthField
-              label="CPF"
-              value={form.cpf}
-              onChange={(v) => set('cpf')(maskCpf(v))}
-              placeholder="000.000.000-00"
-              inputMode="numeric"
-              error={errors.cpf}
-            />
-          )}
+          <AuthField
+            label="CNPJ"
+            value={form.cnpj}
+            onChange={(v) => set('cnpj')(maskCnpj(v))}
+            placeholder="00.000.000/0000-00"
+            inputMode="numeric"
+            error={errors.cnpj}
+          />
         </div>
 
-        {isClub && (
-          <AuthField
-            label="Razão social"
-            value={form.companyName}
-            onChange={set('companyName')}
-            placeholder="Razão social"
-            hint="Opcional"
-          />
-        )}
+        <AuthField
+          label="Razão social"
+          value={form.companyName}
+          onChange={set('companyName')}
+          placeholder="Razão social, como está no CNPJ"
+          error={errors.companyName}
+          // Obrigatória só para a agência — o clube segue podendo pular.
+          hint={isClub && !errors.companyName ? 'Opcional' : undefined}
+        />
 
         <AuthField
           label="Rede social"
