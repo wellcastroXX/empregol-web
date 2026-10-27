@@ -1,5 +1,6 @@
 import appStoreBadge from '@/assets/images/app-store-badge.svg'
 import googlePlayBadge from '@/assets/images/disponivel-google-play-badge.png'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 
 export type Store = 'apple' | 'google'
 
@@ -12,10 +13,16 @@ const RATIO = 540 / 160
 /** Altura padrão — a Apple exige no mínimo 40px de altura para o badge dela. */
 const DEFAULT_HEIGHT = 48
 
-const BADGES: Record<Store, { src: string; alt: string }> = {
-  apple: { src: appStoreBadge, alt: 'Baixar na App Store' },
-  google: { src: googlePlayBadge, alt: 'Disponível no Google Play' },
+const BADGES: Record<Store, string> = {
+  apple: appStoreBadge,
+  google: googlePlayBadge,
 }
+
+const MESSAGES = defineMessages<Record<Store, string>>({
+  pt: { apple: 'Baixar na App Store', google: 'Disponível no Google Play' },
+  en: { apple: 'Download on the App Store', google: 'Get it on Google Play' },
+  es: { apple: 'Descargar en la App Store', google: 'Disponible en Google Play' },
+})
 
 export interface StoreBadgeProps {
   store: Store
@@ -31,7 +38,7 @@ export interface StoreBadgeProps {
  * badge adulterado é motivo de recusa na revisão.
  */
 export function StoreBadge({ store, height = DEFAULT_HEIGHT }: StoreBadgeProps) {
-  const badge = BADGES[store]
+  const badge = { src: BADGES[store], alt: useMessages(MESSAGES)[store] }
   const width = Math.round(height * RATIO)
 
   return (

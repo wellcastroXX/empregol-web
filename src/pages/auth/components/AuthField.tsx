@@ -1,6 +1,13 @@
 import { useId, useState, type ReactNode } from 'react'
 
 import { colors, fonts } from '@/shared/config/theme'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
+
+const MESSAGES = defineMessages({
+  pt: { select: 'Selecione' },
+  en: { select: 'Select' },
+  es: { select: 'Selecciona' },
+})
 
 const labelStyle = {
   fontFamily: fonts.mono,
@@ -96,10 +103,11 @@ export function AuthSelect<T extends string>({
   value,
   onChange,
   options,
-  placeholder = 'Selecione',
+  placeholder,
   error,
   hint,
 }: AuthSelectProps<T>) {
+  const m = useMessages(MESSAGES)
   const id = useId()
   const [focused, setFocused] = useState(false)
   const describedBy = error ? `${id}-error` : hint ? `${id}-hint` : undefined
@@ -124,7 +132,7 @@ export function AuthSelect<T extends string>({
         }}
       >
         <option value="" disabled>
-          {placeholder}
+          {placeholder ?? m.select}
         </option>
         {options.map((option) => (
           <option key={option.value} value={option.value}>

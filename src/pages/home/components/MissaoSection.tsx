@@ -1,9 +1,39 @@
 import { colors, fonts } from '@/shared/config/theme'
 import { MediaPlaceholder } from '@/shared/ui/MediaPlaceholder'
 import AfterScorePhoto from '@/assets/images/others/IMG_8900.JPG.jpeg'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
+
+const MESSAGES = defineMessages({
+  pt: {
+    eyebrow: 'N O S S A · M I S S Ã O',
+    title: ['Mais do que', 'empregar, queremos', 'transformar'],
+    p1: 'Acreditamos que todo atleta — especialmente aqueles que vêm de contextos vulneráveis — merece presença digital, conexões reais e ferramentas para construir seu próprio caminho, dentro ou fora de campo. Por isso também inspiramos nossos atletas a enxergar o empreendedorismo como um caminho possível, não só uma alternativa quando o futebol acaba.',
+    p2: 'Empregol não é sobre ser o maior. É sobre ser o mais completo e o mais próximo do atleta',
+    photoAlt: 'Atletas após o gol',
+    photoLabel: 'Atleta fora de campo · retrato quadrado',
+  },
+  en: {
+    eyebrow: 'O U R · M I S S I O N',
+    title: ['More than', 'finding jobs, we want', 'to transform'],
+    p1: 'We believe every athlete — especially those from vulnerable backgrounds — deserves a digital presence, real connections and the tools to build their own path, on or off the pitch. That is also why we inspire our athletes to see entrepreneurship as a real path, not just a fallback when football ends.',
+    p2: 'Empregol is not about being the biggest. It is about being the most complete and the closest to the athlete',
+    photoAlt: 'Athletes after a goal',
+    photoLabel: 'Athlete off the pitch · square portrait',
+  },
+  es: {
+    eyebrow: 'N U E S T R A · M I S I Ó N',
+    title: ['Más que', 'emplear, queremos', 'transformar'],
+    p1: 'Creemos que todo atleta — especialmente quienes vienen de contextos vulnerables — merece presencia digital, conexiones reales y herramientas para construir su propio camino, dentro o fuera de la cancha. Por eso también inspiramos a nuestros atletas a ver el emprendimiento como un camino posible, no solo como una alternativa cuando el fútbol termina.',
+    p2: 'Empregol no se trata de ser el más grande. Se trata de ser el más completo y el más cercano al atleta',
+    photoAlt: 'Atletas después del gol',
+    photoLabel: 'Atleta fuera de la cancha · retrato cuadrado',
+  },
+})
 
 /** NOSSA MISSÃO — a declaração de propósito, sobre superfície escura. */
 export function MissaoSection() {
+  const m = useMessages(MESSAGES)
+
   return (
     <section
       id="missao"
@@ -24,7 +54,7 @@ export function MissaoSection() {
           marginBottom: 40,
         }}
       >
-        N O S S A · M I S S Ã O
+        {m.eyebrow}
       </div>
 
       <h2
@@ -39,11 +69,12 @@ export function MissaoSection() {
           textTransform: 'uppercase',
         }}
       >
-        Mais do que
+        {m.title[0]}
         <br />
-        empregar, queremos
+        {m.title[1]}
         <br />
-        transformar<span style={{ color: colors.gramado }}>.</span>
+        {m.title[2]}
+        <span style={{ color: colors.gramado }}>.</span>
       </h2>
 
       <div
@@ -66,11 +97,7 @@ export function MissaoSection() {
               margin: '0 0 22px',
             }}
           >
-            Acreditamos que todo atleta — especialmente aqueles que vêm de contextos vulneráveis —
-            merece presença digital, conexões reais e ferramentas para construir seu próprio
-            caminho, dentro ou fora de campo. Por isso também inspiramos nossos atletas a enxergar o
-            empreendedorismo como um caminho possível, não só uma alternativa quando o futebol
-            acaba.
+            {m.p1}
           </p>
           <p
             style={{
@@ -83,17 +110,17 @@ export function MissaoSection() {
               margin: 0,
             }}
           >
-            Empregol não é sobre ser o maior. É sobre ser o mais completo e o mais próximo do atleta
+            {m.p2}
             <span style={{ color: colors.gramado }}>.</span>
           </p>
         </div>
 
         <MediaPlaceholder
           src={AfterScorePhoto}
-          alt="Atletas após o gol"
+          alt={m.photoAlt}
           ratio="1 / 1"
           surface="dark"
-          label="Atleta fora de campo · retrato quadrado"
+          label={m.photoLabel}
         />
       </div>
     </section>

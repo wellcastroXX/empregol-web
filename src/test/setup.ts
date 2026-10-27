@@ -18,6 +18,11 @@ if (!window.matchMedia) {
   }))
 }
 
+// O jsdom se apresenta como `en-US`, e o site escolhe o idioma pelo navegador na
+// primeira visita. Os testes assumem o público principal, que lê português.
+Object.defineProperty(window.navigator, 'language', { value: 'pt-BR', configurable: true })
+Object.defineProperty(window.navigator, 'languages', { value: ['pt-BR'], configurable: true })
+
 afterEach(() => {
   cleanup()
   // A sessão vive em localStorage; sem limpar, um teste autenticado vazaria

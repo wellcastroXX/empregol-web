@@ -1,9 +1,55 @@
 import { useContractorProfile } from '@/features/scout/lib/queries'
 import { colors, fonts } from '@/shared/config/theme'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 import { Eyebrow } from '@/shared/ui/Eyebrow'
 import { maskCnpj, maskCpf, maskPhone } from '@/shared/lib/masks'
 
 import { PanelError, PanelLoading } from '../PanelState'
+
+const MESSAGES = defineMessages({
+  pt: {
+    type: 'Tipo',
+    types: {
+      AGENT: 'Agência',
+      CLUB: 'Clube',
+    },
+    name: 'Nome',
+    phone: 'Telefone',
+    companyName: 'Razão social',
+    socialMedia: 'Rede social',
+    eyebrow: 'M E U · P E R F I L',
+    editNoteBefore: 'A edição do perfil ainda não está na web — a API tem',
+    editNoteAfter: ', mas a tela de edição só existe no app.',
+  },
+  en: {
+    type: 'Type',
+    types: {
+      AGENT: 'Agency',
+      CLUB: 'Club',
+    },
+    name: 'Name',
+    phone: 'Phone',
+    companyName: 'Legal company name',
+    socialMedia: 'Social media',
+    eyebrow: 'M Y · P R O F I L E',
+    editNoteBefore: 'Profile editing is not on the web yet — the API has',
+    editNoteAfter: ', but the editing screen only exists in the app.',
+  },
+  es: {
+    type: 'Tipo',
+    types: {
+      AGENT: 'Agencia',
+      CLUB: 'Club',
+    },
+    name: 'Nombre',
+    phone: 'Teléfono',
+    companyName: 'Razón social',
+    socialMedia: 'Red social',
+    eyebrow: 'M I · P E R F I L',
+    editNoteBefore: 'La edición del perfil todavía no está en la web — la API tiene',
+    editNoteAfter: ', pero la pantalla de edición solo existe en la app.',
+  },
+})
 
 const cardStyle = {
   background: colors.giz,
@@ -12,10 +58,9 @@ const cardStyle = {
   padding: '22px 24px',
 } as const
 
-const TYPE_LABEL = { AGENT: 'Agência', CLUB: 'Clube' } as const
-
 /** Perfil do contratante logado, lido de `/contractors/me`. */
 export function ProfileSection() {
+  const m = useMessages(MESSAGES)
   const profile = useContractorProfile()
 
   if (profile.isLoading) return <PanelLoading />
@@ -24,19 +69,19 @@ export function ProfileSection() {
 
   const p = profile.data
   const rows: ReadonlyArray<readonly [string, string | null | undefined]> = [
-    ['Tipo', TYPE_LABEL[p.type]],
-    ['Nome', p.name],
-    ['Telefone', p.phone ? maskPhone(p.phone) : null],
+    [m.type, m.types[p.type]],
+    [m.name, p.name],
+    [m.phone, p.phone ? maskPhone(p.phone) : null],
     ['CPF', p.cpf ? maskCpf(p.cpf) : null],
     ['CNPJ', p.cnpj ? maskCnpj(p.cnpj) : null],
-    ['Razão social', p.companyName],
-    ['Rede social', p.socialMedia],
+    [m.companyName, p.companyName],
+    [m.socialMedia, p.socialMedia],
   ]
 
   return (
     <section style={cardStyle}>
       <Eyebrow size={10} style={{ letterSpacing: '0.16em', marginBottom: 4 }}>
-        M E U · P E R F I L
+        {m.eyebrow}
       </Eyebrow>
       <h2
         style={{
@@ -104,8 +149,8 @@ export function ProfileSection() {
           lineHeight: 1.5,
         }}
       >
-        A edição do perfil ainda não está na web — a API tem <code>PUT /contractors/me</code>, mas a
-        tela de edição só existe no app.
+        {m.editNoteBefore} <code>PUT /contractors/me</code>
+        {m.editNoteAfter}
       </p>
     </section>
   )

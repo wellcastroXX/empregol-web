@@ -4,13 +4,15 @@ import { Link, useLocation } from 'react-router-dom'
 import { ROUTES } from '@/app/router/routes'
 
 import { colors, fonts } from '@/shared/config/theme'
+import { LanguageSwitcher } from '@/shared/i18n/LanguageSwitcher'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 import { useScrolledPast } from '@/shared/lib/hooks/useScrolledPast'
 import { Wordmark } from '@/shared/ui/Wordmark'
 
 import { MobileMenuButton } from './MobileMenuButton'
 
 interface NavEntry {
-  label: string
+  id: string
   /** Destino: âncora de seção da home (`/#id`) ou rota própria. */
   to: string
 }
@@ -20,14 +22,14 @@ interface NavEntry {
  * design da home antiga (Atletas, Clubes, Agentes, Preço) e apontava para
  * páginas que nunca existiram.
  */
-// `as const satisfies` em vez de anotar o tipo: anotar colapsaria `label` em
+// `as const satisfies` em vez de anotar o tipo: anotar colapsaria `id` em
 // `string` e NavItem deixaria de restringir o que a rota pode marcar como ativo.
 const NAV_ITEMS = [
-  { label: 'A Empregol', to: `${ROUTES.home}#sobre` },
-  { label: 'Suporte', to: `${ROUTES.home}#suporte` },
-  { label: 'Origem', to: `${ROUTES.home}#origem` },
-  { label: 'Missão', to: `${ROUTES.home}#missao` },
-  { label: 'App', to: ROUTES.app },
+  { id: 'sobre', to: `${ROUTES.home}#sobre` },
+  { id: 'suporte', to: `${ROUTES.home}#suporte` },
+  { id: 'origem', to: `${ROUTES.home}#origem` },
+  { id: 'missao', to: `${ROUTES.home}#missao` },
+  { id: 'app', to: ROUTES.app },
 ] as const satisfies readonly NavEntry[]
 
 /** Rolagem a partir da qual a barra assume o fundo sólido. */
@@ -35,7 +37,39 @@ const SOLID_AT = 40
 
 const TRANSITION = 'background-color 240ms ease, border-color 240ms ease, color 240ms ease'
 
-export type NavItem = (typeof NAV_ITEMS)[number]['label']
+export type NavItem = (typeof NAV_ITEMS)[number]['id']
+
+const MESSAGES = defineMessages<{
+  nav: Record<NavItem, string>
+  home: string
+  signIn: string
+  signUp: string
+}>({
+  pt: {
+    nav: {
+      sobre: 'A Empregol',
+      suporte: 'Suporte',
+      origem: 'Origem',
+      missao: 'Missão',
+      app: 'App',
+    },
+    home: 'Empregol — página inicial',
+    signIn: 'Entrar',
+    signUp: 'Cadastre-se',
+  },
+  en: {
+    nav: { sobre: 'About', suporte: 'Support', origem: 'Origin', missao: 'Mission', app: 'App' },
+    home: 'Empregol — home page',
+    signIn: 'Sign in',
+    signUp: 'Sign up',
+  },
+  es: {
+    nav: { sobre: 'Empregol', suporte: 'Soporte', origem: 'Origen', missao: 'Misión', app: 'App' },
+    home: 'Empregol — página de inicio',
+    signIn: 'Entrar',
+    signUp: 'Regístrate',
+  },
+})
 
 export interface SiteHeaderProps {
   active?: NavItem | ''
@@ -49,6 +83,7 @@ export interface SiteHeaderProps {
 
 /** Navegação superior do empregol.com — fixa, transparente no topo do hero. */
 export function SiteHeader({ active = '', overlay = false }: SiteHeaderProps) {
+  const m = useMessages(MESSAGES)
   const scrolled = useScrolledPast(SOLID_AT)
   const { key } = useLocation()
   // Guarda a localização em que o menu foi aberto em vez de um booleano: assim
@@ -95,14 +130,14 @@ export function SiteHeader({ active = '', overlay = false }: SiteHeaderProps) {
           transition: TRANSITION,
         }}
       >
-        <Link to="/" aria-label="Empregol — página inicial" style={{ display: 'block' }}>
+        <Link to="/" aria-label={m.home} style={{ display: 'block' }}>
           <HeaderWordmark cream={transparent} />
         </Link>
 
         <div className="hide-md" style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
           {NAV_ITEMS.map((item) => (
             <Link
-              key={item.label}
+              key={item.id}
               to={item.to}
               style={{
                 fontFamily: fonts.text,
@@ -110,11 +145,11 @@ export function SiteHeader({ active = '', overlay = false }: SiteHeaderProps) {
                 fontWeight: 500,
                 color: fg,
                 textDecoration: 'none',
-                opacity: active === item.label ? 1 : 0.85,
+                opacity: active === item.id ? 1 : 0.85,
                 transition: TRANSITION,
               }}
             >
-              {item.label}
+              {m.nav[item.id]}
             </Link>
           ))}
           <div
@@ -127,6 +162,7 @@ export function SiteHeader({ active = '', overlay = false }: SiteHeaderProps) {
               transition: TRANSITION,
             }}
           >
+            <LanguageSwitcher color={fg} />
             <Link
               to={ROUTES.entrar}
               style={{
@@ -138,7 +174,7 @@ export function SiteHeader({ active = '', overlay = false }: SiteHeaderProps) {
                 transition: TRANSITION,
               }}
             >
-              ENTRAR
+              {m.signIn.toUpperCase()}
             </Link>
             <Link
               to={ROUTES.cadastro}
@@ -156,7 +192,7 @@ export function SiteHeader({ active = '', overlay = false }: SiteHeaderProps) {
                 transition: TRANSITION,
               }}
             >
-              CADASTRE-SE ›
+              {m.signUp.toUpperCase()} ›
             </Link>
           </div>
         </div>
@@ -174,6 +210,8 @@ export function SiteHeader({ active = '', overlay = false }: SiteHeaderProps) {
 
 /** Painel de navegação em tela cheia, abaixo do nav. */
 function MobileMenu({ active, onNavigate }: { active: NavItem | ''; onNavigate: () => void }) {
+  const m = useMessages(MESSAGES)
+
   return (
     <div
       id="menu-mobile"
@@ -199,7 +237,7 @@ function MobileMenu({ active, onNavigate }: { active: NavItem | ''; onNavigate: 
     >
       {NAV_ITEMS.map((item) => (
         <Link
-          key={item.label}
+          key={item.id}
           to={item.to}
           onClick={onNavigate}
           style={{
@@ -211,10 +249,10 @@ function MobileMenu({ active, onNavigate }: { active: NavItem | ''; onNavigate: 
             textDecoration: 'none',
             padding: '14px 0',
             borderBottom: `1px solid ${colors.osso}`,
-            opacity: active === item.label ? 1 : 0.9,
+            opacity: active === item.id ? 1 : 0.9,
           }}
         >
-          {item.label}
+          {m.nav[item.id]}
         </Link>
       ))}
 
@@ -236,7 +274,7 @@ function MobileMenu({ active, onNavigate }: { active: NavItem | ''; onNavigate: 
             textTransform: 'uppercase',
           }}
         >
-          Cadastre-se ›
+          {m.signUp} ›
         </Link>
         <Link
           to={ROUTES.entrar}
@@ -255,8 +293,12 @@ function MobileMenu({ active, onNavigate }: { active: NavItem | ''; onNavigate: 
             textTransform: 'uppercase',
           }}
         >
-          Entrar
+          {m.signIn}
         </Link>
+      </div>
+
+      <div style={{ marginTop: 24 }}>
+        <LanguageSwitcher color={colors.tinta} size={14} />
       </div>
     </div>
   )

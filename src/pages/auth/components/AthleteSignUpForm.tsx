@@ -3,12 +3,91 @@ import { useNavigate } from 'react-router-dom'
 
 import { ROUTES } from '@/app/router/routes'
 import type { AthleteLevel, DominantFoot, Gender } from '@/features/auth/model/auth.types'
-import { DOMINANT_FEET, GENDERS, LEVELS, POSITIONS } from '@/features/auth/model/options'
+import { useFormOptions } from '@/features/auth/model/options'
 import { useAuth } from '@/features/auth/ui/auth-context'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 import { maskCpf, maskNumber, maskPhone, onlyDigits } from '@/shared/lib/masks'
 
 import { AuthAlert, SubmitButton } from './AuthControls'
 import { AuthField, AuthSelect } from './AuthField'
+import { FORM_MESSAGES, type FormMessages } from './form-messages'
+
+const MESSAGES = defineMessages({
+  pt: {
+    fullName: 'Nome completo',
+    cpf: 'CPF',
+    birthDate: 'Nascimento',
+    hometown: 'Naturalidade',
+    hometownPlaceholder: 'Cidade natal',
+    profileUrl: 'Link do seu perfil esportivo',
+    profileUrlPlaceholder: 'OGol/Transfermarkt ou outro',
+    position: 'Posição',
+    dominantFoot: 'Pé dominante',
+    height: 'Altura (cm)',
+    weight: 'Peso (kg)',
+    level: 'Nível',
+    gender: 'Gênero',
+    cpfDigits: 'CPF deve conter 11 dígitos',
+    birthDateRequired: 'Informe a data de nascimento',
+    hometownRequired: 'Informe a naturalidade',
+    profileUrlInvalid: 'Informe um link válido começando com http:// ou https://',
+    positionRequired: 'Selecione a posição',
+    dominantFootRequired: 'Selecione o pé dominante',
+    levelRequired: 'Selecione o nível',
+    heightRange: 'Altura entre 100 e 250 cm',
+    weightRange: 'Peso entre 30 e 200 kg',
+  },
+  en: {
+    fullName: 'Full name',
+    cpf: 'CPF (Brazilian ID)',
+    birthDate: 'Date of birth',
+    hometown: 'Hometown',
+    hometownPlaceholder: 'City of birth',
+    profileUrl: 'Link to your sports profile',
+    profileUrlPlaceholder: 'OGol/Transfermarkt or other',
+    position: 'Position',
+    dominantFoot: 'Dominant foot',
+    height: 'Height (cm)',
+    weight: 'Weight (kg)',
+    level: 'Level',
+    gender: 'Gender',
+    cpfDigits: 'CPF must have 11 digits',
+    birthDateRequired: 'Enter your date of birth',
+    hometownRequired: 'Enter your hometown',
+    profileUrlInvalid: 'Enter a valid link starting with http:// or https://',
+    positionRequired: 'Select your position',
+    dominantFootRequired: 'Select your dominant foot',
+    levelRequired: 'Select your level',
+    heightRange: 'Height between 100 and 250 cm',
+    weightRange: 'Weight between 30 and 200 kg',
+  },
+  es: {
+    fullName: 'Nombre completo',
+    cpf: 'CPF (documento brasileño)',
+    birthDate: 'Fecha de nacimiento',
+    hometown: 'Lugar de nacimiento',
+    hometownPlaceholder: 'Ciudad natal',
+    profileUrl: 'Enlace a tu perfil deportivo',
+    profileUrlPlaceholder: 'OGol/Transfermarkt u otro',
+    position: 'Posición',
+    dominantFoot: 'Pie dominante',
+    height: 'Altura (cm)',
+    weight: 'Peso (kg)',
+    level: 'Nivel',
+    gender: 'Género',
+    cpfDigits: 'El CPF debe tener 11 dígitos',
+    birthDateRequired: 'Indica tu fecha de nacimiento',
+    hometownRequired: 'Indica tu lugar de nacimiento',
+    profileUrlInvalid: 'Indica un enlace válido que empiece con http:// o https://',
+    positionRequired: 'Selecciona la posición',
+    dominantFootRequired: 'Selecciona el pie dominante',
+    levelRequired: 'Selecciona el nivel',
+    heightRange: 'Altura entre 100 y 250 cm',
+    weightRange: 'Peso entre 30 y 200 kg',
+  },
+})
+
+type AthleteMessages = (typeof MESSAGES)['pt']
 
 const emptyForm = {
   fullName: '',
@@ -34,40 +113,43 @@ type Errors = Partial<Record<keyof FormState, string>>
  * Valida no cliente o que a API valida no servidor, para o usuário não gastar
  * uma ida ao servidor por causa de um CPF com 10 dígitos.
  */
-function validate(form: FormState): Errors {
+function validate(form: FormState, m: AthleteMessages, common: FormMessages): Errors {
   const errors: Errors = {}
 
-  if (form.fullName.trim().length < 3) errors.fullName = 'Nome deve ter no mínimo 3 caracteres'
-  if (!/^\S+@\S+\.\S+$/.test(form.email)) errors.email = 'E-mail inválido'
-  if (form.password.length < 8) errors.password = 'Senha deve ter no mínimo 8 caracteres'
-  if (onlyDigits(form.cpf).length !== 11) errors.cpf = 'CPF deve conter 11 dígitos'
-  if (!form.birthDate) errors.birthDate = 'Informe a data de nascimento'
-  if (onlyDigits(form.phone).length < 10) errors.phone = 'Telefone inválido'
-  if (form.naturalidade.trim().length < 2) errors.naturalidade = 'Informe a naturalidade'
+  if (form.fullName.trim().length < 3) errors.fullName = common.nameMin
+  if (!/^\S+@\S+\.\S+$/.test(form.email)) errors.email = common.emailInvalid
+  if (form.password.length < 8) errors.password = common.passwordMin
+  if (onlyDigits(form.cpf).length !== 11) errors.cpf = m.cpfDigits
+  if (!form.birthDate) errors.birthDate = m.birthDateRequired
+  if (onlyDigits(form.phone).length < 10) errors.phone = common.phoneInvalid
+  if (form.naturalidade.trim().length < 2) errors.naturalidade = m.hometownRequired
   if (form.sportsProfileUrl.trim()) {
     try {
       const profileUrl = new URL(form.sportsProfileUrl.trim())
       if (!['http:', 'https:'].includes(profileUrl.protocol)) {
-        errors.sportsProfileUrl = 'Informe um link válido começando com http:// ou https://'
+        errors.sportsProfileUrl = m.profileUrlInvalid
       }
     } catch {
-      errors.sportsProfileUrl = 'Informe um link válido começando com http:// ou https://'
+      errors.sportsProfileUrl = m.profileUrlInvalid
     }
   }
-  if (!form.position) errors.position = 'Selecione a posição'
-  if (!form.dominantFoot) errors.dominantFoot = 'Selecione o pé dominante'
-  if (!form.level) errors.level = 'Selecione o nível'
+  if (!form.position) errors.position = m.positionRequired
+  if (!form.dominantFoot) errors.dominantFoot = m.dominantFootRequired
+  if (!form.level) errors.level = m.levelRequired
 
   const height = Number(form.height)
-  if (!height || height < 100 || height > 250) errors.height = 'Altura entre 100 e 250 cm'
+  if (!height || height < 100 || height > 250) errors.height = m.heightRange
 
   const weight = Number(form.weight)
-  if (!weight || weight < 30 || weight > 200) errors.weight = 'Peso entre 30 e 200 kg'
+  if (!weight || weight < 30 || weight > 200) errors.weight = m.weightRange
 
   return errors
 }
 
 export function AthleteSignUpForm() {
+  const m = useMessages(MESSAGES)
+  const common = useMessages(FORM_MESSAGES)
+  const options = useFormOptions()
   const { register } = useAuth()
   const navigate = useNavigate()
 
@@ -85,7 +167,7 @@ export function AthleteSignUpForm() {
     event.preventDefault()
     if (loading) return
 
-    const found = validate(form)
+    const found = validate(form, m, common)
     setErrors(found)
     if (Object.keys(found).length > 0) return
 
@@ -101,9 +183,7 @@ export function AthleteSignUpForm() {
         birthDate: form.birthDate,
         phone: form.phone,
         naturalidade: form.naturalidade.trim(),
-        ...(form.sportsProfileUrl.trim()
-          ? { sportsProfileUrl: form.sportsProfileUrl.trim() }
-          : {}),
+        ...(form.sportsProfileUrl.trim() ? { sportsProfileUrl: form.sportsProfileUrl.trim() } : {}),
         position: form.position,
         dominantFoot: form.dominantFoot as DominantFoot,
         height: Number(form.height),
@@ -113,7 +193,7 @@ export function AthleteSignUpForm() {
       })
       navigate(ROUTES.verificarEmail)
     } catch (err) {
-      setApiError(err instanceof Error ? err.message : 'Não foi possível criar a conta.')
+      setApiError(err instanceof Error ? err.message : common.createAccountFailed)
     } finally {
       setLoading(false)
     }
@@ -125,28 +205,28 @@ export function AthleteSignUpForm() {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         <AuthField
-          label="Nome completo"
+          label={m.fullName}
           value={form.fullName}
           onChange={set('fullName')}
-          placeholder="Nome completo"
+          placeholder={m.fullName}
           autoComplete="name"
           error={errors.fullName}
         />
         <AuthField
-          label="E-mail"
+          label={common.email}
           value={form.email}
           onChange={set('email')}
-          placeholder="seu@email.com"
+          placeholder={common.emailPlaceholder}
           type="email"
           inputMode="email"
           autoComplete="email"
           error={errors.email}
         />
         <AuthField
-          label="Senha"
+          label={common.password}
           value={form.password}
           onChange={set('password')}
-          placeholder="Mínimo 8 caracteres"
+          placeholder={common.newPasswordPlaceholder}
           type="password"
           autoComplete="new-password"
           error={errors.password}
@@ -154,7 +234,7 @@ export function AthleteSignUpForm() {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'var(--cols-2)', gap: 14 }}>
           <AuthField
-            label="CPF"
+            label={m.cpf}
             value={form.cpf}
             onChange={(v) => set('cpf')(maskCpf(v))}
             placeholder="000.000.000-00"
@@ -162,7 +242,7 @@ export function AthleteSignUpForm() {
             error={errors.cpf}
           />
           <AuthField
-            label="Nascimento"
+            label={m.birthDate}
             value={form.birthDate}
             onChange={set('birthDate')}
             type="date"
@@ -172,7 +252,7 @@ export function AthleteSignUpForm() {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'var(--cols-2)', gap: 14 }}>
           <AuthField
-            label="Telefone"
+            label={common.phone}
             value={form.phone}
             onChange={(v) => set('phone')(maskPhone(v))}
             placeholder="(00) 00000-0000"
@@ -181,44 +261,44 @@ export function AthleteSignUpForm() {
             error={errors.phone}
           />
           <AuthField
-            label="Naturalidade"
+            label={m.hometown}
             value={form.naturalidade}
             onChange={set('naturalidade')}
-            placeholder="Cidade natal"
+            placeholder={m.hometownPlaceholder}
             error={errors.naturalidade}
           />
         </div>
 
         <AuthField
-          label="Link do seu perfil esportivo"
+          label={m.profileUrl}
           value={form.sportsProfileUrl}
           onChange={set('sportsProfileUrl')}
-          placeholder="OGol/Transfermarkt ou outro"
+          placeholder={m.profileUrlPlaceholder}
           type="url"
-          hint="Opcional"
+          hint={common.optional}
           error={errors.sportsProfileUrl}
         />
 
         <div style={{ display: 'grid', gridTemplateColumns: 'var(--cols-2)', gap: 14 }}>
           <AuthSelect
-            label="Posição"
+            label={m.position}
             value={form.position}
             onChange={set('position')}
-            options={POSITIONS}
+            options={options.positions}
             error={errors.position}
           />
           <AuthSelect
-            label="Pé dominante"
+            label={m.dominantFoot}
             value={form.dominantFoot as DominantFoot | ''}
             onChange={set('dominantFoot')}
-            options={DOMINANT_FEET}
+            options={options.dominantFeet}
             error={errors.dominantFoot}
           />
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'var(--cols-2)', gap: 14 }}>
           <AuthField
-            label="Altura (cm)"
+            label={m.height}
             value={form.height}
             onChange={(v) => set('height')(maskNumber(v, 3))}
             placeholder="180"
@@ -226,7 +306,7 @@ export function AthleteSignUpForm() {
             error={errors.height}
           />
           <AuthField
-            label="Peso (kg)"
+            label={m.weight}
             value={form.weight}
             onChange={(v) => set('weight')(maskNumber(v, 3))}
             placeholder="75"
@@ -237,24 +317,28 @@ export function AthleteSignUpForm() {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'var(--cols-2)', gap: 14 }}>
           <AuthSelect
-            label="Nível"
+            label={m.level}
             value={form.level as AthleteLevel | ''}
             onChange={set('level')}
-            options={LEVELS}
+            options={options.levels}
             error={errors.level}
           />
           <AuthSelect
-            label="Gênero"
+            label={m.gender}
             value={form.gender as Gender | ''}
             onChange={set('gender')}
-            options={GENDERS}
-            hint="Opcional"
+            options={options.genders}
+            hint={common.optional}
           />
         </div>
       </div>
 
-      <SubmitButton loading={loading} loadingLabel="Criando conta..." style={{ borderRadius: 30 }}>
-        Criar conta ›
+      <SubmitButton
+        loading={loading}
+        loadingLabel={common.creatingAccount}
+        style={{ borderRadius: 30 }}
+      >
+        {common.createAccount}
       </SubmitButton>
     </form>
   )

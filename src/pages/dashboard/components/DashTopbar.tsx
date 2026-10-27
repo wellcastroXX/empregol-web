@@ -1,10 +1,34 @@
 import { useAuth } from '@/features/auth/ui/auth-context'
 import { colors, fonts } from '@/shared/config/theme'
+import { LanguageSwitcher } from '@/shared/i18n/LanguageSwitcher'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 
 import { DashIcon } from './DashIcon'
 
+const MESSAGES = defineMessages({
+  pt: {
+    date: 'QUI · 24 MAI · 2026',
+    greeting: 'Bom te ver',
+    search: 'Buscar atleta, posição...',
+    newSearch: 'Nova busca',
+  },
+  en: {
+    date: 'THU · MAY 24 · 2026',
+    greeting: 'Good to see you',
+    search: 'Search athlete, position...',
+    newSearch: 'New search',
+  },
+  es: {
+    date: 'JUE · 24 MAY · 2026',
+    greeting: 'Qué bueno verte',
+    search: 'Buscar atleta, posición...',
+    newSearch: 'Nueva búsqueda',
+  },
+})
+
 /** Barra superior do painel: data, saudação e busca global. */
 export function DashTopbar() {
+  const m = useMessages(MESSAGES)
   const { user } = useAuth()
   // Primeiro nome basta na saudação; o nome completo fica na barra lateral.
   const primeiroNome = user?.nome.trim().split(/\s+/)[0] ?? ''
@@ -36,7 +60,7 @@ export function DashTopbar() {
             color: colors.cinza,
           }}
         >
-          QUI · 24 MAI · 2026
+          {m.date}
         </div>
         <h1
           style={{
@@ -48,12 +72,13 @@ export function DashTopbar() {
             margin: '2px 0 0',
           }}
         >
-          {primeiroNome ? `Bom te ver, ${primeiroNome}` : 'Bom te ver'}
+          {primeiroNome ? `${m.greeting}, ${primeiroNome}` : m.greeting}
           <span style={{ color: colors.gramado }}>.</span>
         </h1>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        <LanguageSwitcher color={colors.tinta} />
         <button
           type="button"
           className="hide-md"
@@ -74,7 +99,7 @@ export function DashTopbar() {
             <DashIcon name="search" size={14} />
           </span>
           <span style={{ flex: 1, fontFamily: fonts.text, fontSize: 13, color: colors.cinza }}>
-            Buscar atleta, posição...
+            {m.search}
           </span>
           <kbd
             style={{
@@ -93,7 +118,7 @@ export function DashTopbar() {
         </button>
         <button
           type="button"
-          aria-label="Nova busca"
+          aria-label={m.newSearch}
           style={{
             width: 38,
             height: 38,

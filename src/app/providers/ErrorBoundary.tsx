@@ -1,6 +1,17 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
 
 import { colors, fonts } from '@/shared/config/theme'
+import { defineMessages, LocaleContext } from '@/shared/i18n/locale-context'
+
+const MESSAGES = defineMessages({
+  pt: { eyebrow: 'A L G O · Q U E B R O U', title: 'Erro fora do script', reload: 'RECARREGAR ›' },
+  en: { eyebrow: 'S O M E T H I N G · B R O K E', title: 'Off-script error', reload: 'RELOAD ›' },
+  es: {
+    eyebrow: 'A L G O · S E · R O M P I Ó',
+    title: 'Error fuera del guion',
+    reload: 'RECARGAR ›',
+  },
+})
 
 interface ErrorBoundaryProps {
   children: ReactNode
@@ -13,6 +24,9 @@ interface ErrorBoundaryState {
 
 /** Rede de segurança na raiz — evita a tela branca em erro de render. */
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  static override contextType = LocaleContext
+  declare context: React.ContextType<typeof LocaleContext>
+
   override state: ErrorBoundaryState = { error: null }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
@@ -28,6 +42,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     if (!this.state.error) return this.props.children
     if (this.props.fallback) return this.props.fallback
 
+    const m = MESSAGES[this.context.locale]
+
     return (
       <div style={{ padding: '120px 40px', background: colors.creme, minHeight: '100vh' }}>
         <div
@@ -41,7 +57,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             marginBottom: 18,
           }}
         >
-          A L G O · Q U E B R O U
+          {m.eyebrow}
         </div>
         <h1
           style={{
@@ -54,7 +70,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             margin: '0 0 24px',
           }}
         >
-          Erro fora do script<span style={{ color: colors.gramado }}>.</span>
+          {m.title}
+          <span style={{ color: colors.gramado }}>.</span>
         </h1>
         <button
           type="button"
@@ -72,7 +89,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             cursor: 'pointer',
           }}
         >
-          RECARREGAR ›
+          {m.reload}
         </button>
       </div>
     )

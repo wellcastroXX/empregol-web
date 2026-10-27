@@ -5,11 +5,36 @@ import { ROUTES } from '@/app/router/routes'
 import { AuthError } from '@/features/auth/lib/auth-service'
 import { useAuth } from '@/features/auth/ui/auth-context'
 import { colors, fonts } from '@/shared/config/theme'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 
 import { AuthAlert, SubmitButton } from './AuthControls'
 import { AuthField } from './AuthField'
+import { FORM_MESSAGES } from './form-messages'
+
+const MESSAGES = defineMessages({
+  pt: {
+    failed: 'Não foi possível entrar.',
+    forgot: 'Esqueci a senha ›',
+    submit: 'Entrar ›',
+    loading: 'Entrando...',
+  },
+  en: {
+    failed: 'Could not sign in.',
+    forgot: 'Forgot password ›',
+    submit: 'Sign in ›',
+    loading: 'Signing in...',
+  },
+  es: {
+    failed: 'No se pudo entrar.',
+    forgot: 'Olvidé mi contraseña ›',
+    submit: 'Entrar ›',
+    loading: 'Entrando...',
+  },
+})
 
 export function LoginForm() {
+  const m = useMessages(MESSAGES)
+  const common = useMessages(FORM_MESSAGES)
   const { signIn } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
@@ -37,7 +62,7 @@ export function LoginForm() {
         navigate(ROUTES.verificarEmail)
         return
       }
-      setError(err instanceof Error ? err.message : 'Não foi possível entrar.')
+      setError(err instanceof Error ? err.message : m.failed)
     } finally {
       setLoading(false)
     }
@@ -49,16 +74,16 @@ export function LoginForm() {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         <AuthField
-          label="E-mail"
+          label={common.email}
           value={email}
           onChange={setEmail}
-          placeholder="seu@email.com"
+          placeholder={common.emailPlaceholder}
           type="email"
           inputMode="email"
           autoComplete="email"
         />
         <AuthField
-          label="Senha"
+          label={common.password}
           value={password}
           onChange={setPassword}
           placeholder="••••••••"
@@ -78,12 +103,12 @@ export function LoginForm() {
             alignSelf: 'flex-start',
           }}
         >
-          Esqueci a senha ›
+          {m.forgot}
         </Link>
       </div>
 
-      <SubmitButton loading={loading} loadingLabel="Entrando...">
-        Entrar ›
+      <SubmitButton loading={loading} loadingLabel={m.loading}>
+        {m.submit}
       </SubmitButton>
     </form>
   )

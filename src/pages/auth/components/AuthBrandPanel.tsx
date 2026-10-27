@@ -1,6 +1,40 @@
 import { colors, fonts } from '@/shared/config/theme'
 import { Eyebrow } from '@/shared/ui/Eyebrow'
 import { Wordmark } from '@/shared/ui/Wordmark'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
+
+const MESSAGES = defineMessages({
+  pt: {
+    login: ['Volte', 'pro campo'],
+    signup: ['Entre', 'pro jogo'],
+    loginLead: 'Entre e veja quem te procurou.',
+    signupLead: 'Cadastro em 4 minutos. Apareça pra quem decide a próxima janela.',
+    quote:
+      '“E, tendo mandado que a multidão se assentasse sobre a relva, pegando os cinco pães e os dois peixes, erguendo os olhos para o céu, os abençoou. Depois, tendo partido os pães, deu-os aos discípulos, e estes deram às multidões.”',
+    quoteSource: 'M A T E U S · 1 4 : 1 9',
+    copyright: '© 2026 · EMPREGOL · BRASIL',
+  },
+  en: {
+    login: ['Back', 'on the pitch'],
+    signup: ['Get', 'in the game'],
+    loginLead: 'Sign in and see who has been looking for you.',
+    signupLead: 'Sign up in 4 minutes. Get seen by the people who decide the next window.',
+    quote:
+      '“And he commanded the multitude to sit down on the grass, and took the five loaves, and the two fishes, and looking up to heaven, he blessed, and brake, and gave the loaves to his disciples, and the disciples to the multitude.”',
+    quoteSource: 'M A T T H E W · 1 4 : 1 9',
+    copyright: '© 2026 · EMPREGOL · BRAZIL',
+  },
+  es: {
+    login: ['Vuelve', 'a la cancha'],
+    signup: ['Entra', 'al juego'],
+    loginLead: 'Entra y mira quién te buscó.',
+    signupLead: 'Registro en 4 minutos. Hazte ver por quienes deciden el próximo mercado de pases.',
+    quote:
+      '“Y mandando a las gentes recostarse sobre la hierba, tomando los cinco panes y los dos peces, alzando los ojos al cielo, bendijo, y partió y dio los panes a los discípulos, y los discípulos a las gentes.”',
+    quoteSource: 'M A T E O · 1 4 : 1 9',
+    copyright: '© 2026 · EMPREGOL · BRASIL',
+  },
+})
 
 export interface AuthBrandPanelProps {
   mode: 'login' | 'signup'
@@ -8,6 +42,9 @@ export interface AuthBrandPanelProps {
 
 /** Painel editorial escuro à esquerda — o lado da marca no split. */
 export function AuthBrandPanel({ mode }: AuthBrandPanelProps) {
+  const m = useMessages(MESSAGES)
+  const [first, second] = m[mode]
+
   return (
     <div
       className="hide-md"
@@ -52,19 +89,10 @@ export function AuthBrandPanel({ mode }: AuthBrandPanelProps) {
             textTransform: 'uppercase',
           }}
         >
-          {mode === 'login' ? (
-            <>
-              Volte
-              <br />
-              pro campo<span style={{ color: colors.gramado }}>.</span>
-            </>
-          ) : (
-            <>
-              Entre
-              <br />
-              pro jogo<span style={{ color: colors.gramado }}>.</span>
-            </>
-          )}
+          {first}
+          <br />
+          {second}
+          <span style={{ color: colors.gramado }}>.</span>
         </h2>
 
         <p
@@ -77,9 +105,7 @@ export function AuthBrandPanel({ mode }: AuthBrandPanelProps) {
             maxWidth: 400,
           }}
         >
-          {mode === 'login'
-            ? 'Entre e veja quem te procurou.'
-            : 'Cadastro em 4 minutos. Apareça pra quem decide a próxima janela.'}
+          {mode === 'login' ? m.loginLead : m.signupLead}
         </p>
 
         <div
@@ -100,18 +126,16 @@ export function AuthBrandPanel({ mode }: AuthBrandPanelProps) {
               margin: 0,
             }}
           >
-            “E, tendo mandado que a multidão se assentasse sobre a relva, pegando os cinco pães e os
-            dois peixes, erguendo os olhos para o céu, os abençoou. Depois, tendo partido os pães,
-            deu-os aos discípulos, e estes deram às multidões.”
+            {m.quote}
           </p>
           <Eyebrow surface="dark" size={10} style={{ marginTop: 12, letterSpacing: '0.14em' }}>
-            M A T E U S · 1 4 : 1 9
+            {m.quoteSource}
           </Eyebrow>
         </div>
       </div>
 
       <Eyebrow surface="dark" size={10} style={{ position: 'relative', zIndex: 3 }}>
-        © 2026 · EMPREGOL · BRASIL
+        {m.copyright}
       </Eyebrow>
 
       {/* Camisa fantasma — o motivo gráfico do kit, atrás do granulado */}

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import { colors, fonts } from '@/shared/config/theme'
+import { defineMessages, useLocaleTag, useMessages } from '@/shared/i18n/locale-context'
 import { Eyebrow } from '@/shared/ui/Eyebrow'
 
 import type { AthleteProfile, SeasonStat } from '../model/athlete-profile.types'
@@ -15,15 +16,97 @@ import { MediaLightbox } from './MediaLightbox'
  */
 export type ProfileAudience = 'public' | 'contractor'
 
-const AVAILABILITY_LABEL = { FREE: 'LIVRE', EMPLOYED: 'EMPREGADO' } as const
 const AVAILABILITY_BG = { FREE: colors.gramado, EMPLOYED: colors.statusEmpregado } as const
-const AGENCY_LABEL = { REPRESENTED: 'COM AGÊNCIA', UNREPRESENTED: 'SEM AGÊNCIA' } as const
 
-const FOOT_LABEL: Record<string, string> = {
-  RIGHT: 'Destro',
-  LEFT: 'Canhoto',
-  BOTH: 'Ambidestro',
-}
+const MESSAGES = defineMessages<{
+  availability: Record<AthleteProfile['availability'], string>
+  agency: Record<AthleteProfile['agencyStatus'], string>
+  feet: Record<string, string>
+  years: (age: number) => string
+  lastClub: (club: string) => string
+  goals: string
+  assists: string
+  games: string
+  minutes: string
+  sheet: string
+  height: string
+  weight: string
+  foot: string
+  level: string
+  pretension: string
+  jersey: string
+  seasons: string
+  media: string
+  about: string
+  seasonHead: readonly string[]
+}>({
+  pt: {
+    availability: { FREE: 'LIVRE', EMPLOYED: 'EMPREGADO' },
+    agency: { REPRESENTED: 'COM AGÊNCIA', UNREPRESENTED: 'SEM AGÊNCIA' },
+    feet: { RIGHT: 'Destro', LEFT: 'Canhoto', BOTH: 'Ambidestro' },
+    years: (age) => `${age} anos`,
+    lastClub: (club) => `Últ. clube: ${club}`,
+    goals: 'gols',
+    assists: 'assistências',
+    games: 'jogos',
+    minutes: 'minutos',
+    sheet: 'F I C H A',
+    height: 'Altura',
+    weight: 'Peso',
+    foot: 'Pé',
+    level: 'Nível',
+    pretension: 'Pretensão',
+    jersey: 'Camisa',
+    seasons: 'T E M P O R A D A S',
+    media: 'M Í D I A',
+    about: 'S O B R E',
+    seasonHead: ['Ano', 'Clube', 'Jogos', 'Gols', 'Assist.', 'Min.'],
+  },
+  en: {
+    availability: { FREE: 'FREE AGENT', EMPLOYED: 'UNDER CONTRACT' },
+    agency: { REPRESENTED: 'REPRESENTED', UNREPRESENTED: 'NO AGENCY' },
+    feet: { RIGHT: 'Right-footed', LEFT: 'Left-footed', BOTH: 'Two-footed' },
+    years: (age) => `${age} years old`,
+    lastClub: (club) => `Last club: ${club}`,
+    goals: 'goals',
+    assists: 'assists',
+    games: 'games',
+    minutes: 'minutes',
+    sheet: 'P R O F I L E',
+    height: 'Height',
+    weight: 'Weight',
+    foot: 'Foot',
+    level: 'Level',
+    pretension: 'Salary expectation',
+    jersey: 'Shirt',
+    seasons: 'S E A S O N S',
+    media: 'M E D I A',
+    about: 'A B O U T',
+    seasonHead: ['Year', 'Club', 'Games', 'Goals', 'Assists', 'Min.'],
+  },
+  es: {
+    availability: { FREE: 'LIBRE', EMPLOYED: 'CON CONTRATO' },
+    agency: { REPRESENTED: 'CON AGENCIA', UNREPRESENTED: 'SIN AGENCIA' },
+    feet: { RIGHT: 'Diestro', LEFT: 'Zurdo', BOTH: 'Ambidiestro' },
+    years: (age) => `${age} años`,
+    lastClub: (club) => `Últ. club: ${club}`,
+    goals: 'goles',
+    assists: 'asistencias',
+    games: 'partidos',
+    minutes: 'minutos',
+    sheet: 'F I C H A',
+    height: 'Altura',
+    weight: 'Peso',
+    foot: 'Pie',
+    level: 'Nivel',
+    pretension: 'Pretensión',
+    jersey: 'Camiseta',
+    seasons: 'T E M P O R A D A S',
+    media: 'M U L T I M E D I A',
+    about: 'S O B R E · M Í',
+    seasonHead: ['Año', 'Club', 'Partidos', 'Goles', 'Asist.', 'Min.'],
+  },
+})
 
 function age(birthDate?: string | null): number | null {
   if (!birthDate) return null
@@ -39,11 +122,11 @@ function age(birthDate?: string | null): number | null {
   return years
 }
 
-function salary(value?: string | number | null): string | null {
+function salary(value: string | number | null | undefined, localeTag: string): string | null {
   if (value == null || value === '') return null
   const amount = typeof value === 'number' ? value : Number(value)
   if (Number.isNaN(amount)) return null
-  return amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+  return amount.toLocaleString(localeTag, { style: 'currency', currency: 'BRL' })
 }
 
 export interface AthleteProfileViewProps {
@@ -59,8 +142,10 @@ export interface AthleteProfileViewProps {
  */
 export function AthleteProfileView({ athlete, audience }: AthleteProfileViewProps) {
   // A rota pública manda `age` pronta e omite a data de nascimento.
+  const m = useMessages(MESSAGES)
+  const localeTag = useLocaleTag()
   const years = athlete.age ?? age(athlete.birthDate)
-  const pretension = audience === 'contractor' ? salary(athlete.expectedSalary) : null
+  const pretension = audience === 'contractor' ? salary(athlete.expectedSalary, localeTag) : null
   const seasons = athlete.seasonStats ?? []
   const media = athlete.media ?? []
   // Mesma modal da vitrine pública: o vídeo toca aqui dentro, sem jogar o
@@ -88,10 +173,10 @@ export function AthleteProfileView({ athlete, audience }: AthleteProfileViewProp
 
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 10 }}>
             <Tag background={AVAILABILITY_BG[athlete.availability]} color={colors.giz}>
-              {AVAILABILITY_LABEL[athlete.availability]}
+              {m.availability[athlete.availability]}
             </Tag>
             <Tag background={colors.osso} color={colors.tinta}>
-              {AGENCY_LABEL[athlete.agencyStatus]}
+              {m.agency[athlete.agencyStatus]}
             </Tag>
             {(athlete.positions?.length ? athlete.positions : [athlete.position]).map(
               (position) => (
@@ -104,9 +189,9 @@ export function AthleteProfileView({ athlete, audience }: AthleteProfileViewProp
 
           <Eyebrow size={10} style={{ letterSpacing: '0.12em' }}>
             {[
-              years != null ? `${years} anos` : null,
+              years != null ? m.years(years) : null,
               athlete.naturalidade,
-              athlete.lastClub ? `Últ. clube: ${athlete.lastClub}` : null,
+              athlete.lastClub ? m.lastClub(athlete.lastClub) : null,
             ]
               .filter(Boolean)
               .join(' · ')}
@@ -115,34 +200,34 @@ export function AthleteProfileView({ athlete, audience }: AthleteProfileViewProp
       </header>
 
       <Grid>
-        <Stat value={athlete.goals} label="gols" />
-        <Stat value={athlete.assists} label="assistências" />
-        <Stat value={athlete.gamesThisSeason} label="jogos" />
-        <Stat value={athlete.minutesPlayed} label="minutos" />
+        <Stat value={athlete.goals} label={m.goals} />
+        <Stat value={athlete.assists} label={m.assists} />
+        <Stat value={athlete.gamesThisSeason} label={m.games} />
+        <Stat value={athlete.minutesPlayed} label={m.minutes} />
       </Grid>
 
-      <Block title="F I C H A">
+      <Block title={m.sheet}>
         <Grid>
-          <Field label="Altura" value={athlete.height ? `${athlete.height} m` : null} />
-          <Field label="Peso" value={athlete.weight ? `${athlete.weight} kg` : null} />
-          <Field label="Pé" value={FOOT_LABEL[athlete.dominantFoot] ?? athlete.dominantFoot} />
-          <Field label="Nível" value={athlete.level} />
-          {pretension && <Field label="Pretensão" value={pretension} />}
+          <Field label={m.height} value={athlete.height ? `${athlete.height} m` : null} />
+          <Field label={m.weight} value={athlete.weight ? `${athlete.weight} kg` : null} />
+          <Field label={m.foot} value={m.feet[athlete.dominantFoot] ?? athlete.dominantFoot} />
+          <Field label={m.level} value={athlete.level} />
+          {pretension && <Field label={m.pretension} value={pretension} />}
           <Field
-            label="Camisa"
+            label={m.jersey}
             value={athlete.jerseyNumber != null ? String(athlete.jerseyNumber) : null}
           />
         </Grid>
       </Block>
 
       {seasons.length > 0 && (
-        <Block title="T E M P O R A D A S">
-          <Seasons seasons={seasons} />
+        <Block title={m.seasons}>
+          <Seasons seasons={seasons} head={m.seasonHead} />
         </Block>
       )}
 
       {media.length > 0 && (
-        <Block title="M Í D I A">
+        <Block title={m.media}>
           <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
             {media.map((item, index) => (
               <li
@@ -186,7 +271,7 @@ export function AthleteProfileView({ athlete, audience }: AthleteProfileViewProp
       )}
 
       {athlete.additionalInfo && (
-        <Block title="S O B R E">
+        <Block title={m.about}>
           <p style={{ fontFamily: fonts.text, fontSize: 15, lineHeight: 1.6, margin: 0 }}>
             {athlete.additionalInfo}
           </p>
@@ -289,9 +374,7 @@ function Field({ label, value }: { label: string; value?: string | null }) {
 }
 
 /** Temporadas em tabela — trilho próprio para não estourar no celular. */
-function Seasons({ seasons }: { seasons: readonly SeasonStat[] }) {
-  const head = ['Ano', 'Clube', 'Jogos', 'Gols', 'Assist.', 'Min.']
-
+function Seasons({ seasons, head }: { seasons: readonly SeasonStat[]; head: readonly string[] }) {
   return (
     <div className="empregol-scroll-x" style={{ overflowX: 'auto', marginTop: 14 }}>
       <table

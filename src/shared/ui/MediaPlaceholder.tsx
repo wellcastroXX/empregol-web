@@ -1,4 +1,11 @@
 import { colors } from '@/shared/config/theme'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
+
+const MESSAGES = defineMessages({
+  pt: { placeholder: 'Espaço reservado para imagem' },
+  en: { placeholder: 'Image placeholder' },
+  es: { placeholder: 'Espacio reservado para imagen' },
+})
 
 export interface MediaPlaceholderProps {
   /** Proporção do bloco, no formato CSS `aspect-ratio` (ex.: '4 / 5'). */
@@ -32,6 +39,7 @@ export function MediaPlaceholder({
   src,
   alt,
 }: MediaPlaceholderProps) {
+  const m = useMessages(MESSAGES)
   const dark = surface === 'dark'
 
   return (
@@ -41,8 +49,8 @@ export function MediaPlaceholder({
         src
           ? undefined
           : label
-            ? `Espaço reservado para imagem: ${label}`
-            : 'Espaço reservado para imagem'
+            ? `${m.placeholder}: ${label}`
+            : m.placeholder
       }
       style={{
         width: '100%',

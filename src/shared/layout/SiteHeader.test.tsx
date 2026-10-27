@@ -8,7 +8,7 @@ import { SiteHeader } from './SiteHeader'
 function renderHeader(overlay: boolean) {
   return render(
     <MemoryRouter>
-      <SiteHeader active="App" overlay={overlay} />
+      <SiteHeader active="app" overlay={overlay} />
     </MemoryRouter>,
   )
 }

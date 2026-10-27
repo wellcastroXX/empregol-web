@@ -1,8 +1,29 @@
 import { Link } from 'react-router-dom'
 
 import { colors, fonts } from '@/shared/config/theme'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
+
+const MESSAGES = defineMessages({
+  pt: {
+    eyebrow: 'E R R O · 4 0 4',
+    title: ['Essa página saiu', 'de campo'],
+    back: 'VOLTAR PRO INÍCIO ›',
+  },
+  en: {
+    eyebrow: 'E R R O R · 4 0 4',
+    title: ['This page has left', 'the pitch'],
+    back: 'BACK TO HOME ›',
+  },
+  es: {
+    eyebrow: 'E R R O R · 4 0 4',
+    title: ['Esta página salió', 'de la cancha'],
+    back: 'VOLVER AL INICIO ›',
+  },
+})
 
 export default function NotFoundPage() {
+  const m = useMessages(MESSAGES)
+
   return (
     <section style={{ padding: '120px 40px 160px' }}>
       <div
@@ -16,7 +37,7 @@ export default function NotFoundPage() {
           marginBottom: 18,
         }}
       >
-        E R R O · 4 0 4
+        {m.eyebrow}
       </div>
       <h1
         style={{
@@ -29,9 +50,10 @@ export default function NotFoundPage() {
           margin: '0 0 28px',
         }}
       >
-        Essa página saiu
+        {m.title[0]}
         <br />
-        de campo<span style={{ color: colors.gramado }}>.</span>
+        {m.title[1]}
+        <span style={{ color: colors.gramado }}>.</span>
       </h1>
       <Link
         to="/"
@@ -48,7 +70,7 @@ export default function NotFoundPage() {
           border: `1.5px solid ${colors.tinta}`,
         }}
       >
-        VOLTAR PRO INÍCIO ›
+        {m.back}
       </Link>
     </section>
   )
