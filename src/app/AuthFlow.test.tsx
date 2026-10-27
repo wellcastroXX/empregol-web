@@ -121,7 +121,7 @@ describe('Fluxo de autenticação', () => {
     await user.click(screen.getByRole('button', { name: /Entrar/ }))
 
     await waitFor(() =>
-      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Confirma teu e-mail'),
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Confirme seu e-mail'),
     )
     expect(screen.getByText('lucas@exemplo.com')).toBeInTheDocument()
   })

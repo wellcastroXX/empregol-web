@@ -17,7 +17,7 @@ const MESSAGES = defineMessages({
     mismatch: 'As senhas não conferem.',
     failed: 'Não foi possível redefinir a senha.',
     title: 'Nova senha',
-    lead: 'Escolhe uma senha nova para tua conta.',
+    lead: 'Escolha uma senha nova para sua conta.',
     invalidBefore: 'Link inválido ou incompleto. Peça um novo em',
     invalidLink: 'esqueci a senha',
     done: 'Senha redefinida. Estamos te levando para o login...',

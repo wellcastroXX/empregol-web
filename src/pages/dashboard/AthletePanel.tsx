@@ -36,7 +36,7 @@ const MESSAGES = defineMessages<{
     newInvite: 'N O V O · C O N V I T E',
     contractorTypes: { AGENT: 'AGÊNCIA', CLUB: 'CLUBE' },
     wantsToTalk: 'quer conversar com você',
-    noInvite: 'Nenhum convite ainda. Mantém teu perfil completo para aparecer nas buscas.',
+    noInvite: 'Nenhum convite ainda. Mantenha seu perfil completo para aparecer nas buscas.',
     whoViewed: 'Q U E M · T E · V I U · H O J E',
     viewsCount: (count) => `${count} visualizações hoje`,
     noViews: (week) => `Ainda ninguém te viu hoje — mas a semana toda soma ${week}.`,

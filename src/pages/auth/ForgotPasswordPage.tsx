@@ -11,9 +11,9 @@ import { FORM_MESSAGES } from './components/form-messages'
 
 const MESSAGES = defineMessages({
   pt: {
-    title: 'Recupera o acesso',
-    lead: 'Informa o e-mail da conta e enviamos um link para criar uma senha nova.',
-    sent: 'Se existir uma conta com esse e-mail, o link de redefinição já está a caminho. Confere também a caixa de spam.',
+    title: 'Recupere o acesso',
+    lead: 'Informe o e-mail da conta e enviamos um link para criar uma senha nova.',
+    sent: 'Se existir uma conta com esse e-mail, o link de redefinição já está a caminho. Confira também a caixa de spam.',
     submit: 'Enviar link ›',
   },
   en: {
