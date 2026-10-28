@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { ROUTES } from '@/app/router/routes'
 import { WHATSAPP_URL } from '@/shared/config/contact'
 import { colors, fonts } from '@/shared/config/theme'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 import { Wordmark } from '@/shared/ui/Wordmark'
 
 interface FooterLink {
@@ -18,36 +19,103 @@ interface FooterColumn {
   links: readonly FooterLink[]
 }
 
-const FOOTER_COLUMNS: readonly FooterColumn[] = [
-  {
-    title: 'ATLETAS',
-    links: [
-      { label: 'Cadastro', to: ROUTES.cadastro },
-      { label: 'Baixar o app', to: ROUTES.app },
-      { label: 'Vitrine' },
-      { label: 'Histórias' },
-    ],
+const MESSAGES = defineMessages({
+  pt: {
+    athletes: 'ATLETAS',
+    clubs: 'CLUBES',
+    company: 'EMPRESA',
+    signUp: 'Cadastro',
+    getApp: 'Baixar o app',
+    showcase: 'Vitrine',
+    stories: 'Histórias',
+    signIn: 'Entrar',
+    dashboard: 'Painel',
+    scout: 'Scout',
+    combine: 'Combine 2026',
+    about: 'Sobre',
+    support: 'Suporte',
+    press: 'Imprensa',
+    contact: 'Contato',
+    legal: 'Termos e privacidade',
+    tagline: 'Recolocando atletas no jogo.',
+    copyright: '© 2026 · EMPREGOL · BRASIL',
   },
-  {
-    title: 'CLUBES',
-    links: [
-      { label: 'Entrar', to: ROUTES.entrar },
-      { label: 'Painel', to: ROUTES.painel },
-      { label: 'Scout' },
-      { label: 'Combine 2026' },
-    ],
+  en: {
+    athletes: 'ATHLETES',
+    clubs: 'CLUBS',
+    company: 'COMPANY',
+    signUp: 'Sign up',
+    getApp: 'Get the app',
+    showcase: 'Showcase',
+    stories: 'Stories',
+    signIn: 'Sign in',
+    dashboard: 'Dashboard',
+    scout: 'Scout',
+    combine: 'Combine 2026',
+    about: 'About',
+    support: 'Support',
+    press: 'Press',
+    contact: 'Contact',
+    legal: 'Terms and privacy',
+    tagline: 'Putting athletes back in the game.',
+    copyright: '© 2026 · EMPREGOL · BRAZIL',
   },
-  {
-    title: 'EMPRESA',
-    links: [
-      { label: 'Sobre', to: `${ROUTES.home}#sobre` },
-      { label: 'Suporte', to: ROUTES.suporte },
-      { label: 'Imprensa' },
-      { label: 'Contato', href: WHATSAPP_URL },
-      { label: 'Termos e privacidade', to: ROUTES.politicaPrivacidade },
-    ],
+  es: {
+    athletes: 'ATLETAS',
+    clubs: 'CLUBES',
+    company: 'EMPRESA',
+    signUp: 'Registro',
+    getApp: 'Descargar la app',
+    showcase: 'Vitrina',
+    stories: 'Historias',
+    signIn: 'Entrar',
+    dashboard: 'Panel',
+    scout: 'Scout',
+    combine: 'Combine 2026',
+    about: 'Nosotros',
+    support: 'Soporte',
+    press: 'Prensa',
+    contact: 'Contacto',
+    legal: 'Términos y privacidad',
+    tagline: 'Devolviendo atletas al juego.',
+    copyright: '© 2026 · EMPREGOL · BRASIL',
   },
-]
+})
+
+type FooterMessages = (typeof MESSAGES)['pt']
+
+function footerColumns(m: FooterMessages): readonly FooterColumn[] {
+  return [
+    {
+      title: m.athletes,
+      links: [
+        { label: m.signUp, to: ROUTES.cadastro },
+        { label: m.getApp, to: ROUTES.app },
+        { label: m.showcase },
+        { label: m.stories },
+      ],
+    },
+    {
+      title: m.clubs,
+      links: [
+        { label: m.signIn, to: ROUTES.entrar },
+        { label: m.dashboard, to: ROUTES.painel },
+        { label: m.scout },
+        { label: m.combine },
+      ],
+    },
+    {
+      title: m.company,
+      links: [
+        { label: m.about, to: `${ROUTES.home}#sobre` },
+        { label: m.support, to: ROUTES.suporte },
+        { label: m.press },
+        { label: m.contact, href: WHATSAPP_URL },
+        { label: m.legal, to: ROUTES.politicaPrivacidade },
+      ],
+    },
+  ]
+}
 
 /** Item do rodapé: externo abre em aba nova, interno vai pelo router, e o que
  *  ainda não tem destino fica como texto — não link falso. */
@@ -82,6 +150,7 @@ const linkStyle = {
 
 /** Rodapé escuro em três colunas. */
 export function SiteFooter() {
+  const m = useMessages(MESSAGES)
   return (
     <footer
       style={{ background: colors.tinta, color: colors.giz, padding: '60px var(--page-x) 36px' }}
@@ -108,7 +177,7 @@ export function SiteFooter() {
               maxWidth: 320,
             }}
           >
-            Recolocando atletas no jogo.
+            {m.tagline}
           </p>
         </div>
         <div
@@ -119,7 +188,7 @@ export function SiteFooter() {
             rowGap: 32,
           }}
         >
-          {FOOTER_COLUMNS.map(({ title, links }) => (
+          {footerColumns(m).map(({ title, links }) => (
             <div key={title}>
               <div
                 style={{
@@ -162,7 +231,7 @@ export function SiteFooter() {
             color: colors.cinzaOnDark,
           }}
         >
-          © 2026 · EMPREGOL · BRASIL
+          {m.copyright}
         </span>
         <span
           style={{

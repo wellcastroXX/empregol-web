@@ -2,13 +2,38 @@ import { useState, type FormEvent } from 'react'
 
 import { authService } from '@/features/auth/lib/auth-service'
 import { colors, fonts } from '@/shared/config/theme'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 
 import { AuthAlert, SubmitButton } from './components/AuthControls'
 import { AuthField } from './components/AuthField'
 import { AuthShell } from './components/AuthShell'
+import { FORM_MESSAGES } from './components/form-messages'
+
+const MESSAGES = defineMessages({
+  pt: {
+    title: 'Recupere o acesso',
+    lead: 'Informe o e-mail da conta e enviamos um link para criar uma senha nova.',
+    sent: 'Se existir uma conta com esse e-mail, o link de redefinição já está a caminho. Confira também a caixa de spam.',
+    submit: 'Enviar link ›',
+  },
+  en: {
+    title: 'Recover access',
+    lead: 'Enter your account email and we will send you a link to create a new password.',
+    sent: 'If an account exists with that email, the reset link is on its way. Check your spam folder too.',
+    submit: 'Send link ›',
+  },
+  es: {
+    title: 'Recupera el acceso',
+    lead: 'Indica el correo de la cuenta y te enviaremos un enlace para crear una contraseña nueva.',
+    sent: 'Si existe una cuenta con ese correo, el enlace para restablecerla ya va en camino. Revisa también la carpeta de spam.',
+    submit: 'Enviar enlace ›',
+  },
+})
 
 /** Solicitação de link de redefinição de senha. */
 export default function ForgotPasswordPage() {
+  const m = useMessages(MESSAGES)
+  const common = useMessages(FORM_MESSAGES)
   const [email, setEmail] = useState('')
   const [sent, setSent] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -19,7 +44,7 @@ export default function ForgotPasswordPage() {
     if (loading) return
 
     if (!/^\S+@\S+\.\S+$/.test(email)) {
-      setError('E-mail inválido')
+      setError(common.emailInvalid)
       return
     }
 
@@ -49,7 +74,8 @@ export default function ForgotPasswordPage() {
           margin: '0 0 6px',
         }}
       >
-        Recupera o acesso<span style={{ color: colors.gramado }}>.</span>
+        {m.title}
+        <span style={{ color: colors.gramado }}>.</span>
       </h1>
       <p
         style={{
@@ -60,16 +86,13 @@ export default function ForgotPasswordPage() {
           lineHeight: 1.5,
         }}
       >
-        Informa o e-mail da conta e enviamos um link para criar uma senha nova.
+        {m.lead}
       </p>
 
       {error && <AuthAlert tone="error">{error}</AuthAlert>}
 
       {sent ? (
-        <AuthAlert tone="success">
-          Se existir uma conta com esse e-mail, o link de redefinição já está a caminho. Confere
-          também a caixa de spam.
-        </AuthAlert>
+        <AuthAlert tone="success">{m.sent}</AuthAlert>
       ) : (
         <form
           onSubmit={handleSubmit}
@@ -77,17 +100,15 @@ export default function ForgotPasswordPage() {
           noValidate
         >
           <AuthField
-            label="E-mail"
+            label={common.email}
             value={email}
             onChange={setEmail}
-            placeholder="seu@email.com"
+            placeholder={common.emailPlaceholder}
             type="email"
             inputMode="email"
             autoComplete="email"
           />
-          <SubmitButton loading={loading} loadingLabel="Enviando...">
-            Enviar link ›
-          </SubmitButton>
+          <SubmitButton loading={loading}>{m.submit}</SubmitButton>
         </form>
       )}
     </AuthShell>

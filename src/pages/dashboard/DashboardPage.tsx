@@ -3,6 +3,7 @@ import { useState, type CSSProperties } from 'react'
 import { useAuth } from '@/features/auth/ui/auth-context'
 
 import { colors } from '@/shared/config/theme'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 
 import { AthletePanel } from './AthletePanel'
 import { AthleteProfileHost } from './components/AthleteProfileDrawer'
@@ -14,6 +15,33 @@ import { OverviewSection } from './components/sections/OverviewSection'
 import { ProfileSection } from './components/sections/ProfileSection'
 import { SearchSection } from './components/sections/SearchSection'
 import { ShortlistSection } from './components/sections/ShortlistSection'
+
+const MESSAGES = defineMessages({
+  pt: {
+    savedSearchesTitle: 'Buscas salvas — em breve',
+    savedSearchesBody:
+      'Guardar um conjunto de filtros e ser avisado quando aparecer atleta novo. A API ainda não tem esse recurso, então nada é exibido aqui para não inventar número.',
+    reportsTitle: 'Relatórios — em breve',
+    reportsBody:
+      'Consolidado de visualizações, propostas e conversões da sua conta. Depende de um endpoint de métricas que ainda não existe na API.',
+  },
+  en: {
+    savedSearchesTitle: 'Saved searches — coming soon',
+    savedSearchesBody:
+      'Save a set of filters and get notified when a new athlete shows up. The API does not support this yet, so nothing is shown here rather than making up numbers.',
+    reportsTitle: 'Reports — coming soon',
+    reportsBody:
+      'A summary of views, offers and conversions for your account. It depends on a metrics endpoint the API does not have yet.',
+  },
+  es: {
+    savedSearchesTitle: 'Búsquedas guardadas — próximamente',
+    savedSearchesBody:
+      'Guardar un conjunto de filtros y recibir un aviso cuando aparezca un atleta nuevo. La API todavía no tiene esta función, así que aquí no se muestra nada para no inventar cifras.',
+    reportsTitle: 'Informes — próximamente',
+    reportsBody:
+      'Resumen de visualizaciones, propuestas y conversiones de tu cuenta. Depende de un endpoint de métricas que la API todavía no tiene.',
+  },
+})
 
 /** Largura da barra em cada estado. O grid da página lê isso por variável. */
 const ASIDE_WIDTH = { expanded: '232px', collapsed: '76px' } as const
@@ -79,6 +107,8 @@ function SectionContent({
   section: DashSection
   onNavigate: (section: DashSection) => void
 }) {
+  const m = useMessages(MESSAGES)
+
   switch (section) {
     case 'VISÃO GERAL':
       return <OverviewSection onNavigate={onNavigate} />
@@ -91,18 +121,8 @@ function SectionContent({
     case 'PERFIL':
       return <ProfileSection />
     case 'BUSCAS SALVAS':
-      return (
-        <ComingSoonSection
-          title="Buscas salvas — em breve"
-          description="Guardar um conjunto de filtros e ser avisado quando aparecer atleta novo. A API ainda não tem esse recurso, então nada é exibido aqui para não inventar número."
-        />
-      )
+      return <ComingSoonSection title={m.savedSearchesTitle} description={m.savedSearchesBody} />
     case 'RELATÓRIOS':
-      return (
-        <ComingSoonSection
-          title="Relatórios — em breve"
-          description="Consolidado de visualizações, propostas e conversões da sua conta. Depende de um endpoint de métricas que ainda não existe na API."
-        />
-      )
+      return <ComingSoonSection title={m.reportsTitle} description={m.reportsBody} />
   }
 }

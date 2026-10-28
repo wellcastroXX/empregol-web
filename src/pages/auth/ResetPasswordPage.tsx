@@ -4,16 +4,68 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { ROUTES } from '@/app/router/routes'
 import { authService } from '@/features/auth/lib/auth-service'
 import { colors, fonts } from '@/shared/config/theme'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 
 import { AuthAlert, SubmitButton } from './components/AuthControls'
 import { AuthField } from './components/AuthField'
 import { AuthShell } from './components/AuthShell'
+import { FORM_MESSAGES } from './components/form-messages'
+
+const MESSAGES = defineMessages({
+  pt: {
+    passwordMin: 'A senha deve ter no mínimo 8 caracteres.',
+    mismatch: 'As senhas não conferem.',
+    failed: 'Não foi possível redefinir a senha.',
+    title: 'Nova senha',
+    lead: 'Escolha uma senha nova para sua conta.',
+    invalidBefore: 'Link inválido ou incompleto. Peça um novo em',
+    invalidLink: 'esqueci a senha',
+    done: 'Senha redefinida. Estamos te levando para o login...',
+    newPassword: 'Nova senha',
+    confirm: 'Confirmar senha',
+    confirmPlaceholder: 'Repita a senha',
+    submit: 'Redefinir senha ›',
+    submitting: 'Salvando...',
+  },
+  en: {
+    passwordMin: 'Password must be at least 8 characters.',
+    mismatch: 'Passwords do not match.',
+    failed: 'Could not reset the password.',
+    title: 'New password',
+    lead: 'Choose a new password for your account.',
+    invalidBefore: 'Invalid or incomplete link. Request a new one at',
+    invalidLink: 'forgot password',
+    done: 'Password reset. Taking you to sign in...',
+    newPassword: 'New password',
+    confirm: 'Confirm password',
+    confirmPlaceholder: 'Repeat the password',
+    submit: 'Reset password ›',
+    submitting: 'Saving...',
+  },
+  es: {
+    passwordMin: 'La contraseña debe tener al menos 8 caracteres.',
+    mismatch: 'Las contraseñas no coinciden.',
+    failed: 'No se pudo restablecer la contraseña.',
+    title: 'Nueva contraseña',
+    lead: 'Elige una contraseña nueva para tu cuenta.',
+    invalidBefore: 'Enlace inválido o incompleto. Pide uno nuevo en',
+    invalidLink: 'olvidé mi contraseña',
+    done: 'Contraseña restablecida. Te llevamos al inicio de sesión...',
+    newPassword: 'Nueva contraseña',
+    confirm: 'Confirmar contraseña',
+    confirmPlaceholder: 'Repite la contraseña',
+    submit: 'Restablecer contraseña ›',
+    submitting: 'Guardando...',
+  },
+})
 
 /**
  * Define uma senha nova a partir do token do e-mail
  * (`/redefinir-senha?token=...`).
  */
 export default function ResetPasswordPage() {
+  const m = useMessages(MESSAGES)
+  const common = useMessages(FORM_MESSAGES)
   const [params] = useSearchParams()
   const token = params.get('token') ?? ''
   const navigate = useNavigate()
@@ -29,11 +81,11 @@ export default function ResetPasswordPage() {
     if (loading) return
 
     if (password.length < 8) {
-      setError('A senha deve ter no mínimo 8 caracteres.')
+      setError(m.passwordMin)
       return
     }
     if (password !== confirm) {
-      setError('As senhas não conferem.')
+      setError(m.mismatch)
       return
     }
 
@@ -45,7 +97,7 @@ export default function ResetPasswordPage() {
       // Dá um instante para a confirmação ser lida antes de ir ao login.
       setTimeout(() => navigate(ROUTES.entrar, { replace: true }), 2200)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Não foi possível redefinir a senha.')
+      setError(err instanceof Error ? err.message : m.failed)
     } finally {
       setLoading(false)
     }
@@ -63,7 +115,8 @@ export default function ResetPasswordPage() {
           margin: '0 0 6px',
         }}
       >
-        Nova senha<span style={{ color: colors.gramado }}>.</span>
+        {m.title}
+        <span style={{ color: colors.gramado }}>.</span>
       </h1>
       <p
         style={{
@@ -74,20 +127,20 @@ export default function ResetPasswordPage() {
           lineHeight: 1.5,
         }}
       >
-        Escolhe uma senha nova para tua conta.
+        {m.lead}
       </p>
 
       {/* Sem token não há o que redefinir — link quebrado ou aberto direto. */}
       {!token ? (
         <AuthAlert tone="error">
-          Link inválido ou incompleto. Peça um novo em{' '}
+          {m.invalidBefore}{' '}
           <Link to={ROUTES.esqueciSenha} style={{ color: colors.tinta, fontWeight: 500 }}>
-            esqueci a senha
+            {m.invalidLink}
           </Link>
           .
         </AuthAlert>
       ) : done ? (
-        <AuthAlert tone="success">Senha redefinida. Estamos te levando para o login...</AuthAlert>
+        <AuthAlert tone="success">{m.done}</AuthAlert>
       ) : (
         <form
           onSubmit={handleSubmit}
@@ -98,25 +151,25 @@ export default function ResetPasswordPage() {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <AuthField
-              label="Nova senha"
+              label={m.newPassword}
               value={password}
               onChange={setPassword}
-              placeholder="Mínimo 8 caracteres"
+              placeholder={common.newPasswordPlaceholder}
               type="password"
               autoComplete="new-password"
             />
             <AuthField
-              label="Confirmar senha"
+              label={m.confirm}
               value={confirm}
               onChange={setConfirm}
-              placeholder="Repita a senha"
+              placeholder={m.confirmPlaceholder}
               type="password"
               autoComplete="new-password"
             />
           </div>
 
-          <SubmitButton loading={loading} loadingLabel="Salvando..." style={{ borderRadius: 30 }}>
-            Redefinir senha ›
+          <SubmitButton loading={loading} loadingLabel={m.submitting} style={{ borderRadius: 30 }}>
+            {m.submit}
           </SubmitButton>
         </form>
       )}

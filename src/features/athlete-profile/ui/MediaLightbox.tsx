@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 import { colors, fonts } from '@/shared/config/theme'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 
 import type { AthleteMedia } from '../model/athlete-profile.types'
 
@@ -14,6 +15,36 @@ import type { AthleteMedia } from '../model/athlete-profile.types'
  */
 
 /** URL de embed de YouTube ou Vimeo. `null` quando o link não é de nenhum dos dois. */
+const MESSAGES = defineMessages({
+  pt: {
+    closeLabel: 'Fechar',
+    close: 'FECHAR ✕',
+    previous: '‹ Anterior',
+    next: 'Próximo ›',
+    playbackFailed: 'Seu navegador não conseguiu tocar este arquivo.',
+    external: 'Este item está hospedado fora da Empregol.',
+    openNewTab: 'ABRIR EM NOVA ABA ›',
+  },
+  en: {
+    closeLabel: 'Close',
+    close: 'CLOSE ✕',
+    previous: '‹ Previous',
+    next: 'Next ›',
+    playbackFailed: 'Your browser could not play this file.',
+    external: 'This item is hosted outside Empregol.',
+    openNewTab: 'OPEN IN NEW TAB ›',
+  },
+  es: {
+    closeLabel: 'Cerrar',
+    close: 'CERRAR ✕',
+    previous: '‹ Anterior',
+    next: 'Siguiente ›',
+    playbackFailed: 'Tu navegador no pudo reproducir este archivo.',
+    external: 'Este elemento está alojado fuera de Empregol.',
+    openNewTab: 'ABRIR EN UNA PESTAÑA NUEVA ›',
+  },
+})
+
 function embedUrl(url: string): string | null {
   const youtube = /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/.exec(
     url,
@@ -35,6 +66,7 @@ export interface MediaLightboxProps {
 }
 
 export function MediaLightbox({ items, index, onIndexChange, onClose }: MediaLightboxProps) {
+  const m = useMessages(MESSAGES)
   const item = items[index]
   const closeRef = useRef<HTMLButtonElement>(null)
   // Guarda quem tinha o foco para devolver ao fechar — senão o foco volta pro
@@ -83,7 +115,7 @@ export function MediaLightbox({ items, index, onIndexChange, onClose }: MediaLig
     >
       <button
         type="button"
-        aria-label="Fechar"
+        aria-label={m.closeLabel}
         onClick={onClose}
         style={{
           position: 'absolute',
@@ -124,7 +156,7 @@ export function MediaLightbox({ items, index, onIndexChange, onClose }: MediaLig
               letterSpacing: '0.12em',
             }}
           >
-            FECHAR ✕
+            {m.close}
           </button>
         </div>
 
@@ -161,7 +193,7 @@ export function MediaLightbox({ items, index, onIndexChange, onClose }: MediaLig
         {items.length > 1 && (
           <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
             <Nav
-              label="‹ Anterior"
+              label={m.previous}
               onClick={() => onIndexChange(index - 1)}
               disabled={index === 0}
             />
@@ -177,7 +209,7 @@ export function MediaLightbox({ items, index, onIndexChange, onClose }: MediaLig
               {index + 1} / {items.length}
             </span>
             <Nav
-              label="Próximo ›"
+              label={m.next}
               onClick={() => onIndexChange(index + 1)}
               disabled={index === items.length - 1}
             />
@@ -189,6 +221,7 @@ export function MediaLightbox({ items, index, onIndexChange, onClose }: MediaLig
 }
 
 function Player({ item }: { item: AthleteMedia }) {
+  const m = useMessages(MESSAGES)
   const [failed, setFailed] = useState(false)
   const frame = {
     width: '100%',
@@ -246,11 +279,7 @@ function Player({ item }: { item: AthleteMedia }) {
         lineHeight: 1.6,
       }}
     >
-      <p style={{ margin: '0 0 14px' }}>
-        {failed
-          ? 'Seu navegador não conseguiu tocar este arquivo.'
-          : 'Este item está hospedado fora da Empregol.'}
-      </p>
+      <p style={{ margin: '0 0 14px' }}>{failed ? m.playbackFailed : m.external}</p>
       <a
         href={item.url}
         target="_blank"
@@ -265,7 +294,7 @@ function Player({ item }: { item: AthleteMedia }) {
           paddingBottom: 2,
         }}
       >
-        ABRIR EM NOVA ABA ›
+        {m.openNewTab}
       </a>
     </div>
   )

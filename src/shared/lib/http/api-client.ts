@@ -1,4 +1,5 @@
 import { env } from '@/shared/config/env'
+import { currentLocale, LOCALE_TAGS, type Locale } from '@/shared/i18n/locale'
 
 /** Envelope padrão de sucesso da empregol-api. */
 export interface ApiEnvelope<T> {
@@ -55,6 +56,25 @@ export interface RequestOptions {
   signal?: AbortSignal
 }
 
+/** Mensagens que o próprio cliente gera — quando a API nem chegou a responder. */
+const CLIENT_MESSAGES = {
+  pt: {
+    network: 'Sem conexão com o servidor. Verifique sua internet.',
+    generic: 'Algo deu errado. Tente novamente.',
+    unexpected: 'Erro inesperado.',
+  },
+  en: {
+    network: 'Could not reach the server. Check your internet connection.',
+    generic: 'Something went wrong. Please try again.',
+    unexpected: 'Unexpected error.',
+  },
+  es: {
+    network: 'Sin conexión con el servidor. Revisa tu internet.',
+    generic: 'Algo salió mal. Inténtalo de nuevo.',
+    unexpected: 'Error inesperado.',
+  },
+} satisfies Record<Locale, Record<string, string>>
+
 interface ApiErrorBody {
   message?: string
   code?: string
@@ -76,6 +96,9 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
       method,
       headers: {
         Accept: 'application/json',
+        // As mensagens de erro vêm prontas da API; isto permite a ela responder
+        // no idioma do site.
+        'Accept-Language': LOCALE_TAGS[currentLocale()],
         ...(body ? { 'Content-Type': 'application/json' } : {}),
         ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       },
@@ -84,14 +107,14 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
     })
   } catch {
     // fetch só rejeita em falha de rede ou abort — a API nunca chegou a responder.
-    throw new ApiError('Sem conexão com o servidor. Verifique sua internet.', 'NETWORK_ERROR', 0)
+    throw new ApiError(CLIENT_MESSAGES[currentLocale()].network, 'NETWORK_ERROR', 0)
   }
 
   const payload = (await response.json().catch(() => null)) as (ApiErrorBody & T) | null
 
   if (!response.ok) {
     throw new ApiError(
-      payload?.message ?? 'Algo deu errado. Tente novamente.',
+      payload?.message ?? CLIENT_MESSAGES[currentLocale()].generic,
       payload?.code ?? 'UNKNOWN',
       response.status,
       payload?.errors,
@@ -104,5 +127,9 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
 /** Normaliza qualquer falha em ApiError. */
 export function toApiError(error: unknown): ApiError {
   if (error instanceof ApiError) return error
-  return new ApiError(error instanceof Error ? error.message : 'Erro inesperado.', 'UNKNOWN', 0)
+  return new ApiError(
+    error instanceof Error ? error.message : CLIENT_MESSAGES[currentLocale()].unexpected,
+    'UNKNOWN',
+    0,
+  )
 }

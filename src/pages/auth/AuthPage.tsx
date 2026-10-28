@@ -11,21 +11,77 @@ import { AuthBrandPanel } from './components/AuthBrandPanel'
 import { AuthHeader } from './components/AuthHeader'
 import { ContractorSignUpForm } from './components/ContractorSignUpForm'
 import { LoginForm } from './components/LoginForm'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 
 type Mode = 'login' | 'signup'
 /** Qual conta está sendo criada — atleta, agência ou clube. */
 type AccountType = 'atleta' | ContractorKind
 
-const ACCOUNT_TYPES: ReadonlyArray<readonly [AccountType, string]> = [
-  ['atleta', 'Atleta'],
-  ['club', 'Clube'],
-  ['agent', 'Agência'],
-]
+const ACCOUNT_TYPES: readonly AccountType[] = ['atleta', 'club', 'agent']
 
-const MODES: ReadonlyArray<readonly [Mode, string]> = [
-  ['login', 'Entrar'],
-  ['signup', 'Cadastrar'],
-]
+const MODES: readonly Mode[] = ['login', 'signup']
+
+const MESSAGES = defineMessages<{
+  accountTypes: Record<AccountType, string>
+  modes: Record<Mode, string>
+  modesLabel: string
+  title: Record<Mode, string>
+  newHere: string
+  signUp: string
+  haveAccount: string
+  signIn: string
+  iAm: string
+  consentBefore: string
+  terms: string
+  consentAnd: string
+  privacy: string
+}>({
+  pt: {
+    accountTypes: { atleta: 'Atleta', club: 'Clube', agent: 'Agência' },
+    modes: { login: 'Entrar', signup: 'Cadastrar' },
+    modesLabel: 'Entrar ou cadastrar',
+    title: { login: 'Entre de novo', signup: 'Crie sua conta' },
+    newHere: 'Novo aqui?',
+    signUp: 'Cadastre-se ›',
+    haveAccount: 'Já tem conta?',
+    signIn: 'Entre ›',
+    iAm: 'Eu sou',
+    consentBefore: 'Ao continuar você aceita os',
+    terms: 'termos',
+    consentAnd: 'e a',
+    privacy: 'política de privacidade',
+  },
+  en: {
+    accountTypes: { atleta: 'Athlete', club: 'Club', agent: 'Agency' },
+    modes: { login: 'Sign in', signup: 'Sign up' },
+    modesLabel: 'Sign in or sign up',
+    title: { login: 'Welcome back', signup: 'Create your account' },
+    newHere: 'New here?',
+    signUp: 'Sign up ›',
+    haveAccount: 'Already have an account?',
+    signIn: 'Sign in ›',
+    iAm: 'I am',
+    consentBefore: 'By continuing you accept the',
+    terms: 'terms',
+    consentAnd: 'and the',
+    privacy: 'privacy policy',
+  },
+  es: {
+    accountTypes: { atleta: 'Atleta', club: 'Club', agent: 'Agencia' },
+    modes: { login: 'Entrar', signup: 'Registrarse' },
+    modesLabel: 'Entrar o registrarse',
+    title: { login: 'Vuelve a entrar', signup: 'Crea tu cuenta' },
+    newHere: '¿Nuevo aquí?',
+    signUp: 'Regístrate ›',
+    haveAccount: '¿Ya tienes cuenta?',
+    signIn: 'Entra ›',
+    iAm: 'Soy',
+    consentBefore: 'Al continuar aceptas los',
+    terms: 'términos',
+    consentAnd: 'y la',
+    privacy: 'política de privacidad',
+  },
+})
 
 /**
  * Login e cadastro no mesmo split editorial.
@@ -34,6 +90,7 @@ const MODES: ReadonlyArray<readonly [Mode, string]> = [
  * usuário pode chegar direto no cadastro por link, e alternar troca a URL.
  */
 export default function AuthPage() {
+  const m = useMessages(MESSAGES)
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const { status } = useAuth()
@@ -75,7 +132,7 @@ export default function AuthPage() {
 
         <div
           role="tablist"
-          aria-label="Entrar ou cadastrar"
+          aria-label={m.modesLabel}
           style={{
             display: 'flex',
             gap: 4,
@@ -86,7 +143,7 @@ export default function AuthPage() {
             width: 'fit-content',
           }}
         >
-          {MODES.map(([id, label]) => (
+          {MODES.map((id) => (
             <button
               key={id}
               type="button"
@@ -108,7 +165,7 @@ export default function AuthPage() {
                 boxShadow: mode === id ? `0 1px 2px ${colors.tinta12}` : 'none',
               }}
             >
-              {label}
+              {m.modes[id]}
             </button>
           ))}
         </div>
@@ -123,7 +180,7 @@ export default function AuthPage() {
             margin: '0 0 6px',
           }}
         >
-          {mode === 'login' ? 'Entre de novo' : 'Crie sua conta'}
+          {m.title[mode]}
           <span style={{ color: colors.gramado }}>.</span>
         </h1>
 
@@ -132,16 +189,16 @@ export default function AuthPage() {
         >
           {mode === 'login' ? (
             <>
-              Novo aqui?{' '}
+              {m.newHere}{' '}
               <Link to={ROUTES.cadastro} replace style={{ color: colors.tinta, fontWeight: 500 }}>
-                Cadastre-se ›
+                {m.signUp}
               </Link>
             </>
           ) : (
             <>
-              Já tem conta?{' '}
+              {m.haveAccount}{' '}
               <Link to={ROUTES.entrar} replace style={{ color: colors.tinta, fontWeight: 500 }}>
-                Entre ›
+                {m.signIn}
               </Link>
             </>
           )}
@@ -161,10 +218,10 @@ export default function AuthPage() {
                 padding: 0,
               }}
             >
-              Eu sou
+              {m.iAm}
             </legend>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
-              {ACCOUNT_TYPES.map(([id, label]) => (
+              {ACCOUNT_TYPES.map((id) => (
                 <button
                   key={id}
                   type="button"
@@ -181,7 +238,7 @@ export default function AuthPage() {
                   }}
                 >
                   <span style={{ fontFamily: fonts.display, fontWeight: 600, fontSize: 15 }}>
-                    {label}
+                    {m.accountTypes[id]}
                   </span>
                 </button>
               ))}
@@ -208,13 +265,13 @@ export default function AuthPage() {
             lineHeight: 1.5,
           }}
         >
-          Ao continuar você aceita os{' '}
+          {m.consentBefore}{' '}
           <a href="#" style={{ color: colors.tinta }}>
-            termos
+            {m.terms}
           </a>{' '}
-          e a{' '}
+          {m.consentAnd}{' '}
           <a href="#" style={{ color: colors.tinta }}>
-            política de privacidade
+            {m.privacy}
           </a>
           .
         </p>

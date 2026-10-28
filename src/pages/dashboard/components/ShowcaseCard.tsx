@@ -3,7 +3,50 @@ import { useState } from 'react'
 import { useMyAthleteProfile, useSetPublicProfile } from '@/features/athlete-dashboard/lib/queries'
 import { perfilPublicoDe } from '@/app/router/routes'
 import { colors, fonts } from '@/shared/config/theme'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 import { Eyebrow } from '@/shared/ui/Eyebrow'
+
+const MESSAGES = defineMessages({
+  pt: {
+    eyebrow: 'V I T R I N E · P Ú B L I C A',
+    publicBody:
+      'Sua ficha está aberta: qualquer pessoa com o link vê suas temporadas e seus vídeos. Pretensão salarial e dados de contato continuam fora dela.',
+    privateBody:
+      'Sua vitrine está fechada — seu perfil continua aparecendo normalmente para clubes e agências aprovadas, só não tem link aberto na internet. Reabrir devolve o mesmo endereço de antes.',
+    copy: 'Copiar',
+    copied: 'Copiado',
+    failed: 'Não foi possível alterar a vitrine.',
+    saving: 'Salvando...',
+    close: 'Fechar vitrine',
+    open: 'Abrir vitrine pública',
+  },
+  en: {
+    eyebrow: 'P U B L I C · S H O W C A S E',
+    publicBody:
+      'Your profile is open: anyone with the link can see your seasons and your videos. Salary expectations and contact details stay out of it.',
+    privateBody:
+      'Your showcase is closed — your profile still shows up as usual for approved clubs and agencies, it just has no open link on the internet. Reopening brings back the same address as before.',
+    copy: 'Copy',
+    copied: 'Copied',
+    failed: 'Could not change the showcase.',
+    saving: 'Saving...',
+    close: 'Close showcase',
+    open: 'Open public showcase',
+  },
+  es: {
+    eyebrow: 'V I T R I N A · P Ú B L I C A',
+    publicBody:
+      'Tu ficha está abierta: cualquier persona con el enlace ve tus temporadas y tus videos. Las pretensiones salariales y los datos de contacto quedan fuera.',
+    privateBody:
+      'Tu vitrina está cerrada — tu perfil sigue apareciendo normalmente para clubes y agencias aprobados, solo que no tiene un enlace abierto en internet. Al reabrirla vuelve la misma dirección de antes.',
+    copy: 'Copiar',
+    copied: 'Copiado',
+    failed: 'No se pudo cambiar la vitrina.',
+    saving: 'Guardando...',
+    close: 'Cerrar vitrina',
+    open: 'Abrir vitrina pública',
+  },
+})
 
 const cardStyle = {
   background: colors.giz,
@@ -20,6 +63,7 @@ const cardStyle = {
  * regra melhor do que um texto genérico aqui.
  */
 export function ShowcaseCard() {
+  const m = useMessages(MESSAGES)
   const profile = useMyAthleteProfile()
   const setPublic = useSetPublicProfile()
   const [copied, setCopied] = useState(false)
@@ -42,7 +86,7 @@ export function ShowcaseCard() {
   return (
     <section style={{ ...cardStyle, marginBottom: 16 }}>
       <Eyebrow size={10} style={{ letterSpacing: '0.16em', marginBottom: 12 }}>
-        V I T R I N E · P Ú B L I C A
+        {m.eyebrow}
       </Eyebrow>
 
       <p
@@ -54,9 +98,7 @@ export function ShowcaseCard() {
           margin: '0 0 16px',
         }}
       >
-        {isPublic
-          ? 'Sua ficha está aberta: qualquer pessoa com o link vê suas temporadas e seus vídeos. Pretensão salarial e dados de contato continuam fora dela.'
-          : 'Sua vitrine está fechada — seu perfil continua aparecendo normalmente para clubes e agências aprovadas, só não tem link aberto na internet. Reabrir devolve o mesmo endereço de antes.'}
+        {isPublic ? m.publicBody : m.privateBody}
       </p>
 
       {isPublic && url && (
@@ -83,7 +125,7 @@ export function ShowcaseCard() {
             {url}
           </code>
           <button type="button" onClick={() => void copy()} style={ghostButton}>
-            {copied ? 'Copiado' : 'Copiar'}
+            {copied ? m.copied : m.copy}
           </button>
         </div>
       )}
@@ -99,9 +141,7 @@ export function ShowcaseCard() {
             margin: '0 0 14px',
           }}
         >
-          {setPublic.error instanceof Error
-            ? setPublic.error.message
-            : 'Não foi possível alterar a vitrine.'}
+          {setPublic.error instanceof Error ? setPublic.error.message : m.failed}
         </p>
       )}
 
@@ -123,11 +163,7 @@ export function ShowcaseCard() {
           textTransform: 'uppercase',
         }}
       >
-        {setPublic.isPending
-          ? 'Salvando...'
-          : isPublic
-            ? 'Fechar vitrine'
-            : 'Abrir vitrine pública'}
+        {setPublic.isPending ? m.saving : isPublic ? m.close : m.open}
       </button>
     </section>
   )

@@ -11,8 +11,66 @@ import { useAuth } from '@/features/auth/ui/auth-context'
 import { scoutApi } from '@/features/scout/api/scout-api'
 import { useFavorites, useToggleFavorite } from '@/features/scout/lib/queries'
 import { colors, fonts } from '@/shared/config/theme'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 import { Eyebrow } from '@/shared/ui/Eyebrow'
 import { useDocumentTitle } from '@/shared/lib/hooks/useDocumentTitle'
+
+const MESSAGES = defineMessages({
+  pt: {
+    fallbackTitle: 'Perfil do atleta — Empregol',
+    loading: 'C A R R E G A N D O',
+    unavailableEyebrow: 'P E R F I L · I N D I S P O N Í V E L',
+    unavailableTitle: ['Esse perfil não está', 'aberto ao público'],
+    unavailableBody:
+      'Ou o endereço está errado, ou o atleta ainda não abriu a vitrine. Clubes e agências cadastrados encontram todos os atletas pela busca do painel.',
+    asClub: 'Como clube',
+    asVisitor: 'Como visitante',
+    removeShortlist: 'Remover da shortlist',
+    saveShortlist: 'Salvar na shortlist',
+    onShortlist: 'Na sua shortlist',
+    openFailed: 'Não foi possível abrir a conversa.',
+    opening: 'ABRINDO...',
+    sendMessage: 'ENVIAR MENSAGEM ›',
+    proposalSoon: 'Propostas ainda não estão disponíveis no site — em breve.',
+    inviteTrial: 'CONVIDAR PARA TESTE',
+  },
+  en: {
+    fallbackTitle: 'Athlete profile — Empregol',
+    loading: 'L O A D I N G',
+    unavailableEyebrow: 'P R O F I L E · U N A V A I L A B L E',
+    unavailableTitle: ['This profile is not', 'open to the public'],
+    unavailableBody:
+      'Either the address is wrong, or the athlete has not opened their showcase yet. Registered clubs and agencies can find every athlete through the dashboard search.',
+    asClub: 'As a club',
+    asVisitor: 'As a visitor',
+    removeShortlist: 'Remove from shortlist',
+    saveShortlist: 'Save to shortlist',
+    onShortlist: 'On your shortlist',
+    openFailed: 'Could not open the conversation.',
+    opening: 'OPENING...',
+    sendMessage: 'SEND MESSAGE ›',
+    proposalSoon: 'Offers are not available on the website yet — coming soon.',
+    inviteTrial: 'INVITE TO A TRIAL',
+  },
+  es: {
+    fallbackTitle: 'Perfil del atleta — Empregol',
+    loading: 'C A R G A N D O',
+    unavailableEyebrow: 'P E R F I L · N O · D I S P O N I B L E',
+    unavailableTitle: ['Este perfil no está', 'abierto al público'],
+    unavailableBody:
+      'O la dirección es incorrecta, o el atleta todavía no abrió su vitrina. Los clubes y agencias registrados encuentran a todos los atletas en la búsqueda del panel.',
+    asClub: 'Como club',
+    asVisitor: 'Como visitante',
+    removeShortlist: 'Quitar de la shortlist',
+    saveShortlist: 'Guardar en la shortlist',
+    onShortlist: 'En tu shortlist',
+    openFailed: 'No se pudo abrir la conversación.',
+    opening: 'ABRIENDO...',
+    sendMessage: 'ENVIAR MENSAJE ›',
+    proposalSoon: 'Las propuestas todavía no están disponibles en el sitio — próximamente.',
+    inviteTrial: 'INVITAR A UNA PRUEBA',
+  },
+})
 
 /**
  * Vitrine pública do atleta — empregol.co/p/<slug>.
@@ -29,6 +87,7 @@ import { useDocumentTitle } from '@/shared/lib/hooks/useDocumentTitle'
  * aparece para quem está de fora.
  */
 export default function PublicProfilePage() {
+  const m = useMessages(MESSAGES)
   const { slug } = useParams<{ slug: string }>()
   const { user } = useAuth()
   const navigate = useNavigate()
@@ -47,12 +106,12 @@ export default function PublicProfilePage() {
   const profile =
     audience === 'contractor' ? (fullProfile.data ?? publicProfile.data) : publicProfile.data
 
-  useDocumentTitle(profile ? `${profile.fullName} — Empregol` : 'Perfil do atleta — Empregol')
+  useDocumentTitle(profile ? `${profile.fullName} — Empregol` : m.fallbackTitle)
 
   if (publicProfile.isLoading) {
     return (
       <Shell>
-        <Eyebrow size={11}>C A R R E G A N D O</Eyebrow>
+        <Eyebrow size={11}>{m.loading}</Eyebrow>
       </Shell>
     )
   }
@@ -61,7 +120,7 @@ export default function PublicProfilePage() {
     return (
       <Shell>
         <Eyebrow size={11} style={{ marginBottom: 16 }}>
-          P E R F I L · I N D I S P O N Í V E L
+          {m.unavailableEyebrow}
         </Eyebrow>
         <h1
           style={{
@@ -73,13 +132,13 @@ export default function PublicProfilePage() {
             margin: '0 0 18px',
           }}
         >
-          Esse perfil não está
+          {m.unavailableTitle[0]}
           <br />
-          aberto ao público<span style={{ color: colors.gramado }}>.</span>
+          {m.unavailableTitle[1]}
+          <span style={{ color: colors.gramado }}>.</span>
         </h1>
         <p style={{ fontFamily: fonts.text, fontSize: 16, lineHeight: 1.6, maxWidth: 520 }}>
-          Ou o endereço está errado, ou o atleta ainda não abriu a vitrine. Clubes e agências
-          cadastrados encontram todos os atletas pela busca do painel.
+          {m.unavailableBody}
         </p>
       </Shell>
     )
@@ -104,12 +163,12 @@ export default function PublicProfilePage() {
             <ModeButton
               active={audience === 'contractor'}
               onClick={() => setAudience('contractor')}
-              label="Como clube"
+              label={m.asClub}
             />
             <ModeButton
               active={audience === 'public'}
               onClick={() => setAudience('public')}
-              label="Como visitante"
+              label={m.asVisitor}
             />
           </div>
         </div>
@@ -179,6 +238,7 @@ function ModeButton({
  * favoritou o atleta — a rota pública é anônima e nem saberia quem pergunta.
  */
 function FavoriteButton({ athleteId }: { athleteId: string }) {
+  const m = useMessages(MESSAGES)
   const favorites = useFavorites()
   const toggle = useToggleFavorite()
   const saved = favorites.data?.some((athlete) => athlete.id === athleteId) ?? false
@@ -189,8 +249,8 @@ function FavoriteButton({ athleteId }: { athleteId: string }) {
       onClick={() => toggle.mutate(athleteId)}
       disabled={favorites.isLoading || toggle.isPending}
       aria-pressed={saved}
-      aria-label={saved ? 'Remover da shortlist' : 'Salvar na shortlist'}
-      title={saved ? 'Na sua shortlist' : 'Salvar na shortlist'}
+      aria-label={saved ? m.removeShortlist : m.saveShortlist}
+      title={saved ? m.onShortlist : m.saveShortlist}
       style={{
         background: saved ? colors.giz : 'transparent',
         color: saved ? colors.tinta : colors.giz,
@@ -208,6 +268,7 @@ function FavoriteButton({ athleteId }: { athleteId: string }) {
 
 /** Ações do hero, como no kit: proposta ainda não, conversa sim. */
 function ContractorActions({ athleteId, onOpened }: { athleteId: string; onOpened: () => void }) {
+  const m = useMessages(MESSAGES)
   const [opening, setOpening] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -218,7 +279,7 @@ function ContractorActions({ athleteId, onOpened }: { athleteId: string; onOpene
       await scoutApi.openConversation(athleteId)
       onOpened()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Não foi possível abrir a conversa.')
+      setError(err instanceof Error ? err.message : m.openFailed)
       setOpening(false)
     }
   }
@@ -243,12 +304,12 @@ function ContractorActions({ athleteId, onOpened }: { athleteId: string; onOpene
             letterSpacing: '0.04em',
           }}
         >
-          {opening ? 'ABRINDO...' : 'ENVIAR MENSAGEM ›'}
+          {opening ? m.opening : m.sendMessage}
         </button>
         <button
           type="button"
           disabled
-          title="Propostas ainda não estão disponíveis no site — em breve."
+          title={m.proposalSoon}
           style={{
             background: 'transparent',
             color: colors.cinzaOnDark,
@@ -262,7 +323,7 @@ function ContractorActions({ athleteId, onOpened }: { athleteId: string; onOpene
             letterSpacing: '0.04em',
           }}
         >
-          CONVIDAR PARA TESTE
+          {m.inviteTrial}
         </button>
         <FavoriteButton athleteId={athleteId} />
       </div>

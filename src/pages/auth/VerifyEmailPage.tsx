@@ -4,13 +4,54 @@ import { Navigate, useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/app/router/routes'
 import { useAuth } from '@/features/auth/ui/auth-context'
 import { colors, fonts } from '@/shared/config/theme'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 
 import { AuthAlert, SubmitButton } from './components/AuthControls'
 import { AuthField } from './components/AuthField'
 import { AuthShell } from './components/AuthShell'
 
+const MESSAGES = defineMessages({
+  pt: {
+    codeLength: 'O código tem 6 dígitos.',
+    verifyFailed: 'Não foi possível confirmar o código.',
+    resendFailed: 'Não foi possível reenviar o código.',
+    title: 'Confirme seu e-mail',
+    sentTo: 'Enviamos um código de 6 dígitos para',
+    resent: 'Código reenviado. Confira sua caixa de entrada.',
+    code: 'Código',
+    submit: 'Confirmar ›',
+    submitting: 'Confirmando...',
+    resend: 'Reenviar código ›',
+  },
+  en: {
+    codeLength: 'The code has 6 digits.',
+    verifyFailed: 'Could not confirm the code.',
+    resendFailed: 'Could not resend the code.',
+    title: 'Confirm your email',
+    sentTo: 'We sent a 6-digit code to',
+    resent: 'Code resent. Check your inbox.',
+    code: 'Code',
+    submit: 'Confirm ›',
+    submitting: 'Confirming...',
+    resend: 'Resend code ›',
+  },
+  es: {
+    codeLength: 'El código tiene 6 dígitos.',
+    verifyFailed: 'No se pudo confirmar el código.',
+    resendFailed: 'No se pudo reenviar el código.',
+    title: 'Confirma tu correo',
+    sentTo: 'Enviamos un código de 6 dígitos a',
+    resent: 'Código reenviado. Revisa tu bandeja de entrada.',
+    code: 'Código',
+    submit: 'Confirmar ›',
+    submitting: 'Confirmando...',
+    resend: 'Reenviar código ›',
+  },
+})
+
 /** Confirmação do código de 6 dígitos enviado por e-mail no cadastro. */
 export default function VerifyEmailPage() {
+  const m = useMessages(MESSAGES)
   const { pendingEmail, status, verifyEmail, resendCode } = useAuth()
   const navigate = useNavigate()
 
@@ -30,7 +71,7 @@ export default function VerifyEmailPage() {
     if (loading) return
 
     if (code.trim().length !== 6) {
-      setError('O código tem 6 dígitos.')
+      setError(m.codeLength)
       return
     }
 
@@ -40,7 +81,7 @@ export default function VerifyEmailPage() {
       await verifyEmail(code.trim())
       navigate(ROUTES.painel, { replace: true })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Não foi possível confirmar o código.')
+      setError(err instanceof Error ? err.message : m.verifyFailed)
     } finally {
       setLoading(false)
     }
@@ -53,7 +94,7 @@ export default function VerifyEmailPage() {
       await resendCode()
       setResent(true)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Não foi possível reenviar o código.')
+      setError(err instanceof Error ? err.message : m.resendFailed)
     }
   }
 
@@ -69,7 +110,8 @@ export default function VerifyEmailPage() {
           margin: '0 0 6px',
         }}
       >
-        Confirma teu e-mail<span style={{ color: colors.gramado }}>.</span>
+        {m.title}
+        <span style={{ color: colors.gramado }}>.</span>
       </h1>
       <p
         style={{
@@ -80,26 +122,23 @@ export default function VerifyEmailPage() {
           lineHeight: 1.5,
         }}
       >
-        Enviamos um código de 6 dígitos para{' '}
-        <strong style={{ color: colors.tinta }}>{pendingEmail}</strong>.
+        {m.sentTo} <strong style={{ color: colors.tinta }}>{pendingEmail}</strong>.
       </p>
 
       {error && <AuthAlert tone="error">{error}</AuthAlert>}
-      {resent && (
-        <AuthAlert tone="success">Código reenviado. Confere tua caixa de entrada.</AuthAlert>
-      )}
+      {resent && <AuthAlert tone="success">{m.resent}</AuthAlert>}
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }} noValidate>
         <AuthField
-          label="Código"
+          label={m.code}
           value={code}
           onChange={(v) => setCode(v.replace(/\D/g, '').slice(0, 6))}
           placeholder="000000"
           inputMode="numeric"
           autoComplete="one-time-code"
         />
-        <SubmitButton loading={loading} loadingLabel="Confirmando...">
-          Confirmar ›
+        <SubmitButton loading={loading} loadingLabel={m.submitting}>
+          {m.submit}
         </SubmitButton>
       </form>
 
@@ -122,7 +161,7 @@ export default function VerifyEmailPage() {
           textDecoration: 'underline',
         }}
       >
-        Reenviar código ›
+        {m.resend}
       </button>
     </AuthShell>
   )

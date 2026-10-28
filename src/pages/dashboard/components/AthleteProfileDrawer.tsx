@@ -6,10 +6,61 @@ import { AthleteProfileView } from '@/features/athlete-profile/ui/AthleteProfile
 import { scoutApi } from '@/features/scout/api/scout-api'
 import { scoutKeys } from '@/features/scout/lib/queries'
 import { colors, fonts } from '@/shared/config/theme'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 
 import { AthleteProfileContext } from './athlete-profile-context'
 import type { DashSection } from './DashSidebar'
 import { PanelError, PanelLoading } from './PanelState'
+
+const MESSAGES = defineMessages<{
+  openFailed: string
+  profileOf: (name: string) => string
+  profile: string
+  closeProfile: string
+  close: string
+  opening: string
+  proposalSoon: string
+  proposal: string
+  openingConversation: string
+  message: string
+}>({
+  pt: {
+    openFailed: 'Não foi possível abrir a conversa.',
+    profileOf: (name) => `Perfil de ${name}`,
+    profile: 'Perfil do atleta',
+    closeProfile: 'Fechar perfil',
+    close: 'FECHAR ✕',
+    opening: 'Abrindo perfil',
+    proposalSoon: 'Propostas ainda não estão disponíveis no site — em breve.',
+    proposal: 'Proposta',
+    openingConversation: 'Abrindo...',
+    message: 'Conversar',
+  },
+  en: {
+    openFailed: 'Could not open the conversation.',
+    profileOf: (name) => `${name}'s profile`,
+    profile: 'Athlete profile',
+    closeProfile: 'Close profile',
+    close: 'CLOSE ✕',
+    opening: 'Opening profile',
+    proposalSoon: 'Offers are not available on the website yet — coming soon.',
+    proposal: 'Offer',
+    openingConversation: 'Opening...',
+    message: 'Message',
+  },
+  es: {
+    openFailed: 'No se pudo abrir la conversación.',
+    profileOf: (name) => `Perfil de ${name}`,
+    profile: 'Perfil del atleta',
+    closeProfile: 'Cerrar perfil',
+    close: 'CERRAR ✕',
+    opening: 'Abriendo perfil',
+    proposalSoon: 'Las propuestas todavía no están disponibles en el sitio — próximamente.',
+    proposal: 'Propuesta',
+    openingConversation: 'Abriendo...',
+    message: 'Conversar',
+  },
+})
 
 export interface AthleteProfileHostProps {
   children: ReactNode
@@ -48,6 +99,7 @@ interface AthleteProfileDrawerProps {
 }
 
 function AthleteProfileDrawer({ athleteId, onClose, onNavigate }: AthleteProfileDrawerProps) {
+  const m = useMessages(MESSAGES)
   const profile = useAthleteProfile(athleteId)
   const queryClient = useQueryClient()
   const [opening, setOpening] = useState(false)
@@ -78,7 +130,7 @@ function AthleteProfileDrawer({ athleteId, onClose, onNavigate }: AthleteProfile
       onClose()
       onNavigate('CONVERSAS')
     } catch (error) {
-      setOpenError(error instanceof Error ? error.message : 'Não foi possível abrir a conversa.')
+      setOpenError(error instanceof Error ? error.message : m.openFailed)
       setOpening(false)
     }
   }
@@ -87,7 +139,7 @@ function AthleteProfileDrawer({ athleteId, onClose, onNavigate }: AthleteProfile
     <div
       role="dialog"
       aria-modal="true"
-      aria-label={profile.data ? `Perfil de ${profile.data.fullName}` : 'Perfil do atleta'}
+      aria-label={profile.data ? m.profileOf(profile.data.fullName) : m.profile}
       style={{
         position: 'fixed',
         inset: 0,
@@ -99,7 +151,7 @@ function AthleteProfileDrawer({ athleteId, onClose, onNavigate }: AthleteProfile
       {/* Scrim: clicar fora fecha. É um botão para o teclado também alcançar. */}
       <button
         type="button"
-        aria-label="Fechar perfil"
+        aria-label={m.closeProfile}
         onClick={onClose}
         style={{
           position: 'absolute',
@@ -145,12 +197,12 @@ function AthleteProfileDrawer({ athleteId, onClose, onNavigate }: AthleteProfile
               color: colors.tinta,
             }}
           >
-            FECHAR ✕
+            {m.close}
           </button>
         </div>
 
         <div style={{ overflowY: 'auto', padding: '10px var(--page-x) 28px', flex: 1 }}>
-          {profile.isLoading && <PanelLoading label="Abrindo perfil" />}
+          {profile.isLoading && <PanelLoading label={m.opening} />}
           {profile.isError && (
             <PanelError error={profile.error} onRetry={() => profile.refetch()} />
           )}
@@ -184,7 +236,7 @@ function AthleteProfileDrawer({ athleteId, onClose, onNavigate }: AthleteProfile
               // A API tem /proposals, mas o fluxo de criação ainda não existe no
               // site. Desabilitado e explicado em vez de escondido: o clube
               // precisa saber que a proposta vem por aqui.
-              title="Propostas ainda não estão disponíveis no site — em breve."
+              title={m.proposalSoon}
               style={{
                 flex: 1,
                 background: 'transparent',
@@ -200,7 +252,7 @@ function AthleteProfileDrawer({ athleteId, onClose, onNavigate }: AthleteProfile
                 textTransform: 'uppercase',
               }}
             >
-              Proposta
+              {m.proposal}
             </button>
             <button
               type="button"
@@ -222,7 +274,7 @@ function AthleteProfileDrawer({ athleteId, onClose, onNavigate }: AthleteProfile
                 textTransform: 'uppercase',
               }}
             >
-              {opening ? 'Abrindo...' : 'Conversar'}
+              {opening ? m.openingConversation : m.message}
             </button>
           </div>
         </footer>

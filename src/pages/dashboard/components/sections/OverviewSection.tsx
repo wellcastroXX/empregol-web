@@ -5,11 +5,48 @@ import {
   useToggleFavorite,
 } from '@/features/scout/lib/queries'
 import { colors, fonts } from '@/shared/config/theme'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 import { Eyebrow } from '@/shared/ui/Eyebrow'
 
 import { AthleteRow } from '../AthleteRow'
 import { PanelEmpty, PanelError, PanelLoading } from '../PanelState'
 import type { DashSection } from '../DashSidebar'
+
+const MESSAGES = defineMessages({
+  pt: {
+    kpiShowcase: 'atletas na vitrine',
+    kpiShortlist: 'na shortlist',
+    kpiConversations: 'conversas',
+    kpiUnread: 'não lidas',
+    eyebrow: 'ATLETAS · DISPONÍVEIS',
+    title: 'Quem está na vitrine',
+    seeAll: 'VER TODOS ›',
+    emptyTitle: 'Nenhum atleta ainda',
+    emptyBody: 'Assim que atletas se cadastrarem e confirmarem o e-mail, eles aparecem aqui.',
+  },
+  en: {
+    kpiShowcase: 'athletes in the showcase',
+    kpiShortlist: 'on the shortlist',
+    kpiConversations: 'conversations',
+    kpiUnread: 'unread',
+    eyebrow: 'ATHLETES · AVAILABLE',
+    title: 'Who is in the showcase',
+    seeAll: 'SEE ALL ›',
+    emptyTitle: 'No athletes yet',
+    emptyBody: 'As soon as athletes sign up and confirm their email, they show up here.',
+  },
+  es: {
+    kpiShowcase: 'atletas en la vitrina',
+    kpiShortlist: 'en la shortlist',
+    kpiConversations: 'conversaciones',
+    kpiUnread: 'no leídas',
+    eyebrow: 'ATLETAS · DISPONIBLES',
+    title: 'Quién está en la vitrina',
+    seeAll: 'VER TODOS ›',
+    emptyTitle: 'Todavía no hay atletas',
+    emptyBody: 'En cuanto los atletas se registren y confirmen su correo, aparecerán aquí.',
+  },
+})
 
 const cardStyle = {
   background: colors.giz,
@@ -33,6 +70,7 @@ export interface OverviewSectionProps {
  * o app usa no ContractorHome: busca de atletas e lista de conversas.
  */
 export function OverviewSection({ onNavigate }: OverviewSectionProps) {
+  const m = useMessages(MESSAGES)
   const explore = useExploreAthletes({ limit: FEATURED })
   const favorites = useFavorites()
   const conversations = useConversations()
@@ -52,25 +90,25 @@ export function OverviewSection({ onNavigate }: OverviewSectionProps) {
       >
         <Kpi
           value={explore.data?.total}
-          label="atletas na vitrine"
+          label={m.kpiShowcase}
           loading={explore.isLoading}
           onClick={() => onNavigate('BUSCAR')}
         />
         <Kpi
           value={favorites.data?.length}
-          label="na shortlist"
+          label={m.kpiShortlist}
           loading={favorites.isLoading}
           onClick={() => onNavigate('SHORTLIST')}
         />
         <Kpi
           value={conversations.data?.length}
-          label="conversas"
+          label={m.kpiConversations}
           loading={conversations.isLoading}
           onClick={() => onNavigate('CONVERSAS')}
         />
         <Kpi
           value={unread}
-          label="não lidas"
+          label={m.kpiUnread}
           loading={conversations.isLoading}
           accent={unread > 0}
           onClick={() => onNavigate('CONVERSAS')}
@@ -89,7 +127,7 @@ export function OverviewSection({ onNavigate }: OverviewSectionProps) {
         >
           <div>
             <Eyebrow size={10} style={{ letterSpacing: '0.16em', marginBottom: 4 }}>
-              ATLETAS · DISPONÍVEIS
+              {m.eyebrow}
             </Eyebrow>
             <h2
               style={{
@@ -101,7 +139,7 @@ export function OverviewSection({ onNavigate }: OverviewSectionProps) {
                 margin: 0,
               }}
             >
-              Quem está na vitrine
+              {m.title}
             </h2>
           </div>
           <button
@@ -121,17 +159,14 @@ export function OverviewSection({ onNavigate }: OverviewSectionProps) {
               whiteSpace: 'nowrap',
             }}
           >
-            VER TODOS ›
+            {m.seeAll}
           </button>
         </div>
 
         {explore.isLoading && <PanelLoading />}
         {explore.isError && <PanelError error={explore.error} onRetry={() => explore.refetch()} />}
         {explore.data?.athletes.length === 0 && (
-          <PanelEmpty
-            title="Nenhum atleta ainda"
-            description="Assim que atletas se cadastrarem e confirmarem o e-mail, eles aparecem aqui."
-          />
+          <PanelEmpty title={m.emptyTitle} description={m.emptyBody} />
         )}
         {explore.data?.athletes.map((athlete) => (
           <AthleteRow

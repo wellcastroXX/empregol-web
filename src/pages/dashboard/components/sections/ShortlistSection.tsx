@@ -1,10 +1,41 @@
 import { useFavorites, useToggleFavorite } from '@/features/scout/lib/queries'
 import { colors, fonts } from '@/shared/config/theme'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 import { Eyebrow } from '@/shared/ui/Eyebrow'
 
 import { AthleteRow } from '../AthleteRow'
 import type { DashSection } from '../DashSidebar'
 import { PanelEmpty, PanelError, PanelLoading } from '../PanelState'
+
+const MESSAGES = defineMessages<{
+  loading: string
+  count: (total: number) => string
+  emptyTitle: string
+  emptyBody: string
+  search: string
+}>({
+  pt: {
+    loading: 'Carregando...',
+    count: (total) => `${total} atletas salvos`,
+    emptyTitle: 'Shortlist vazia',
+    emptyBody: 'Marque atletas na busca e eles ficam guardados aqui para a próxima janela.',
+    search: 'Buscar atletas ›',
+  },
+  en: {
+    loading: 'Loading...',
+    count: (total) => `${total} saved ${total === 1 ? 'athlete' : 'athletes'}`,
+    emptyTitle: 'Empty shortlist',
+    emptyBody: 'Mark athletes in the search and they are kept here for the next window.',
+    search: 'Search athletes ›',
+  },
+  es: {
+    loading: 'Cargando...',
+    count: (total) => `${total} ${total === 1 ? 'atleta guardado' : 'atletas guardados'}`,
+    emptyTitle: 'Shortlist vacía',
+    emptyBody: 'Marca atletas en la búsqueda y quedarán guardados aquí para el próximo mercado.',
+    search: 'Buscar atletas ›',
+  },
+})
 
 const cardStyle = {
   background: colors.giz,
@@ -19,6 +50,7 @@ export interface ShortlistSectionProps {
 
 /** Shortlist — os favoritos do contratante em `/favorites`. */
 export function ShortlistSection({ onNavigate }: ShortlistSectionProps) {
+  const m = useMessages(MESSAGES)
   const favorites = useFavorites()
   const toggleFavorite = useToggleFavorite()
   const athletes = favorites.data ?? []
@@ -38,7 +70,7 @@ export function ShortlistSection({ onNavigate }: ShortlistSectionProps) {
           margin: '0 0 18px',
         }}
       >
-        {favorites.isLoading ? 'Carregando...' : `${athletes.length} atletas salvos`}
+        {favorites.isLoading ? m.loading : m.count(athletes.length)}
       </h2>
 
       {favorites.isLoading && <PanelLoading />}
@@ -47,8 +79,8 @@ export function ShortlistSection({ onNavigate }: ShortlistSectionProps) {
       )}
       {!favorites.isLoading && !favorites.isError && athletes.length === 0 && (
         <PanelEmpty
-          title="Shortlist vazia"
-          description="Marque atletas na busca e eles ficam guardados aqui para a próxima janela."
+          title={m.emptyTitle}
+          description={m.emptyBody}
           action={
             <button
               type="button"
@@ -67,7 +99,7 @@ export function ShortlistSection({ onNavigate }: ShortlistSectionProps) {
                 textTransform: 'uppercase',
               }}
             >
-              Buscar atletas ›
+              {m.search}
             </button>
           }
         />

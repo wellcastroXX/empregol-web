@@ -2,10 +2,15 @@ import { useMatches } from 'react-router-dom'
 
 import { useAuth } from '@/features/auth/ui/auth-context'
 import type { UserRole } from '@/features/auth/model/auth.types'
+import type { Locale } from '@/shared/i18n/locale'
+import { useLocale } from '@/shared/i18n/locale-context'
 import { useDocumentTitle } from '@/shared/lib/hooks/useDocumentTitle'
 
-/** Contexto que um título dinâmico pode consultar — hoje, só o papel do usuário. */
+import { DEFAULT_TITLES } from './default-title'
+
+/** Contexto que um título dinâmico pode consultar: o idioma e o papel do usuário. */
 export interface RouteTitleContext {
+  locale: Locale
   role?: UserRole
 }
 
@@ -15,9 +20,6 @@ export type RouteTitle = string | ((ctx: RouteTitleContext) => string)
 export interface RouteHandle {
   title?: RouteTitle
 }
-
-/** Título de quem não declarou nada — e o que o index.html já traz no HTML. */
-export const DEFAULT_TITLE = 'Empregol — Atleta livre não é atleta esquecido.'
 
 /**
  * Mantém o título da aba em dia a partir do `handle.title` da rota casada.
@@ -29,6 +31,7 @@ export const DEFAULT_TITLE = 'Empregol — Atleta livre não é atleta esquecido
 export function DocumentTitle() {
   const matches = useMatches()
   const { user } = useAuth()
+  const { locale } = useLocale()
 
   // Da folha para a raiz: a rota mais específica é quem nomeia a página.
   const declared = [...matches]
@@ -37,7 +40,9 @@ export function DocumentTitle() {
     .find((title) => title !== undefined)
 
   const title =
-    typeof declared === 'function' ? declared({ role: user?.role }) : (declared ?? DEFAULT_TITLE)
+    typeof declared === 'function'
+      ? declared({ locale, role: user?.role })
+      : (declared ?? DEFAULT_TITLES[locale])
 
   useDocumentTitle(title)
 

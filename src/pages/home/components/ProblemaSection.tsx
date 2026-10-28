@@ -1,4 +1,5 @@
 import { colors, fonts } from '@/shared/config/theme'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 
 interface Figure {
   value: string
@@ -7,14 +8,68 @@ interface Figure {
   accent?: boolean
 }
 
-const FIGURES: readonly Figure[] = [
-  { value: '360', unit: 'mil', label: 'atletas registrados no futebol brasileiro' },
-  { value: '88', unit: 'mil', label: 'são atletas profissionais' },
-  { value: '11–12', unit: 'mil', label: 'têm contrato ativo neste momento', accent: true },
-]
+const MESSAGES = defineMessages<{
+  eyebrow: string
+  title: string
+  figures: readonly Figure[]
+  bodyBefore: string
+  bodyStrong: string
+}>({
+  pt: {
+    eyebrow: 'O · T A M A N H O · D O · P R O B L E M A',
+    title: 'A maioria dos profissionais do país está, agora mesmo, sem clube',
+    figures: [
+      {
+        value: '360',
+        unit: 'mil',
+        label: 'atletas registrados no futebol brasileiro',
+      },
+      {
+        value: '88',
+        unit: 'mil',
+        label: 'são atletas profissionais',
+      },
+      { value: '11–12', unit: 'mil', label: 'têm contrato ativo neste momento', accent: true },
+    ],
+    bodyBefore:
+      'Isso significa que a imensa maioria dos atletas profissionais do país está sem clube — sem visibilidade, sem renda, sem rede de apoio.',
+    bodyStrong: 'É esse exército de talento esquecido que a Empregol existe para servir.',
+  },
+  en: {
+    eyebrow: 'T H E · S I Z E · O F · T H E · P R O B L E M',
+    title: 'Most of the country’s professionals are without a club right now',
+    figures: [
+      { value: '360', unit: 'k', label: 'registered athletes in Brazilian football' },
+      { value: '88', unit: 'k', label: 'are professional athletes' },
+      { value: '11–12', unit: 'k', label: 'have an active contract right now', accent: true },
+    ],
+    bodyBefore:
+      'That means the vast majority of the country’s professional athletes have no club — no visibility, no income, no support network.',
+    bodyStrong: 'This army of forgotten talent is who Empregol exists to serve.',
+  },
+  es: {
+    eyebrow: 'E L · T A M A Ñ O · D E L · P R O B L E M A',
+    title: 'La mayoría de los profesionales del país está, ahora mismo, sin club',
+    figures: [
+      { value: '360', unit: 'mil', label: 'atletas registrados en el fútbol brasileño' },
+      { value: '88', unit: 'mil', label: 'son atletas profesionales' },
+      {
+        value: '11–12',
+        unit: 'mil',
+        label: 'tienen contrato vigente en este momento',
+        accent: true,
+      },
+    ],
+    bodyBefore:
+      'Eso significa que la inmensa mayoría de los atletas profesionales del país está sin club — sin visibilidad, sin ingresos, sin red de apoyo.',
+    bodyStrong: 'Es a ese ejército de talento olvidado al que Empregol existe para servir.',
+  },
+})
 
 /** O TAMANHO DO PROBLEMA — o funil em três números. */
 export function ProblemaSection() {
+  const m = useMessages(MESSAGES)
+
   return (
     <section
       id="problema"
@@ -36,7 +91,7 @@ export function ProblemaSection() {
           marginBottom: 40,
         }}
       >
-        O · T A M A N H O · D O · P R O B L E M A
+        {m.eyebrow}
       </div>
 
       <h2
@@ -51,7 +106,7 @@ export function ProblemaSection() {
           maxWidth: 1100,
         }}
       >
-        A maioria dos profissionais do país está, agora mesmo, sem clube
+        {m.title}
         <span style={{ color: colors.gramado }}>.</span>
       </h2>
 
@@ -63,7 +118,7 @@ export function ProblemaSection() {
           marginBottom: 56,
         }}
       >
-        {FIGURES.map((f) => (
+        {m.figures.map((f) => (
           <div key={f.label} style={{ paddingTop: 20, borderTop: `1.5px solid ${colors.tinta}` }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
               <span
@@ -124,9 +179,7 @@ export function ProblemaSection() {
           borderTop: `1px solid ${colors.ossoRule}`,
         }}
       >
-        Isso significa que a imensa maioria dos atletas profissionais do país está sem clube — sem
-        visibilidade, sem renda, sem rede de apoio.{' '}
-        <strong>É esse exército de talento esquecido que a Empregol existe para servir.</strong>
+        {m.bodyBefore} <strong>{m.bodyStrong}</strong>
       </p>
     </section>
   )

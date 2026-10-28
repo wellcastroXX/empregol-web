@@ -1,6 +1,13 @@
 import type { CSSProperties, ReactNode } from 'react'
 
 import { colors, fonts } from '@/shared/config/theme'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
+
+const MESSAGES = defineMessages({
+  pt: { sending: 'Enviando...' },
+  en: { sending: 'Sending...' },
+  es: { sending: 'Enviando...' },
+})
 
 export interface AuthAlertProps {
   tone: 'error' | 'success'
@@ -43,9 +50,11 @@ export interface SubmitButtonProps {
 export function SubmitButton({
   children,
   loading = false,
-  loadingLabel = 'Enviando...',
+  loadingLabel,
   style,
 }: SubmitButtonProps) {
+  const m = useMessages(MESSAGES)
+
   return (
     <button
       type="submit"
@@ -68,7 +77,7 @@ export function SubmitButton({
         ...style,
       }}
     >
-      {loading ? loadingLabel : children}
+      {loading ? (loadingLabel ?? m.sending) : children}
     </button>
   )
 }

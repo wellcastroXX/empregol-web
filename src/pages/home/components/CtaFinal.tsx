@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 
 import { ROUTES } from '@/app/router/routes'
 import { colors, fonts } from '@/shared/config/theme'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 
 const ctaBase = {
   display: 'inline-flex',
@@ -18,8 +19,46 @@ const ctaBase = {
   whiteSpace: 'nowrap',
 } as const
 
+const MESSAGES = defineMessages({
+  pt: {
+    athleteBefore: 'Se você é',
+    athleteStrong: 'atleta',
+    athleteAfter: ', seu próximo contrato pode estar a um cadastro de distância.',
+    clubBefore: 'Se você é',
+    clubStrong: 'clube ou agência',
+    clubAfter: ', o talento que falta no seu time pode estar aqui.',
+    title: ['O futuro', 'é claro'],
+    signUp: 'Cadastre-se agora ›',
+    about: 'Conheça a Empregol ›',
+  },
+  en: {
+    athleteBefore: 'If you are an',
+    athleteStrong: 'athlete',
+    athleteAfter: ', your next contract may be just one sign-up away.',
+    clubBefore: 'If you are a',
+    clubStrong: 'club or agency',
+    clubAfter: ', the talent your team is missing may be right here.',
+    title: ['The future', 'is clear'],
+    signUp: 'Sign up now ›',
+    about: 'Discover Empregol ›',
+  },
+  es: {
+    athleteBefore: 'Si eres',
+    athleteStrong: 'atleta',
+    athleteAfter: ', tu próximo contrato puede estar a un registro de distancia.',
+    clubBefore: 'Si eres un',
+    clubStrong: 'club o agencia',
+    clubAfter: ', el talento que le falta a tu equipo puede estar aquí.',
+    title: ['El futuro', 'es claro'],
+    signUp: 'Regístrate ahora ›',
+    about: 'Conoce Empregol ›',
+  },
+})
+
 /** FECHAMENTO — os dois públicos e a chamada final. */
 export function CtaFinal() {
+  const m = useMessages(MESSAGES)
+
   return (
     <section
       style={{
@@ -47,8 +86,8 @@ export function CtaFinal() {
             borderTop: `1.5px solid ${colors.tinta}`,
           }}
         >
-          Se você é <strong>atleta</strong>, seu próximo contrato pode estar a um cadastro de
-          distância.
+          {m.athleteBefore} <strong>{m.athleteStrong}</strong>
+          {m.athleteAfter}
         </p>
         <p
           style={{
@@ -61,8 +100,8 @@ export function CtaFinal() {
             borderTop: `1.5px solid ${colors.tinta}`,
           }}
         >
-          Se você é <strong>clube ou agência</strong>, o talento que falta no seu time pode estar
-          aqui.
+          {m.clubBefore} <strong>{m.clubStrong}</strong>
+          {m.clubAfter}
         </p>
       </div>
 
@@ -78,8 +117,10 @@ export function CtaFinal() {
           textTransform: 'uppercase',
         }}
       >
-        O futuro
-        <br />é claro<span style={{ color: colors.gramado }}>.</span>
+        {m.title[0]}
+        <br />
+        {m.title[1]}
+        <span style={{ color: colors.gramado }}>.</span>
       </h2>
 
       <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
@@ -87,7 +128,7 @@ export function CtaFinal() {
           to={ROUTES.cadastro}
           style={{ ...ctaBase, background: colors.gramado, color: colors.giz, borderRadius: 30 }}
         >
-          Cadastre-se agora ›
+          {m.signUp}
         </Link>
         {/* Não existe página "sobre" ainda; leva à seção que responde isso na
             própria home. O scroll-margin em :target impede o nav fixo de cobrir. */}
@@ -101,7 +142,7 @@ export function CtaFinal() {
             border: `1.5px solid ${colors.tinta}`,
           }}
         >
-          Conheça a Empregol ›
+          {m.about}
         </a>
       </div>
     </section>

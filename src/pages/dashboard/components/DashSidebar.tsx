@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { ROUTES } from '@/app/router/routes'
 import { useAuth } from '@/features/auth/ui/auth-context'
 import { colors, fonts } from '@/shared/config/theme'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 import { Wordmark } from '@/shared/ui/Wordmark'
 
 import { DashIcon, type DashIconName } from './DashIcon'
@@ -29,11 +30,84 @@ function initials(nome: string): string {
   return (first + last).toUpperCase()
 }
 
-const ROLE_LABEL: Record<string, string> = {
-  athlete: 'ATLETA',
-  agent: 'AGÊNCIA',
-  club: 'CLUBE',
-}
+/**
+ * Os rótulos do menu. A seção em si continua identificada pelo nome em
+ * português (é o que o resto do painel usa para navegar); só o texto exibido
+ * muda de idioma.
+ */
+const MESSAGES = defineMessages<{
+  sections: Record<DashSection, string>
+  roles: Record<string, string>
+  expand: string
+  collapse: string
+  myAccount: string
+  nav: string
+  plan: string
+  planBody: string
+  planCta: string
+  signOut: string
+}>({
+  pt: {
+    sections: {
+      'VISÃO GERAL': 'VISÃO GERAL',
+      BUSCAR: 'BUSCAR',
+      SHORTLIST: 'SHORTLIST',
+      CONVERSAS: 'CONVERSAS',
+      'BUSCAS SALVAS': 'BUSCAS SALVAS',
+      RELATÓRIOS: 'RELATÓRIOS',
+      PERFIL: 'PERFIL',
+    },
+    roles: { athlete: 'ATLETA', agent: 'AGÊNCIA', club: 'CLUBE' },
+    expand: 'Expandir menu',
+    collapse: 'Retrair menu',
+    myAccount: 'Minha conta',
+    nav: 'Seções do painel',
+    plan: 'PLANO PRO',
+    planBody: 'Busca ilimitada de atletas e shortlist sem teto.',
+    planCta: 'VER PLANO ELITE ›',
+    signOut: 'Sair',
+  },
+  en: {
+    sections: {
+      'VISÃO GERAL': 'OVERVIEW',
+      BUSCAR: 'SEARCH',
+      SHORTLIST: 'SHORTLIST',
+      CONVERSAS: 'MESSAGES',
+      'BUSCAS SALVAS': 'SAVED SEARCHES',
+      RELATÓRIOS: 'REPORTS',
+      PERFIL: 'PROFILE',
+    },
+    roles: { athlete: 'ATHLETE', agent: 'AGENCY', club: 'CLUB' },
+    expand: 'Expand menu',
+    collapse: 'Collapse menu',
+    myAccount: 'My account',
+    nav: 'Dashboard sections',
+    plan: 'PRO PLAN',
+    planBody: 'Unlimited athlete search and no cap on your shortlist.',
+    planCta: 'SEE ELITE PLAN ›',
+    signOut: 'Sign out',
+  },
+  es: {
+    sections: {
+      'VISÃO GERAL': 'RESUMEN',
+      BUSCAR: 'BUSCAR',
+      SHORTLIST: 'SHORTLIST',
+      CONVERSAS: 'CONVERSACIONES',
+      'BUSCAS SALVAS': 'BÚSQUEDAS GUARDADAS',
+      RELATÓRIOS: 'INFORMES',
+      PERFIL: 'PERFIL',
+    },
+    roles: { athlete: 'ATLETA', agent: 'AGENCIA', club: 'CLUB' },
+    expand: 'Expandir menú',
+    collapse: 'Contraer menú',
+    myAccount: 'Mi cuenta',
+    nav: 'Secciones del panel',
+    plan: 'PLAN PRO',
+    planBody: 'Búsqueda ilimitada de atletas y shortlist sin límite.',
+    planCta: 'VER PLAN ELITE ›',
+    signOut: 'Salir',
+  },
+})
 
 export interface DashSidebarProps {
   active: DashSection
@@ -49,9 +123,10 @@ export function DashSidebar({
   collapsed,
   onToggleCollapsed,
 }: DashSidebarProps) {
+  const m = useMessages(MESSAGES)
   const { user, signOut } = useAuth()
   const nome = user?.nome ?? ''
-  const papel = ROLE_LABEL[user?.kind ?? user?.role ?? ''] ?? ''
+  const papel = m.roles[user?.kind ?? user?.role ?? ''] ?? ''
 
   return (
     <aside
@@ -92,7 +167,7 @@ export function DashSidebar({
         <button
           type="button"
           onClick={onToggleCollapsed}
-          aria-label={collapsed ? 'Expandir menu' : 'Retrair menu'}
+          aria-label={collapsed ? m.expand : m.collapse}
           aria-expanded={!collapsed}
           style={{
             width: 32,
@@ -175,7 +250,7 @@ export function DashSidebar({
                 whiteSpace: 'nowrap',
               }}
             >
-              {nome || 'Minha conta'}
+              {nome || m.myAccount}
             </span>
             <span
               style={{
@@ -194,18 +269,16 @@ export function DashSidebar({
         )}
       </button>
 
-      <nav
-        aria-label="Seções do painel"
-        style={{ display: 'flex', flexDirection: 'column', gap: 2 }}
-      >
-        {ITEMS.map(([label, icon]) => {
-          const on = active === label
+      <nav aria-label={m.nav} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {ITEMS.map(([section, icon]) => {
+          const on = active === section
+          const label = m.sections[section]
           return (
             <button
-              key={label}
+              key={section}
               type="button"
               aria-current={on ? 'page' : undefined}
-              onClick={() => onNavigate(label)}
+              onClick={() => onNavigate(section)}
               title={collapsed ? label : undefined}
               style={{
                 display: 'flex',
@@ -252,7 +325,7 @@ export function DashSidebar({
               marginBottom: 6,
             }}
           >
-            PLANO PRO
+            {m.plan}
           </div>
           <p
             style={{
@@ -263,7 +336,7 @@ export function DashSidebar({
               margin: '0 0 10px',
             }}
           >
-            Busca ilimitada de atletas e shortlist sem teto.
+            {m.planBody}
           </p>
           <a
             href="#"
@@ -279,7 +352,7 @@ export function DashSidebar({
               paddingBottom: 1,
             }}
           >
-            VER PLANO ELITE ›
+            {m.planCta}
           </a>
         </div>
       )}
@@ -306,7 +379,7 @@ export function DashSidebar({
         <button
           type="button"
           onClick={signOut}
-          title={collapsed ? 'Sair' : undefined}
+          title={collapsed ? m.signOut : undefined}
           style={{
             background: 'transparent',
             border: `1px solid ${colors.ruleDark}`,
@@ -322,7 +395,7 @@ export function DashSidebar({
             color: colors.giz,
           }}
         >
-          {collapsed ? '⏻' : 'Sair'}
+          {collapsed ? '⏻' : m.signOut}
         </button>
       </div>
     </aside>

@@ -1,7 +1,8 @@
 import { useState, type ReactNode } from 'react'
 
-import { DOMINANT_FEET, LEVELS, POSITIONS } from '@/features/auth/model/options'
+import { useFormOptions } from '@/features/auth/model/options'
 import { colors, fonts } from '@/shared/config/theme'
+import { defineMessages, useLocaleTag, useMessages } from '@/shared/i18n/locale-context'
 
 import type { AthleteMedia, AthleteProfile, SeasonStat } from '../model/athlete-profile.types'
 import { MediaLightbox } from './MediaLightbox'
@@ -28,26 +29,163 @@ const eyebrow = {
   margin: 0,
 } as const
 
-const AVAILABILITY_LABEL = { FREE: 'LIVRE', EMPLOYED: 'EMPREGADO' } as const
-const AGENCY_LABEL = { REPRESENTED: 'Agenciado', UNREPRESENTED: 'Não agenciado' } as const
+const MESSAGES = defineMessages<{
+  availability: Record<AthleteProfile['availability'], string>
+  agency: Record<AthleteProfile['agencyStatus'], string>
+  years: (age: number) => string
+  formerClub: (club: string) => string
+  athletes: string
+  foot: (label: string) => string
+  goals: string
+  assists: string
+  games: string
+  minutes: string
+  videosEyebrow: string
+  videosTitle: string
+  items: (count: number) => string
+  open: (title: string) => string
+  careerEyebrow: string
+  careerTitle: string
+  careerHead: readonly string[]
+  positionEyebrow: string
+  detailsEyebrow: string
+  details: Record<
+    'age' | 'height' | 'weight' | 'foot' | 'level' | 'hometown' | 'agency' | 'lastClub',
+    string
+  >
+  sportsProfile: string
+  salaryEyebrow: string
+  salaryNote: string
+}>({
+  pt: {
+    availability: { FREE: 'LIVRE', EMPLOYED: 'EMPREGADO' },
+    agency: { REPRESENTED: 'Agenciado', UNREPRESENTED: 'Não agenciado' },
+    years: (age) => `${age} anos`,
+    formerClub: (club) => `Ex-${club}`,
+    athletes: 'ATLETAS',
+    foot: (label) => `Pé ${label}`,
+    goals: 'gols',
+    assists: 'assistências',
+    games: 'jogos',
+    minutes: 'minutos',
+    videosEyebrow: 'V Í D E O S · & · J O G A D A S',
+    videosTitle: 'Jogadas.',
+    items: (count) => `${count} ${count === 1 ? 'ITEM' : 'ITENS'}`,
+    open: (title) => `Abrir ${title}`,
+    careerEyebrow: 'T R A J E T Ó R I A',
+    careerTitle: 'Por onde passou.',
+    careerHead: ['ANO', 'CLUBE', 'JOGOS', 'GOLS', 'ASSIST.', 'MIN.'],
+    positionEyebrow: 'P O S I Ç Ã O · E M · C A M P O',
+    detailsEyebrow: 'F I C H A · T É C N I C A',
+    details: {
+      age: 'Idade',
+      height: 'Altura',
+      weight: 'Peso',
+      foot: 'Pé',
+      level: 'Nível',
+      hometown: 'Naturalidade',
+      agency: 'Agenciamento',
+      lastClub: 'Último clube',
+    },
+    sportsProfile: 'PERFIL ESPORTIVO ›',
+    salaryEyebrow: 'P R E T E N S Ã O · M E N S A L',
+    salaryNote:
+      'Visível para você porque está logado como clube ou agência. Quem abre o link de fora não vê este valor.',
+  },
+  en: {
+    availability: { FREE: 'FREE AGENT', EMPLOYED: 'UNDER CONTRACT' },
+    agency: { REPRESENTED: 'Represented', UNREPRESENTED: 'Not represented' },
+    years: (age) => `${age} years old`,
+    formerClub: (club) => `Formerly ${club}`,
+    athletes: 'ATHLETES',
+    // "Both feet" já se explica; os outros viram "Right foot" / "Left foot".
+    foot: (label) => (label.endsWith('feet') ? label : `${label} foot`),
+    goals: 'goals',
+    assists: 'assists',
+    games: 'games',
+    minutes: 'minutes',
+    videosEyebrow: 'V I D E O S · & · H I G H L I G H T S',
+    videosTitle: 'Highlights.',
+    items: (count) => `${count} ${count === 1 ? 'ITEM' : 'ITEMS'}`,
+    open: (title) => `Open ${title}`,
+    careerEyebrow: 'C A R E E R',
+    careerTitle: 'Where they have played.',
+    careerHead: ['YEAR', 'CLUB', 'GAMES', 'GOALS', 'ASSISTS', 'MIN.'],
+    positionEyebrow: 'P O S I T I O N · O N · T H E · P I T C H',
+    detailsEyebrow: 'P L A Y E R · P R O F I L E',
+    details: {
+      age: 'Age',
+      height: 'Height',
+      weight: 'Weight',
+      foot: 'Foot',
+      level: 'Level',
+      hometown: 'Hometown',
+      agency: 'Representation',
+      lastClub: 'Last club',
+    },
+    sportsProfile: 'SPORTS PROFILE ›',
+    salaryEyebrow: 'M O N T H L Y · S A L A R Y · E X P E C T A T I O N',
+    salaryNote:
+      'Visible to you because you are signed in as a club or agency. People opening the link from outside do not see this amount.',
+  },
+  es: {
+    availability: { FREE: 'LIBRE', EMPLOYED: 'CON CONTRATO' },
+    agency: { REPRESENTED: 'Con representante', UNREPRESENTED: 'Sin representante' },
+    years: (age) => `${age} años`,
+    formerClub: (club) => `Ex-${club}`,
+    athletes: 'ATLETAS',
+    foot: (label) => `Pie ${label.toLowerCase()}`,
+    goals: 'goles',
+    assists: 'asistencias',
+    games: 'partidos',
+    minutes: 'minutos',
+    videosEyebrow: 'V I D E O S · & · J U G A D A S',
+    videosTitle: 'Jugadas.',
+    items: (count) => `${count} ${count === 1 ? 'ELEMENTO' : 'ELEMENTOS'}`,
+    open: (title) => `Abrir ${title}`,
+    careerEyebrow: 'T R A Y E C T O R I A',
+    careerTitle: 'Por dónde pasó.',
+    careerHead: ['AÑO', 'CLUB', 'PARTIDOS', 'GOLES', 'ASIST.', 'MIN.'],
+    positionEyebrow: 'P O S I C I Ó N · E N · L A · C A N C H A',
+    detailsEyebrow: 'F I C H A · T É C N I C A',
+    details: {
+      age: 'Edad',
+      height: 'Altura',
+      weight: 'Peso',
+      foot: 'Pie',
+      level: 'Nivel',
+      hometown: 'Lugar de nacimiento',
+      agency: 'Representación',
+      lastClub: 'Último club',
+    },
+    sportsProfile: 'PERFIL DEPORTIVO ›',
+    salaryEyebrow: 'P R E T E N S I Ó N · M E N S U A L',
+    salaryNote:
+      'Visible para ti porque iniciaste sesión como club o agencia. Quien abre el enlace desde fuera no ve este valor.',
+  },
+})
 
 function labelOf(options: ReadonlyArray<{ value: string; label: string }>, value?: string | null) {
   if (!value) return null
   return options.find((option) => option.value === value)?.label ?? value
 }
 
-/** 192 → "1,92 m". Aceita metros também, caso algum cadastro antigo use. */
-function height(value?: number | null): string | null {
+/** 192 → "1,92 m" (ou "1.92 m"). Aceita metros também, caso algum cadastro antigo use. */
+function height(value: number | null | undefined, localeTag: string): string | null {
   if (!value) return null
   const meters = value > 3 ? value / 100 : value
-  return `${meters.toFixed(2).replace('.', ',')} m`
+  const formatted = meters.toLocaleString(localeTag, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })
+  return `${formatted} m`
 }
 
-function money(value?: string | number | null): string | null {
+function money(value: string | number | null | undefined, localeTag: string): string | null {
   if (value == null || value === '') return null
   const amount = typeof value === 'number' ? value : Number(value)
   if (Number.isNaN(amount)) return null
-  return amount.toLocaleString('pt-BR', {
+  return amount.toLocaleString(localeTag, {
     style: 'currency',
     currency: 'BRL',
     maximumFractionDigits: 0,
@@ -101,13 +239,18 @@ export function PublicAthleteProfile({ athlete, audience, actions }: PublicAthle
 }
 
 function Hero({ athlete, actions }: { athlete: AthleteProfile; actions?: ReactNode }) {
-  const positionLabel = labelOf(POSITIONS, athlete.position)
+  const m = useMessages(MESSAGES)
+  const localeTag = useLocaleTag()
+  const options = useFormOptions()
+  const positionLabel = labelOf(options.positions, athlete.position)
+  const levelLabel = labelOf(options.levels, athlete.level)
+  const footLabel = labelOf(options.dominantFeet, athlete.dominantFoot)
   const meta = [
     positionLabel?.toUpperCase(),
-    athlete.age ? `${athlete.age} ANOS` : null,
-    height(athlete.height)?.toUpperCase(),
+    athlete.age ? m.years(athlete.age).toUpperCase() : null,
+    height(athlete.height, localeTag)?.toUpperCase(),
     athlete.weight ? `${athlete.weight} KG` : null,
-    athlete.lastClub ? `EX-${athlete.lastClub.toUpperCase()}` : null,
+    athlete.lastClub ? m.formerClub(athlete.lastClub).toUpperCase() : null,
   ].filter(Boolean)
 
   const names = athlete.fullName.trim().split(/\s+/)
@@ -130,7 +273,7 @@ function Hero({ athlete, actions }: { athlete: AthleteProfile; actions?: ReactNo
           }}
         >
           <p style={{ ...eyebrow, color: colors.cinzaOnDark }}>
-            ATLETAS {positionLabel ? `· ${positionLabel.toUpperCase()} ` : ''}·{' '}
+            {m.athletes} {positionLabel ? `· ${positionLabel.toUpperCase()} ` : ''}·{' '}
             <span style={{ color: colors.giz }}>{athlete.fullName.toUpperCase()}</span>
           </p>
           {athlete.slug && (
@@ -158,16 +301,16 @@ function Hero({ athlete, actions }: { athlete: AthleteProfile; actions?: ReactNo
                 <span
                   style={{ width: 6, height: 6, borderRadius: '50%', background: 'currentColor' }}
                 />
-                {AVAILABILITY_LABEL[athlete.availability]}
+                {m.availability[athlete.availability]}
               </Tag>
-              {labelOf(LEVELS, athlete.level) && (
+              {levelLabel && (
                 <Tag background="transparent" color={colors.giz} border={colors.cinzaOnDark}>
-                  {labelOf(LEVELS, athlete.level)}
+                  {levelLabel}
                 </Tag>
               )}
-              {labelOf(DOMINANT_FEET, athlete.dominantFoot) && (
+              {footLabel && (
                 <Tag background="transparent" color={colors.giz} border={colors.cinzaOnDark}>
-                  Pé {labelOf(DOMINANT_FEET, athlete.dominantFoot)}
+                  {m.foot(footLabel)}
                 </Tag>
               )}
             </div>
@@ -273,11 +416,13 @@ function Portrait({ athlete }: { athlete: AthleteProfile }) {
  * estraga a leitura no celular.
  */
 function StatsBand({ athlete }: { athlete: AthleteProfile }) {
+  const m = useMessages(MESSAGES)
+  const localeTag = useLocaleTag()
   const stats = [
-    [athlete.goals, 'gols'],
-    [athlete.assists, 'assistências'],
-    [athlete.gamesThisSeason, 'jogos'],
-    [athlete.minutesPlayed, 'minutos'],
+    [athlete.goals, m.goals],
+    [athlete.assists, m.assists],
+    [athlete.gamesThisSeason, m.games],
+    [athlete.minutesPlayed, m.minutes],
   ].filter(([value]) => value != null) as Array<[number, string]>
 
   if (stats.length === 0) return null
@@ -311,7 +456,7 @@ function StatsBand({ athlete }: { athlete: AthleteProfile }) {
                 color: colors.tinta,
               }}
             >
-              {value.toLocaleString('pt-BR')}
+              {value.toLocaleString(localeTag)}
             </div>
             <div
               style={{
@@ -378,6 +523,7 @@ function SectionHead({
 
 /** Vídeos e fotos do atleta. O kit usa um destaque grande + dois menores. */
 function Videos({ media, thumb }: { media: readonly AthleteMedia[]; thumb?: string | null }) {
+  const m = useMessages(MESSAGES)
   // Índice do item aberto na modal; `null` com a modal fechada.
   const [playing, setPlaying] = useState<number | null>(null)
   const [first, ...rest] = media
@@ -390,13 +536,9 @@ function Videos({ media, thumb }: { media: readonly AthleteMedia[]; thumb?: stri
   return (
     <section>
       <SectionHead
-        eyebrowText="V Í D E O S · & · J O G A D A S"
-        title="Jogadas."
-        right={
-          <span style={{ ...eyebrow, color: colors.tinta }}>
-            {media.length} {media.length === 1 ? 'ITEM' : 'ITENS'}
-          </span>
-        }
+        eyebrowText={m.videosEyebrow}
+        title={m.videosTitle}
+        right={<span style={{ ...eyebrow, color: colors.tinta }}>{m.items(media.length)}</span>}
       />
       <div
         style={{
@@ -445,6 +587,7 @@ function MediaTile({
   onOpen: () => void
   big?: boolean
 }) {
+  const m = useMessages(MESSAGES)
   const isPhoto = item.mediaType === 'PHOTO'
   const background = isPhoto ? item.url : thumb
 
@@ -452,7 +595,7 @@ function MediaTile({
     <button
       type="button"
       onClick={onOpen}
-      aria-label={`Abrir ${item.title}`}
+      aria-label={m.open(item.title)}
       style={{
         position: 'relative',
         display: 'block',
@@ -563,10 +706,12 @@ function MediaTile({
 
 /** Trajetória, das temporadas que o atleta cadastrou. */
 function Career({ seasons }: { seasons: readonly SeasonStat[] }) {
+  const m = useMessages(MESSAGES)
+  const localeTag = useLocaleTag()
   if (seasons.length === 0) return null
 
   // A coluna "divisão" do kit não existe na API — a tabela nasce sem ela.
-  const head = ['ANO', 'CLUBE', 'JOGOS', 'GOLS', 'ASSIST.', 'MIN.']
+  const head = m.careerHead
   const cell = {
     padding: '14px 10px 14px 0',
     fontFamily: fonts.mono,
@@ -578,7 +723,7 @@ function Career({ seasons }: { seasons: readonly SeasonStat[] }) {
 
   return (
     <section>
-      <SectionHead eyebrowText="T R A J E T Ó R I A" title="Por onde passou." />
+      <SectionHead eyebrowText={m.careerEyebrow} title={m.careerTitle} />
       <div className="empregol-scroll-x" style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', minWidth: 440, borderCollapse: 'collapse' }}>
           <thead>
@@ -612,7 +757,7 @@ function Career({ seasons }: { seasons: readonly SeasonStat[] }) {
                 <td style={cell}>{season.gamesPlayed}</td>
                 <td style={cell}>{season.goals}</td>
                 <td style={cell}>{season.assists}</td>
-                <td style={cell}>{season.minutesPlayed.toLocaleString('pt-BR')}&apos;</td>
+                <td style={cell}>{season.minutesPlayed.toLocaleString(localeTag)}&apos;</td>
               </tr>
             ))}
           </tbody>
@@ -639,11 +784,13 @@ function Card({ children, dark = false }: { children: ReactNode; dark?: boolean 
 }
 
 function PositionCard({ athlete }: { athlete: AthleteProfile }) {
+  const m = useMessages(MESSAGES)
+  const { positions } = useFormOptions()
   const others = (athlete.positions ?? []).filter((p) => p !== athlete.position)
 
   return (
     <Card>
-      <p style={{ ...eyebrow, fontSize: 10, marginBottom: 16 }}>P O S I Ç Ã O · E M · C A M P O</p>
+      <p style={{ ...eyebrow, fontSize: 10, marginBottom: 16 }}>{m.positionEyebrow}</p>
       <div style={{ display: 'flex', gap: 20, alignItems: 'center', flexWrap: 'wrap' }}>
         <PositionPitch position={athlete.position} others={others} size={96} />
         <div style={{ minWidth: 0 }}>
@@ -659,7 +806,7 @@ function PositionCard({ athlete }: { athlete: AthleteProfile }) {
             {athlete.position}
           </div>
           <div style={{ fontFamily: fonts.display, fontWeight: 600, fontSize: 18, marginTop: 4 }}>
-            {labelOf(POSITIONS, athlete.position)}
+            {labelOf(positions, athlete.position)}
           </div>
           {others.length > 0 && (
             <div style={{ display: 'flex', gap: 6, marginTop: 12, flexWrap: 'wrap' }}>
@@ -677,22 +824,25 @@ function PositionCard({ athlete }: { athlete: AthleteProfile }) {
 }
 
 function DetailsCard({ athlete }: { athlete: AthleteProfile }) {
+  const m = useMessages(MESSAGES)
+  const localeTag = useLocaleTag()
+  const options = useFormOptions()
   const rows = [
-    ['Idade', athlete.age ? `${athlete.age} anos` : null],
-    ['Altura', height(athlete.height)],
-    ['Peso', athlete.weight ? `${athlete.weight} kg` : null],
-    ['Pé', labelOf(DOMINANT_FEET, athlete.dominantFoot)],
-    ['Nível', labelOf(LEVELS, athlete.level)],
-    ['Naturalidade', athlete.naturalidade],
-    ['Agenciamento', AGENCY_LABEL[athlete.agencyStatus]],
-    ['Último clube', athlete.lastClub],
+    [m.details.age, athlete.age ? m.years(athlete.age) : null],
+    [m.details.height, height(athlete.height, localeTag)],
+    [m.details.weight, athlete.weight ? `${athlete.weight} kg` : null],
+    [m.details.foot, labelOf(options.dominantFeet, athlete.dominantFoot)],
+    [m.details.level, labelOf(options.levels, athlete.level)],
+    [m.details.hometown, athlete.naturalidade],
+    [m.details.agency, m.agency[athlete.agencyStatus]],
+    [m.details.lastClub, athlete.lastClub],
   ].filter(([, value]) => Boolean(value)) as Array<[string, string]>
 
   if (rows.length === 0) return null
 
   return (
     <Card>
-      <p style={{ ...eyebrow, fontSize: 10, marginBottom: 10 }}>F I C H A · T É C N I C A</p>
+      <p style={{ ...eyebrow, fontSize: 10, marginBottom: 10 }}>{m.detailsEyebrow}</p>
       {rows.map(([key, value], index) => (
         <div
           key={key}
@@ -728,7 +878,7 @@ function DetailsCard({ athlete }: { athlete: AthleteProfile }) {
             paddingBottom: 2,
           }}
         >
-          PERFIL ESPORTIVO ›
+          {m.sportsProfile}
         </a>
       )}
     </Card>
@@ -740,13 +890,15 @@ function DetailsCard({ athlete }: { athlete: AthleteProfile }) {
  * campo; o cartão só existe para contratante autenticado.
  */
 function SalaryCard({ athlete, audience }: { athlete: AthleteProfile; audience: ProfileAudience }) {
-  const value = audience === 'contractor' ? money(athlete.expectedSalary) : null
+  const m = useMessages(MESSAGES)
+  const localeTag = useLocaleTag()
+  const value = audience === 'contractor' ? money(athlete.expectedSalary, localeTag) : null
   if (!value) return null
 
   return (
     <Card dark>
       <p style={{ ...eyebrow, fontSize: 10, color: colors.cinzaOnDark, marginBottom: 10 }}>
-        P R E T E N S Ã O · M E N S A L
+        {m.salaryEyebrow}
       </p>
       <div
         style={{
@@ -768,8 +920,7 @@ function SalaryCard({ athlete, audience }: { athlete: AthleteProfile; audience: 
           margin: '12px 0 0',
         }}
       >
-        Visível para você porque está logado como clube ou agência. Quem abre o link de fora não vê
-        este valor.
+        {m.salaryNote}
       </p>
     </Card>
   )

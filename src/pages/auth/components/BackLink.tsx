@@ -2,6 +2,13 @@ import { useNavigate } from 'react-router-dom'
 
 import { ROUTES } from '@/app/router/routes'
 import { colors, fonts } from '@/shared/config/theme'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
+
+const MESSAGES = defineMessages({
+  pt: { back: 'Voltar' },
+  en: { back: 'Back' },
+  es: { back: 'Volver' },
+})
 
 /**
  * Volta para a página anterior.
@@ -11,6 +18,7 @@ import { colors, fonts } from '@/shared/config/theme'
  * botão morto.
  */
 export function BackLink() {
+  const m = useMessages(MESSAGES)
   const navigate = useNavigate()
 
   const goBack = () => {
@@ -45,7 +53,7 @@ export function BackLink() {
       <span aria-hidden="true" style={{ fontSize: 15, lineHeight: 1, color: colors.tinta }}>
         ‹
       </span>
-      Voltar
+      {m.back}
     </button>
   )
 }

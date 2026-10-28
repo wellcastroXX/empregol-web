@@ -1,3 +1,11 @@
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
+
+const MESSAGES = defineMessages({
+  pt: { open: 'Abrir menu', close: 'Fechar menu' },
+  en: { open: 'Open menu', close: 'Close menu' },
+  es: { open: 'Abrir menú', close: 'Cerrar menú' },
+})
+
 export interface MobileMenuButtonProps {
   open: boolean
   onToggle: () => void
@@ -15,12 +23,14 @@ const BAR = {
 
 /** Botão de menu. Os três traços viram um X quando aberto. */
 export function MobileMenuButton({ open, onToggle, color }: MobileMenuButtonProps) {
+  const m = useMessages(MESSAGES)
+
   return (
     <button
       type="button"
       className="only-md"
       onClick={onToggle}
-      aria-label={open ? 'Fechar menu' : 'Abrir menu'}
+      aria-label={open ? m.close : m.open}
       aria-expanded={open}
       aria-controls="menu-mobile"
       style={{

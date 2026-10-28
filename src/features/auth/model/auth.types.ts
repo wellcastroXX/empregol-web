@@ -1,3 +1,5 @@
+import { currentLocale, type Locale } from '@/shared/i18n/locale'
+
 /** Tipos do domínio de autenticação, espelhando os DTOs da empregol-api. */
 
 export type UserRole = 'athlete' | 'contractor'
@@ -101,6 +103,12 @@ export interface ApiLoginData {
   user: ApiUser
 }
 
+const INCOMPLETE_PROFILE: Record<Locale, string> = {
+  pt: 'Perfil de usuário incompleto retornado pela API.',
+  en: 'The API returned an incomplete user profile.',
+  es: 'La API devolvió un perfil de usuario incompleto.',
+}
+
 /** Achata o usuário da API no formato usado pela interface. */
 export function toAuthUser(user: ApiUser): AuthUser {
   const base = {
@@ -130,5 +138,5 @@ export function toAuthUser(user: ApiUser): AuthUser {
     }
   }
 
-  throw new Error('Perfil de usuário incompleto retornado pela API.')
+  throw new Error(INCOMPLETE_PROFILE[currentLocale()])
 }

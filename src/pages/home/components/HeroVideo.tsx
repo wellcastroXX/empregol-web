@@ -5,6 +5,31 @@ import heroPoster from '@/assets/videos/hero-poster.jpg'
 import heroVideo from '@/assets/videos/hero.mp4'
 import { colors, fonts } from '@/shared/config/theme'
 import { usePrefersReducedMotion } from '@/shared/lib/hooks/usePrefersReducedMotion'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
+
+const MESSAGES = defineMessages({
+  pt: {
+    eyebrow: 'E M P R E G O L · P L A T A F O R M A · D O · A T L E T A',
+    headline: ['Seu gol', 'começa', 'aqui'],
+    lead: 'A Empregol nasceu de uma dor que a gente conhece de perto: a de ser esquecido depois de dar tudo em campo.',
+    body: 'Somos a plataforma que conecta atletas de futebol sem contrato ativo a clubes, agências e marcas — dando visibilidade, oportunidade e apoio a quem o mercado deixou de enxergar.',
+    cta: 'Quero fazer parte ›',
+  },
+  en: {
+    eyebrow: 'E M P R E G O L · T H E · A T H L E T E · P L A T F O R M',
+    headline: ['Your goal', 'starts', 'here'],
+    lead: 'Empregol was born from a pain we know firsthand: being forgotten after giving everything on the pitch.',
+    body: 'We are the platform that connects football players without an active contract to clubs, agencies and brands — giving visibility, opportunity and support to those the market stopped seeing.',
+    cta: 'I want in ›',
+  },
+  es: {
+    eyebrow: 'E M P R E G O L · L A · P L A T A F O R M A · D E L · A T L E T A',
+    headline: ['Tu gol', 'empieza', 'aquí'],
+    lead: 'Empregol nació de un dolor que conocemos de cerca: el de ser olvidado después de darlo todo en la cancha.',
+    body: 'Somos la plataforma que conecta a futbolistas sin contrato vigente con clubes, agencias y marcas — dando visibilidad, oportunidades y apoyo a quienes el mercado dejó de ver.',
+    cta: 'Quiero ser parte ›',
+  },
+})
 
 /**
  * Abertura da home: vídeo full-bleed com scrim escuro e a manchete empilhada
@@ -12,6 +37,7 @@ import { usePrefersReducedMotion } from '@/shared/lib/hooks/usePrefersReducedMot
  * no DOM, não dentro da mídia.
  */
 export function HeroVideo() {
+  const m = useMessages(MESSAGES)
   const prefersReducedMotion = usePrefersReducedMotion()
 
   return (
@@ -84,7 +110,7 @@ export function HeroVideo() {
             marginBottom: 28,
           }}
         >
-          E M P R E G O L · P L A T A F O R M A · D O · A T L E T A
+          {m.eyebrow}
         </div>
 
         <h1
@@ -99,11 +125,12 @@ export function HeroVideo() {
             textTransform: 'uppercase',
           }}
         >
-          Seu gol
+          {m.headline[0]}
           <br />
-          começa
+          {m.headline[1]}
           <br />
-          aqui<span style={{ color: colors.gramado }}>.</span>
+          {m.headline[2]}
+          <span style={{ color: colors.gramado }}>.</span>
         </h1>
 
         <div
@@ -126,8 +153,7 @@ export function HeroVideo() {
                 margin: '0 0 14px',
               }}
             >
-              A Empregol nasceu de uma dor que a gente conhece de perto: a de ser esquecido depois
-              de dar tudo em campo.
+              {m.lead}
             </p>
             <p
               style={{
@@ -139,9 +165,7 @@ export function HeroVideo() {
                 margin: 0,
               }}
             >
-              Somos a plataforma que conecta atletas de futebol sem contrato ativo a clubes, agências
-              e marcas — dando visibilidade, oportunidade e apoio a quem o mercado deixou de
-              enxergar.
+              {m.body}
             </p>
           </div>
 
@@ -165,7 +189,7 @@ export function HeroVideo() {
               whiteSpace: 'nowrap',
             }}
           >
-            Quero fazer parte ›
+            {m.cta}
           </Link>
         </div>
       </div>

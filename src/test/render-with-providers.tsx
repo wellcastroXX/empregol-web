@@ -6,6 +6,8 @@ import { MemoryRouter } from 'react-router-dom'
 import { sessionStorage } from '@/features/auth/lib/session-storage'
 import type { AuthUser } from '@/features/auth/model/auth.types'
 import { AuthProvider } from '@/features/auth/ui/AuthProvider'
+import type { Locale } from '@/shared/i18n/locale'
+import { LocaleProvider } from '@/shared/i18n/LocaleProvider'
 
 export const testUser: AuthUser = {
   id: 'user-1',
@@ -24,11 +26,13 @@ export interface RenderWithProvidersOptions extends Omit<RenderOptions, 'wrapper
    * storage no primeiro render, então isso faz a árvore já nascer autenticada.
    */
   user?: AuthUser | null
+  /** Idioma da árvore. Português por padrão, como o site nasce para o público principal. */
+  locale?: Locale
 }
 
 export function renderWithProviders(
   ui: ReactElement,
-  { route = '/', user = null, ...options }: RenderWithProvidersOptions = {},
+  { route = '/', user = null, locale = 'pt', ...options }: RenderWithProvidersOptions = {},
 ) {
   if (user) {
     sessionStorage.save({
@@ -44,11 +48,13 @@ export function renderWithProviders(
 
   function Wrapper({ children }: { children: ReactNode }) {
     return (
-      <MemoryRouter initialEntries={[route]}>
-        <QueryClientProvider client={queryClient}>
-          <AuthProvider>{children}</AuthProvider>
-        </QueryClientProvider>
-      </MemoryRouter>
+      <LocaleProvider initialLocale={locale}>
+        <MemoryRouter initialEntries={[route]}>
+          <QueryClientProvider client={queryClient}>
+            <AuthProvider>{children}</AuthProvider>
+          </QueryClientProvider>
+        </MemoryRouter>
+      </LocaleProvider>
     )
   }
 

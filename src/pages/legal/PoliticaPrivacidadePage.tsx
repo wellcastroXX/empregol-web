@@ -2,6 +2,7 @@ import { Fragment } from 'react'
 
 import pdfUrl from '@/assets/others/termos-de-uso–empregol.pdf'
 import { colors, fonts } from '@/shared/config/theme'
+import { defineMessages, useLocaleTag, useMessages } from '@/shared/i18n/locale-context'
 
 import {
   ANEXO,
@@ -15,15 +16,60 @@ import {
 } from './termos-de-uso.content'
 
 /**
+ * O documento em si não é traduzido: texto jurídico precisa de revisão de
+ * advogado antes de valer em outro idioma. Em inglês e espanhol, a página
+ * avisa que a versão válida é a em português.
+ */
+const MESSAGES = defineMessages<{
+  eyebrow: string
+  download: string
+  contents: string
+  contentsEyebrow: string
+  onlyPortuguese: string | null
+}>({
+  pt: {
+    eyebrow: 'D O C U M E N T O · L E G A L',
+    download: 'BAIXAR EM PDF ›',
+    contents: 'Sumário',
+    contentsEyebrow: 'S U M Á R I O',
+    onlyPortuguese: null,
+  },
+  en: {
+    eyebrow: 'L E G A L · D O C U M E N T',
+    download: 'DOWNLOAD PDF ›',
+    contents: 'Contents',
+    contentsEyebrow: 'C O N T E N T S',
+    onlyPortuguese:
+      'This document is available in Portuguese only. The Portuguese version is the one that legally applies.',
+  },
+  es: {
+    eyebrow: 'D O C U M E N T O · L E G A L',
+    download: 'DESCARGAR EN PDF ›',
+    contents: 'Índice',
+    contentsEyebrow: 'Í N D I C E',
+    onlyPortuguese:
+      'Este documento solo está disponible en portugués. La versión en portugués es la que tiene validez legal.',
+  },
+})
+
+/**
  * Documento legal da Empregol em página única — todas as cláusulas em uma
  * rolagem só, sem abas nem visualizador de PDF. O texto vem de
  * `termos-de-uso.content.ts`; o PDF original fica disponível para download.
  */
 export default function PoliticaPrivacidadePage() {
+  const m = useMessages(MESSAGES)
+  // Os rótulos da página (não o documento) seguem o idioma do site.
+  const chromeLang = useLocaleTag()
+
   return (
-    <article style={{ padding: 'var(--section-y) var(--page-x)' }}>
+    // O texto do documento só existe em português; `lang` faz leitores de tela
+    // e tradutores do navegador tratarem o conteúdo como tal.
+    <article lang="pt-BR" style={{ padding: 'var(--section-y) var(--page-x)' }}>
       <header style={{ maxWidth: 760, margin: '0 auto 56px' }}>
-        <div style={eyebrowStyle}>D O C U M E N T O · L E G A L</div>
+        <div lang={chromeLang} style={eyebrowStyle}>
+          {m.eyebrow}
+        </div>
         <h1
           style={{
             fontFamily: fonts.display,
@@ -39,9 +85,25 @@ export default function PoliticaPrivacidadePage() {
           <span style={{ color: colors.gramado }}>.</span>
         </h1>
         <p style={{ ...bodyStyle, color: colors.cinza, margin: '0 0 8px' }}>{DOCUMENT_VERSION}</p>
+        {m.onlyPortuguese && (
+          <p
+            role="note"
+            lang={chromeLang}
+            style={{
+              ...bodyStyle,
+              margin: '16px 0 0',
+              padding: '12px 14px',
+              borderLeft: `3px solid ${colors.gramado}`,
+              background: colors.giz,
+            }}
+          >
+            {m.onlyPortuguese}
+          </p>
+        )}
         <a
           href={pdfUrl}
           download
+          lang={chromeLang}
           style={{
             display: 'inline-block',
             marginTop: 16,
@@ -56,13 +118,15 @@ export default function PoliticaPrivacidadePage() {
             border: `1.5px solid ${colors.tinta}`,
           }}
         >
-          BAIXAR EM PDF ›
+          {m.download}
         </a>
       </header>
 
       {/* Sumário: 11 cláusulas em uma rolagem só pedem um atalho no topo. */}
-      <nav aria-label="Sumário" style={{ maxWidth: 760, margin: '0 auto 64px' }}>
-        <div style={{ ...eyebrowStyle, marginBottom: 14 }}>S U M Á R I O</div>
+      <nav aria-label={m.contents} style={{ maxWidth: 760, margin: '0 auto 64px' }}>
+        <div lang={chromeLang} style={{ ...eyebrowStyle, marginBottom: 14 }}>
+          {m.contentsEyebrow}
+        </div>
         <ol style={{ listStyle: 'none', margin: 0, padding: 0 }}>
           {[...SECTIONS, ANEXO].map((section) => (
             <li key={section.number} style={{ borderTop: `1px solid ${colors.osso}` }}>

@@ -1,15 +1,57 @@
 import type { AthleteCard } from '@/features/scout/model/scout.types'
 import { colors, fonts } from '@/shared/config/theme'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 import { Eyebrow } from '@/shared/ui/Eyebrow'
 
 import { useOpenAthleteProfile } from './athlete-profile-context'
 
-const AVAILABILITY_LABEL = { FREE: 'LIVRE', EMPLOYED: 'EMPREGADO' } as const
+const MESSAGES = defineMessages<{
+  availability: Record<AthleteCard['availability'], string>
+  years: (age: number) => string
+  openProfile: (name: string) => string
+  addToShortlist: (name: string) => string
+  removeFromShortlist: (name: string) => string
+  onShortlist: string
+  shortlist: string
+  message: string
+}>({
+  pt: {
+    availability: { FREE: 'LIVRE', EMPLOYED: 'EMPREGADO' },
+    years: (age) => `${age} anos`,
+    openProfile: (name) => `Abrir o perfil de ${name}`,
+    addToShortlist: (name) => `Adicionar ${name} à shortlist`,
+    removeFromShortlist: (name) => `Remover ${name} da shortlist`,
+    onShortlist: 'Na shortlist',
+    shortlist: 'Shortlist',
+    message: 'Conversar',
+  },
+  en: {
+    availability: { FREE: 'FREE AGENT', EMPLOYED: 'UNDER CONTRACT' },
+    years: (age) => `${age} years old`,
+    openProfile: (name) => `Open ${name}'s profile`,
+    addToShortlist: (name) => `Add ${name} to the shortlist`,
+    removeFromShortlist: (name) => `Remove ${name} from the shortlist`,
+    onShortlist: 'On shortlist',
+    shortlist: 'Shortlist',
+    message: 'Message',
+  },
+  es: {
+    availability: { FREE: 'LIBRE', EMPLOYED: 'CON CONTRATO' },
+    years: (age) => `${age} años`,
+    openProfile: (name) => `Abrir el perfil de ${name}`,
+    addToShortlist: (name) => `Agregar a ${name} a la shortlist`,
+    removeFromShortlist: (name) => `Quitar a ${name} de la shortlist`,
+    onShortlist: 'En la shortlist',
+    shortlist: 'Shortlist',
+    message: 'Conversar',
+  },
+})
+
 const AVAILABILITY_BG = { FREE: colors.gramado, EMPLOYED: colors.statusEmpregado } as const
 
 /** Linha de metadados: posição · idade · último clube. */
-function meta(athlete: AthleteCard): string {
-  return [athlete.position, athlete.age ? `${athlete.age} anos` : null, athlete.lastClub]
+function meta(athlete: AthleteCard, years: (age: number) => string): string {
+  return [athlete.position, athlete.age ? years(athlete.age) : null, athlete.lastClub]
     .filter(Boolean)
     .join(' · ')
 }
@@ -73,6 +115,7 @@ export function AthleteRow({
 }: AthleteRowProps) {
   const jersey = athlete.jerseyNumber != null ? String(athlete.jerseyNumber).padStart(2, '0') : '--'
   const openProfile = useOpenAthleteProfile()
+  const m = useMessages(MESSAGES)
 
   return (
     <div
@@ -90,7 +133,7 @@ export function AthleteRow({
       <Identity
         as={openProfile ? 'button' : 'div'}
         onClick={openProfile ? () => openProfile(athlete.id) : undefined}
-        label={openProfile ? `Abrir o perfil de ${athlete.fullName}` : undefined}
+        label={openProfile ? m.openProfile(athlete.fullName) : undefined}
       >
         <div
           style={{
@@ -140,11 +183,11 @@ export function AthleteRow({
                 letterSpacing: '0.10em',
               }}
             >
-              {AVAILABILITY_LABEL[athlete.availability]}
+              {m.availability[athlete.availability]}
             </span>
           </div>
           <Eyebrow size={9.5} style={{ letterSpacing: '0.12em', marginTop: 3 }}>
-            {meta(athlete)}
+            {meta(athlete, m.years)}
           </Eyebrow>
         </div>
       </Identity>
@@ -158,8 +201,8 @@ export function AthleteRow({
             aria-pressed={athlete.isFavorited ?? false}
             aria-label={
               athlete.isFavorited
-                ? `Remover ${athlete.fullName} da shortlist`
-                : `Adicionar ${athlete.fullName} à shortlist`
+                ? m.removeFromShortlist(athlete.fullName)
+                : m.addToShortlist(athlete.fullName)
             }
             style={{
               background: athlete.isFavorited ? colors.tinta : 'transparent',
@@ -176,7 +219,7 @@ export function AthleteRow({
               whiteSpace: 'nowrap',
             }}
           >
-            {athlete.isFavorited ? 'Na shortlist' : 'Shortlist'}
+            {athlete.isFavorited ? m.onShortlist : m.shortlist}
           </button>
         )}
         {onOpenConversation && (
@@ -199,7 +242,7 @@ export function AthleteRow({
               whiteSpace: 'nowrap',
             }}
           >
-            Conversar
+            {m.message}
           </button>
         )}
       </div>

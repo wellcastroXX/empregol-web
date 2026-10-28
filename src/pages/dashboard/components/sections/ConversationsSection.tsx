@@ -5,9 +5,52 @@ import { useConversations, useMessages, useSendMessage } from '@/features/scout/
 import type { Conversation } from '@/features/scout/model/scout.types'
 import { useAuth } from '@/features/auth/ui/auth-context'
 import { colors, fonts } from '@/shared/config/theme'
+// Renomeado: `useMessages` aqui já é o hook das mensagens da conversa.
+import { defineMessages, useLocaleTag, useMessages as useText } from '@/shared/i18n/locale-context'
 import { Eyebrow } from '@/shared/ui/Eyebrow'
 
 import { PanelEmpty, PanelError, PanelLoading } from '../PanelState'
+
+const MESSAGES = defineMessages({
+  pt: {
+    fallbackName: 'Conversa',
+    emptyTitle: 'Nenhuma conversa ainda',
+    emptyBody:
+      'Abra uma conversa a partir da busca de atletas — o botão Conversar fica em cada linha.',
+    eyebrow: 'C O N V E R S A S',
+    noMessages: 'Sem mensagens',
+    threadEmpty: 'Nenhuma mensagem ainda. Escreva a primeira.',
+    draftPlaceholder: 'Escreva uma mensagem',
+    draftLabel: 'Mensagem',
+    send: 'Enviar',
+    sending: 'Enviando',
+  },
+  en: {
+    fallbackName: 'Conversation',
+    emptyTitle: 'No conversations yet',
+    emptyBody: 'Start a conversation from the athlete search — the Message button is on every row.',
+    eyebrow: 'C O N V E R S A T I O N S',
+    noMessages: 'No messages',
+    threadEmpty: 'No messages yet. Write the first one.',
+    draftPlaceholder: 'Write a message',
+    draftLabel: 'Message',
+    send: 'Send',
+    sending: 'Sending',
+  },
+  es: {
+    fallbackName: 'Conversación',
+    emptyTitle: 'Todavía no hay conversaciones',
+    emptyBody:
+      'Abre una conversación desde la búsqueda de atletas — el botón Conversar está en cada fila.',
+    eyebrow: 'C O N V E R S A C I O N E S',
+    noMessages: 'Sin mensajes',
+    threadEmpty: 'Todavía no hay mensajes. Escribe el primero.',
+    draftPlaceholder: 'Escribe un mensaje',
+    draftLabel: 'Mensaje',
+    send: 'Enviar',
+    sending: 'Enviando',
+  },
+})
 
 const cardStyle = {
   background: colors.giz,
@@ -16,17 +59,19 @@ const cardStyle = {
   padding: '22px 24px',
 } as const
 
-function peerName(conversation: Conversation): string {
-  return conversation.athlete?.fullName ?? conversation.contractor?.name ?? 'Conversa'
+function peerName(conversation: Conversation, fallback: string): string {
+  return conversation.athlete?.fullName ?? conversation.contractor?.name ?? fallback
 }
 
-function timeLabel(iso?: string | null): string {
+function timeLabel(iso: string | null | undefined, localeTag: string): string {
   if (!iso) return ''
-  return new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
+  return new Date(iso).toLocaleDateString(localeTag, { day: '2-digit', month: 'short' })
 }
 
 /** Conversas do contratante: lista à esquerda, thread à direita. */
 export function ConversationsSection() {
+  const m = useText(MESSAGES)
+  const localeTag = useLocaleTag()
   const conversations = useConversations()
   const [activeId, setActiveId] = useState<string | null>(null)
   const list = conversations.data ?? []
@@ -50,19 +95,14 @@ export function ConversationsSection() {
   }
 
   if (list.length === 0) {
-    return (
-      <PanelEmpty
-        title="Nenhuma conversa ainda"
-        description="Abra uma conversa a partir da busca de atletas — o botão Conversar fica em cada linha."
-      />
-    )
+    return <PanelEmpty title={m.emptyTitle} description={m.emptyBody} />
   }
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'var(--cols-dash-main)', gap: 16 }}>
       <section style={{ ...cardStyle, padding: '22px 0 8px' }}>
         <Eyebrow size={10} style={{ letterSpacing: '0.16em', padding: '0 24px', marginBottom: 14 }}>
-          C O N V E R S A S
+          {m.eyebrow}
         </Eyebrow>
         {list.map((conversation) => {
           const active = conversation.id === currentId
@@ -92,7 +132,7 @@ export function ConversationsSection() {
                     color: colors.tinta,
                   }}
                 >
-                  {peerName(conversation)}
+                  {peerName(conversation, m.fallbackName)}
                 </span>
                 {conversation.contractorUnreadCount > 0 && (
                   <span
@@ -117,7 +157,7 @@ export function ConversationsSection() {
                     color: colors.cinza,
                   }}
                 >
-                  {timeLabel(conversation.lastMessageAt)}
+                  {timeLabel(conversation.lastMessageAt, localeTag)}
                 </span>
               </span>
               <span
@@ -132,7 +172,7 @@ export function ConversationsSection() {
                   whiteSpace: 'nowrap',
                 }}
               >
-                {conversation.lastMessagePreview ?? 'Sem mensagens'}
+                {conversation.lastMessagePreview ?? m.noMessages}
               </span>
             </button>
           )
@@ -145,6 +185,7 @@ export function ConversationsSection() {
 }
 
 function Thread({ conversation }: { conversation: Conversation }) {
+  const m = useText(MESSAGES)
   const { user } = useAuth()
   const messages = useMessages(conversation.id)
   const send = useSendMessage(conversation.id)
@@ -172,7 +213,7 @@ function Thread({ conversation }: { conversation: Conversation }) {
           margin: '0 0 4px',
         }}
       >
-        {peerName(conversation)}
+        {peerName(conversation, m.fallbackName)}
       </h2>
       <Eyebrow size={9.5} style={{ letterSpacing: '0.14em', marginBottom: 16 }}>
         {conversation.athlete?.position ?? ''}
@@ -185,7 +226,7 @@ function Thread({ conversation }: { conversation: Conversation }) {
         )}
         {!messages.isLoading && ordered.length === 0 && (
           <p style={{ fontFamily: fonts.text, fontSize: 14, color: colors.cinza, margin: 0 }}>
-            Nenhuma mensagem ainda. Escreve a primeira.
+            {m.threadEmpty}
           </p>
         )}
         {ordered.map((message) => {
@@ -215,8 +256,8 @@ function Thread({ conversation }: { conversation: Conversation }) {
         <input
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          placeholder="Escreve uma mensagem"
-          aria-label="Mensagem"
+          placeholder={m.draftPlaceholder}
+          aria-label={m.draftLabel}
           style={{
             flex: 1,
             minWidth: 0,
@@ -248,7 +289,7 @@ function Thread({ conversation }: { conversation: Conversation }) {
             opacity: draft.trim() ? 1 : 0.5,
           }}
         >
-          {send.isPending ? 'Enviando' : 'Enviar'}
+          {send.isPending ? m.sending : m.send}
         </button>
       </form>
     </section>

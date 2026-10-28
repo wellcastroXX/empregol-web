@@ -1,13 +1,84 @@
 import { useAthleteDashboard } from '@/features/athlete-dashboard/lib/queries'
 import { useAuth } from '@/features/auth/ui/auth-context'
 import { colors, fonts } from '@/shared/config/theme'
+import { LanguageSwitcher } from '@/shared/i18n/LanguageSwitcher'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 import { Eyebrow } from '@/shared/ui/Eyebrow'
 import { Wordmark } from '@/shared/ui/Wordmark'
 
 import { PanelEmpty, PanelError, PanelLoading } from './components/PanelState'
 import { ShowcaseCard } from './components/ShowcaseCard'
 
-const CONTRACTOR_LABEL = { AGENT: 'AGÊNCIA', CLUB: 'CLUBE' } as const
+const MESSAGES = defineMessages<{
+  signOut: string
+  eyebrow: string
+  hello: (name: string) => string
+  viewsToday: string
+  proposals: string
+  daysShowcase: string
+  newInvite: string
+  contractorTypes: Record<'AGENT' | 'CLUB', string>
+  wantsToTalk: string
+  noInvite: string
+  whoViewed: string
+  viewsCount: (count: number) => string
+  noViews: (week: number) => string
+  emptyTitle: string
+  emptyBody: string
+}>({
+  pt: {
+    signOut: 'Sair',
+    eyebrow: 'Á R E A · D O · A T L E T A',
+    hello: (name) => `Olá, ${name || 'atleta'}`,
+    viewsToday: 'viram hoje',
+    proposals: 'propostas',
+    daysShowcase: 'na vitrine',
+    newInvite: 'N O V O · C O N V I T E',
+    contractorTypes: { AGENT: 'AGÊNCIA', CLUB: 'CLUBE' },
+    wantsToTalk: 'quer conversar com você',
+    noInvite: 'Nenhum convite ainda. Mantenha seu perfil completo para aparecer nas buscas.',
+    whoViewed: 'Q U E M · T E · V I U · H O J E',
+    viewsCount: (count) => `${count} visualizações hoje`,
+    noViews: (week) => `Ainda ninguém te viu hoje — mas a semana toda soma ${week}.`,
+    emptyTitle: 'Sem dados ainda',
+    emptyBody: 'Volte em instantes.',
+  },
+  en: {
+    signOut: 'Sign out',
+    eyebrow: 'A T H L E T E · A R E A',
+    hello: (name) => `Hi, ${name || 'athlete'}`,
+    viewsToday: 'viewed today',
+    proposals: 'offers',
+    daysShowcase: 'in the showcase',
+    newInvite: 'N E W · I N V I T A T I O N',
+    contractorTypes: { AGENT: 'AGENCY', CLUB: 'CLUB' },
+    wantsToTalk: 'wants to talk to you',
+    noInvite: 'No invitations yet. Keep your profile complete to show up in searches.',
+    whoViewed: 'W H O · V I E W E D · Y O U · T O D A Y',
+    viewsCount: (count) => `${count} ${count === 1 ? 'view' : 'views'} today`,
+    noViews: (week) => `Nobody has viewed you today yet — but the whole week adds up to ${week}.`,
+    emptyTitle: 'No data yet',
+    emptyBody: 'Check back in a moment.',
+  },
+  es: {
+    signOut: 'Salir',
+    eyebrow: 'Á R E A · D E L · A T L E T A',
+    hello: (name) => `Hola, ${name || 'atleta'}`,
+    viewsToday: 'te vieron hoy',
+    proposals: 'propuestas',
+    daysShowcase: 'en la vitrina',
+    newInvite: 'N U E V A · I N V I T A C I Ó N',
+    contractorTypes: { AGENT: 'AGENCIA', CLUB: 'CLUB' },
+    wantsToTalk: 'quiere conversar contigo',
+    noInvite:
+      'Todavía no hay invitaciones. Mantén tu perfil completo para aparecer en las búsquedas.',
+    whoViewed: 'Q U I É N · T E · V I O · H O Y',
+    viewsCount: (count) => `${count} ${count === 1 ? 'visualización' : 'visualizaciones'} hoy`,
+    noViews: (week) => `Todavía nadie te vio hoy — pero en toda la semana suman ${week}.`,
+    emptyTitle: 'Todavía no hay datos',
+    emptyBody: 'Vuelve en un momento.',
+  },
+})
 
 const cardStyle = {
   background: colors.giz,
@@ -18,6 +89,8 @@ const cardStyle = {
 
 /** Cabeçalho próprio — o atleta não tem barra lateral de scout. */
 function AthleteTopbar({ onSignOut }: { onSignOut: () => void }) {
+  const m = useMessages(MESSAGES)
+
   return (
     <header
       style={{
@@ -35,25 +108,28 @@ function AthleteTopbar({ onSignOut }: { onSignOut: () => void }) {
       }}
     >
       <Wordmark variant="dark" height={22} />
-      <button
-        type="button"
-        onClick={onSignOut}
-        style={{
-          background: 'transparent',
-          border: `1px solid ${colors.tinta}`,
-          borderRadius: 30,
-          padding: '9px 16px',
-          cursor: 'pointer',
-          fontFamily: fonts.mono,
-          fontWeight: 500,
-          fontSize: 10,
-          letterSpacing: '0.14em',
-          textTransform: 'uppercase',
-          color: colors.tinta,
-        }}
-      >
-        Sair
-      </button>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        <LanguageSwitcher color={colors.tinta} />
+        <button
+          type="button"
+          onClick={onSignOut}
+          style={{
+            background: 'transparent',
+            border: `1px solid ${colors.tinta}`,
+            borderRadius: 30,
+            padding: '9px 16px',
+            cursor: 'pointer',
+            fontFamily: fonts.mono,
+            fontWeight: 500,
+            fontSize: 10,
+            letterSpacing: '0.14em',
+            textTransform: 'uppercase',
+            color: colors.tinta,
+          }}
+        >
+          {m.signOut}
+        </button>
+      </div>
     </header>
   )
 }
@@ -66,6 +142,7 @@ function AthleteTopbar({ onSignOut }: { onSignOut: () => void }) {
  * último convite e quem visualizou.
  */
 export function AthletePanel() {
+  const m = useMessages(MESSAGES)
   const { user, signOut } = useAuth()
   const dashboard = useAthleteDashboard()
 
@@ -79,7 +156,7 @@ export function AthletePanel() {
       <AthleteTopbar onSignOut={signOut} />
 
       <main style={{ padding: '28px var(--page-x) 60px', maxWidth: 900, margin: '0 auto' }}>
-        <Eyebrow style={{ marginBottom: 8 }}>Á R E A · D O · A T L E T A</Eyebrow>
+        <Eyebrow style={{ marginBottom: 8 }}>{m.eyebrow}</Eyebrow>
         <h1
           style={{
             fontFamily: fonts.display,
@@ -90,7 +167,7 @@ export function AthletePanel() {
             margin: '0 0 28px',
           }}
         >
-          Olá, {firstName || 'atleta'}
+          {m.hello(firstName)}
           <span style={{ color: colors.gramado }}>.</span>
         </h1>
 
@@ -109,16 +186,16 @@ export function AthletePanel() {
                 marginBottom: 28,
               }}
             >
-              <StatCard value={stats?.viewsToday ?? 0} label="viram hoje" accent />
-              <StatCard value={stats?.pendingProposals ?? 0} label="propostas" />
-              <StatCard value={`${stats?.daysOnPlatform ?? 0}d`} label="na vitrine" />
+              <StatCard value={stats?.viewsToday ?? 0} label={m.viewsToday} accent />
+              <StatCard value={stats?.pendingProposals ?? 0} label={m.proposals} />
+              <StatCard value={`${stats?.daysOnPlatform ?? 0}d`} label={m.daysShowcase} />
             </div>
 
             <ShowcaseCard />
 
             <section style={{ ...cardStyle, marginBottom: 16 }}>
               <Eyebrow size={10} style={{ letterSpacing: '0.16em', marginBottom: 12 }}>
-                N O V O · C O N V I T E
+                {m.newInvite}
               </Eyebrow>
               {proposal ? (
                 <div>
@@ -133,7 +210,7 @@ export function AthletePanel() {
                     {proposal.contractor.companyName ?? proposal.contractor.name}
                   </div>
                   <Eyebrow size={9.5} style={{ letterSpacing: '0.14em', marginTop: 4 }}>
-                    {CONTRACTOR_LABEL[proposal.contractor.type]} · quer conversar com você
+                    {m.contractorTypes[proposal.contractor.type]} · {m.wantsToTalk}
                   </Eyebrow>
                   {proposal.message && (
                     <p
@@ -151,14 +228,14 @@ export function AthletePanel() {
                 </div>
               ) : (
                 <p style={{ fontFamily: fonts.text, fontSize: 14, color: colors.cinza, margin: 0 }}>
-                  Nenhum convite ainda. Mantém teu perfil completo para aparecer nas buscas.
+                  {m.noInvite}
                 </p>
               )}
             </section>
 
             <section style={cardStyle}>
               <Eyebrow size={10} style={{ letterSpacing: '0.16em', marginBottom: 4 }}>
-                Q U E M · T E · V I U · H O J E
+                {m.whoViewed}
               </Eyebrow>
               <h2
                 style={{
@@ -170,11 +247,11 @@ export function AthletePanel() {
                   margin: '0 0 8px',
                 }}
               >
-                {viewers.length} visualizações hoje
+                {m.viewsCount(viewers.length)}
               </h2>
               {viewers.length === 0 ? (
                 <p style={{ fontFamily: fonts.text, fontSize: 14, color: colors.cinza, margin: 0 }}>
-                  Ainda ninguém te viu hoje — mas a semana toda soma {stats?.viewsThisWeek ?? 0}.
+                  {m.noViews(stats?.viewsThisWeek ?? 0)}
                 </p>
               ) : (
                 viewers.map((view) => (
@@ -199,7 +276,7 @@ export function AthletePanel() {
                       {view.contractor.companyName ?? view.contractor.name}
                     </span>
                     <Eyebrow size={9.5} style={{ letterSpacing: '0.12em' }}>
-                      {CONTRACTOR_LABEL[view.contractor.type]}
+                      {m.contractorTypes[view.contractor.type]}
                     </Eyebrow>
                   </div>
                 ))
@@ -209,7 +286,7 @@ export function AthletePanel() {
         )}
 
         {!dashboard.isLoading && !dashboard.isError && !dashboard.data && (
-          <PanelEmpty title="Sem dados ainda" description="Volte em instantes." />
+          <PanelEmpty title={m.emptyTitle} description={m.emptyBody} />
         )}
       </main>
     </div>

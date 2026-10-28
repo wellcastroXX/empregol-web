@@ -58,6 +58,7 @@ src/
 │       └── ui/               #   componentes do domínio (FormationPitch)
 ├── shared/                   # Agnóstico de domínio
 │   ├── config/               #   env validado (zod) + tokens do design system
+│   ├── i18n/                 #   idioma do site (PT/EN/ES) e seletor
 │   ├── layout/               #   SiteHeader, SiteFooter, SiteLayout
 │   ├── lib/                  #   apiClient (axios), queryClient
 │   └── ui/                   #   primitivos de UI
@@ -76,6 +77,22 @@ src/
   produção.
 - **Erros de API normalizados** por `toApiError` em `src/shared/lib/http/api-client.ts`.
 - O token de acesso vive **em memória** (`setAccessToken`), não no `localStorage`.
+
+## Idiomas
+
+O site existe em **português** (original), **inglês** e **espanhol**, sem mudar a URL. Na primeira
+visita o idioma segue o do navegador (qualquer outro cai no português); depois vale o que o visitante
+escolheu no seletor PT · EN · ES, salvo no `localStorage` (`empregol.locale`).
+
+- Cada componente declara os próprios textos com `defineMessages({ pt, en, es })` e lê com
+  `useMessages(MESSAGES)` (`src/shared/i18n/locale-context.ts`). O tipo sai do bloco em português:
+  esquecer uma chave em inglês ou espanhol é erro de compilação.
+- Texto com número usa função: ``count: (n) => `${n} atletas` ``.
+- Datas, moedas e números formatam com `useLocaleTag()` em vez de `'pt-BR'` fixo.
+- Código fora do React (cliente HTTP) lê o idioma por `currentLocale()`. As requisições à API levam
+  `Accept-Language`; as mensagens de erro que a API devolve continuam no idioma dela.
+- **Termos de uso e política de privacidade não são traduzidos**: texto jurídico precisa de revisão
+  de advogado. Em EN/ES a página mostra um aviso de que a versão válida é a em português.
 
 ## Design System
 

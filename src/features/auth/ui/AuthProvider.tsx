@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useReducer, useRef, useState, type ReactNode } from 'react'
 
+import { currentLocale, type Locale } from '@/shared/i18n/locale'
 import { setAccessToken } from '@/shared/lib/http/api-client'
 
 import { AuthError, authService } from '../lib/auth-service'
@@ -13,6 +14,12 @@ import type {
   UserRole,
 } from '../model/auth.types'
 import { AuthContext, DEFAULT_ROLE, type AuthContextValue } from './auth-context'
+
+const SESSION_EXPIRED: Record<Locale, string> = {
+  pt: 'Sessão de cadastro expirada. Entre novamente.',
+  en: 'Your sign-up session has expired. Please sign in again.',
+  es: 'La sesión de registro expiró. Vuelve a entrar.',
+}
 
 interface AuthState {
   status: AuthStatus
@@ -96,7 +103,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const verifyEmail = useCallback(
     async (code: string) => {
       const p = pending.current
-      if (!p) throw new AuthError('Sessão de cadastro expirada. Entre novamente.')
+      if (!p) throw new AuthError(SESSION_EXPIRED[currentLocale()])
       await authService.verifyEmail(p.role, p.email, code)
       const { session, user } = await authService.login({ email: p.email, password: p.password })
       authenticate(session, user)
@@ -106,7 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const resendCode = useCallback(async () => {
     const p = pending.current
-    if (!p) throw new AuthError('Sessão de cadastro expirada. Entre novamente.')
+    if (!p) throw new AuthError(SESSION_EXPIRED[currentLocale()])
     await authService.resendCode(p.role, p.email)
   }, [])
 

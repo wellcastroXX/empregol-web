@@ -6,35 +6,187 @@ import { Eyebrow } from '@/shared/ui/Eyebrow'
 import { PhoneMock } from './components/PhoneMock'
 import { QrPlaceholder } from './components/QrPlaceholder'
 import { StoreBadge } from './components/StoreBadge'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 
 type Platform = 'ios' | 'android'
 
-const REQUIREMENTS: Record<Platform, ReadonlyArray<readonly [string, string]>> = {
-  ios: [
-    ['Sistema', 'iOS 16 ou superior'],
-    ['Tamanho', '48 MB'],
-    ['Idioma', 'Português (BR)'],
-    ['Versão', '1.4.0 · ago 2026'],
-    ['Preço', 'Grátis · com plano opcional'],
-  ],
-  android: [
-    ['Sistema', 'Android 10 ou superior'],
-    ['Tamanho', '42 MB'],
-    ['Idioma', 'Português (BR)'],
-    ['Versão', '1.4.0 · ago 2026'],
-    ['Preço', 'Grátis · com plano opcional'],
-  ],
-}
-
-const FEATURES = [
-  ['001', 'Monte sua vitrine', 'Posição, físico, estatísticas e vídeos. Tudo editável na palma da mão.'],
-  ['002', 'Veja quem olhou seu perfil', '312 clubes passaram pelo seu perfil essa semana. Saiba quais.'],
-  ['003', 'Receba propostas', 'Convite de teste, data e local — direto no chat com o clube.'],
-  ['004', 'Suba vídeo do treino', 'Grave, publique e apareça em destaque na próxima janela.'],
-] as const
+const MESSAGES = defineMessages<{
+  requirements: Record<Platform, ReadonlyArray<readonly [string, string]>>
+  features: ReadonlyArray<readonly [string, string, string]>
+  eyebrow: string
+  title: readonly [string, string]
+  lead: string
+  ratingIos: string
+  ratingAndroid: string
+  featuresEyebrow: string
+  availability: string
+  runs: string
+  platform: string
+  scan: string
+  qrTitle: string
+  qrBody: string
+  closingEyebrow: string
+  closing: readonly [string, string]
+}>({
+  pt: {
+    requirements: {
+      ios: [
+        ['Sistema', 'iOS 16 ou superior'],
+        ['Tamanho', '48 MB'],
+        ['Idioma', 'Português (BR)'],
+        ['Versão', '1.4.0 · ago 2026'],
+        ['Preço', 'Grátis · com plano opcional'],
+      ],
+      android: [
+        ['Sistema', 'Android 10 ou superior'],
+        ['Tamanho', '42 MB'],
+        ['Idioma', 'Português (BR)'],
+        ['Versão', '1.4.0 · ago 2026'],
+        ['Preço', 'Grátis · com plano opcional'],
+      ],
+    },
+    features: [
+      [
+        '001',
+        'Monte sua vitrine',
+        'Posição, físico, estatísticas e vídeos. Tudo editável na palma da mão.',
+      ],
+      [
+        '002',
+        'Veja quem olhou seu perfil',
+        '312 clubes passaram pelo seu perfil essa semana. Saiba quais.',
+      ],
+      ['003', 'Receba propostas', 'Convite de teste, data e local — direto no chat com o clube.'],
+      ['004', 'Suba vídeo do treino', 'Grave, publique e apareça em destaque na próxima janela.'],
+    ],
+    eyebrow: 'A P P · I O S · & · A N D R O I D',
+    title: ['Sua vitrine', 'no bolso'],
+    lead: 'Receba propostas, veja quem te olhou e suba vídeos direto do treino. Baixe grátis — cadastro em 4 minutos.',
+    ratingIos: '4,8',
+    ratingAndroid: '4,7',
+    featuresEyebrow: 'O · Q U E · V O C Ê · F A Z · N O · A P P',
+    availability: 'D I S P O N I B I L I D A D E',
+    runs: 'Roda no seu celular',
+    platform: 'Plataforma',
+    scan: 'A P O N T E · A · C Â M E R A',
+    qrTitle: 'Baixe em 10 segundos',
+    qrBody: 'O QR te leva direto para a loja certa.',
+    closingEyebrow: 'E M P R E G O L · P L A T A F O R M A · D O · A T L E T A',
+    closing: ['O próximo pode', 'ser você'],
+  },
+  en: {
+    requirements: {
+      ios: [
+        ['System', 'iOS 16 or later'],
+        ['Size', '48 MB'],
+        ['Language', 'Portuguese (BR)'],
+        ['Version', '1.4.0 · Aug 2026'],
+        ['Price', 'Free · optional plan'],
+      ],
+      android: [
+        ['System', 'Android 10 or later'],
+        ['Size', '42 MB'],
+        ['Language', 'Portuguese (BR)'],
+        ['Version', '1.4.0 · Aug 2026'],
+        ['Price', 'Free · optional plan'],
+      ],
+    },
+    features: [
+      [
+        '001',
+        'Build your showcase',
+        'Position, physique, stats and videos. All editable from the palm of your hand.',
+      ],
+      [
+        '002',
+        'See who viewed your profile',
+        '312 clubs visited your profile this week. Find out which ones.',
+      ],
+      [
+        '003',
+        'Get offers',
+        'Trial invitations, date and venue — straight to your chat with the club.',
+      ],
+      [
+        '004',
+        'Upload training videos',
+        'Record, post and get featured in the next transfer window.',
+      ],
+    ],
+    eyebrow: 'A P P · I O S · & · A N D R O I D',
+    title: ['Your showcase', 'in your pocket'],
+    lead: 'Get offers, see who checked you out and upload videos straight from training. Free download — sign up in 4 minutes.',
+    ratingIos: '4.8',
+    ratingAndroid: '4.7',
+    featuresEyebrow: 'W H A T · Y O U · D O · I N · T H E · A P P',
+    availability: 'A V A I L A B I L I T Y',
+    runs: 'Runs on your phone',
+    platform: 'Platform',
+    scan: 'P O I N T · Y O U R · C A M E R A',
+    qrTitle: 'Download in 10 seconds',
+    qrBody: 'The QR code takes you straight to the right store.',
+    closingEyebrow: 'E M P R E G O L · T H E · A T H L E T E · P L A T F O R M',
+    closing: ['The next one', 'could be you'],
+  },
+  es: {
+    requirements: {
+      ios: [
+        ['Sistema', 'iOS 16 o superior'],
+        ['Tamaño', '48 MB'],
+        ['Idioma', 'Portugués (BR)'],
+        ['Versión', '1.4.0 · ago 2026'],
+        ['Precio', 'Gratis · con plan opcional'],
+      ],
+      android: [
+        ['Sistema', 'Android 10 o superior'],
+        ['Tamaño', '42 MB'],
+        ['Idioma', 'Portugués (BR)'],
+        ['Versión', '1.4.0 · ago 2026'],
+        ['Precio', 'Gratis · con plan opcional'],
+      ],
+    },
+    features: [
+      [
+        '001',
+        'Arma tu vitrina',
+        'Posición, físico, estadísticas y videos. Todo editable en la palma de tu mano.',
+      ],
+      [
+        '002',
+        'Mira quién vio tu perfil',
+        '312 clubes pasaron por tu perfil esta semana. Descubre cuáles.',
+      ],
+      [
+        '003',
+        'Recibe propuestas',
+        'Invitación a prueba, fecha y lugar — directo en el chat con el club.',
+      ],
+      [
+        '004',
+        'Sube videos del entrenamiento',
+        'Graba, publica y destácate en el próximo mercado de pases.',
+      ],
+    ],
+    eyebrow: 'A P P · I O S · & · A N D R O I D',
+    title: ['Tu vitrina', 'en el bolsillo'],
+    lead: 'Recibe propuestas, mira quién te vio y sube videos directo del entrenamiento. Descarga gratis — registro en 4 minutos.',
+    ratingIos: '4,8',
+    ratingAndroid: '4,7',
+    featuresEyebrow: 'Q U É · H A C E S · E N · L A · A P P',
+    availability: 'D I S P O N I B I L I D A D',
+    runs: 'Funciona en tu celular',
+    platform: 'Plataforma',
+    scan: 'A P U N T A · L A · C Á M A R A',
+    qrTitle: 'Descárgala en 10 segundos',
+    qrBody: 'El QR te lleva directo a la tienda correcta.',
+    closingEyebrow: 'E M P R E G O L · L A · P L A T A F O R M A · D E L · A T L E T A',
+    closing: ['El próximo', 'puedes ser tú'],
+  },
+})
 
 /** empregol.com/app — landing de download do aplicativo. */
 export default function DownloadPage() {
+  const m = useMessages(MESSAGES)
   const [platform, setPlatform] = useState<Platform>('ios')
 
   return (
@@ -64,7 +216,7 @@ export default function DownloadPage() {
         >
           <div style={{ paddingBottom: 80 }}>
             <Eyebrow surface="dark" style={{ marginBottom: 22 }}>
-              A P P · I O S · &amp; · A N D R O I D
+              {m.eyebrow}
             </Eyebrow>
 
             <h1
@@ -78,9 +230,10 @@ export default function DownloadPage() {
                 textTransform: 'uppercase',
               }}
             >
-              Sua vitrine
+              {m.title[0]}
               <br />
-              no bolso<span style={{ color: colors.gramado }}>...</span>
+              {m.title[1]}
+              <span style={{ color: colors.gramado }}>...</span>
             </h1>
 
             <p
@@ -93,8 +246,7 @@ export default function DownloadPage() {
                 maxWidth: 440,
               }}
             >
-              Receba propostas, veja quem te olhou e suba vídeos direto do treino. Baixe grátis —
-              cadastro em 4 minutos.
+              {m.lead}
             </p>
 
             <div style={{ display: 'flex', gap: 12, marginTop: 34, flexWrap: 'wrap' }}>
@@ -112,8 +264,8 @@ export default function DownloadPage() {
                 flexWrap: 'wrap',
               }}
             >
-              <RatingStat value="4,8" label="app store" stars />
-              <RatingStat value="4,7" label="google play" stars />
+              <RatingStat value={m.ratingIos} label="app store" stars />
+              <RatingStat value={m.ratingAndroid} label="google play" stars />
             </div>
           </div>
 
@@ -151,10 +303,10 @@ export default function DownloadPage() {
         }}
       >
         <Eyebrow color={colors.tinta} style={{ marginBottom: 28 }}>
-          O · Q U E · V O C Ê · F A Z · N O · A P P
+          {m.featuresEyebrow}
         </Eyebrow>
         <div style={{ display: 'grid', gridTemplateColumns: 'var(--cols-4)', gap: 20 }}>
-          {FEATURES.map(([num, title, body]) => (
+          {m.features.map(([num, title, body]) => (
             <div key={num} style={{ paddingTop: 14, borderTop: `1.5px solid ${colors.tinta}` }}>
               <div
                 style={{
@@ -207,7 +359,7 @@ export default function DownloadPage() {
           }}
         >
           <div>
-            <Eyebrow style={{ marginBottom: 14 }}>D I S P O N I B I L I D A D E</Eyebrow>
+            <Eyebrow style={{ marginBottom: 14 }}>{m.availability}</Eyebrow>
             <h2
               style={{
                 fontFamily: fonts.display,
@@ -219,12 +371,13 @@ export default function DownloadPage() {
                 margin: '0 0 26px',
               }}
             >
-              Roda no seu celular<span style={{ color: colors.gramado }}>.</span>
+              {m.runs}
+              <span style={{ color: colors.gramado }}>.</span>
             </h2>
 
             <div
               role="tablist"
-              aria-label="Plataforma"
+              aria-label={m.platform}
               style={{
                 display: 'flex',
                 gap: 4,
@@ -276,7 +429,7 @@ export default function DownloadPage() {
                 margin: 0,
               }}
             >
-              {REQUIREMENTS[platform].map(([key, value], i, all) => (
+              {m.requirements[platform].map(([key, value], i, all) => (
                 <div
                   key={key}
                   style={{
@@ -332,7 +485,7 @@ export default function DownloadPage() {
             }}
           >
             <Eyebrow surface="dark" style={{ marginBottom: 20 }}>
-              A P O N T E · A · C Â M E R A
+              {m.scan}
             </Eyebrow>
             <QrPlaceholder />
             <h3
@@ -344,7 +497,8 @@ export default function DownloadPage() {
                 margin: '26px 0 8px',
               }}
             >
-              Baixe em 10 segundos<span style={{ color: colors.gramado }}>.</span>
+              {m.qrTitle}
+              <span style={{ color: colors.gramado }}>.</span>
             </h3>
             <p
               style={{
@@ -356,7 +510,7 @@ export default function DownloadPage() {
                 lineHeight: 1.55,
               }}
             >
-              O QR te leva direto para a loja certa.
+              {m.qrBody}
             </p>
             <div
               style={{
@@ -401,7 +555,7 @@ export default function DownloadPage() {
         >
           <div>
             <Eyebrow color="rgba(251,250,245,0.75)" style={{ marginBottom: 14 }}>
-              E M P R E G O L · P L A T A F O R M A · D O · A T L E T A
+              {m.closingEyebrow}
             </Eyebrow>
             <h2
               style={{
@@ -414,9 +568,10 @@ export default function DownloadPage() {
                 textTransform: 'uppercase',
               }}
             >
-              O próximo pode
+              {m.closing[0]}
               <br />
-              ser você<span style={{ color: colors.tinta }}>.</span>
+              {m.closing[1]}
+              <span style={{ color: colors.tinta }}>.</span>
             </h2>
           </div>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>

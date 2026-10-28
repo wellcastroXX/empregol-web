@@ -1,4 +1,5 @@
 import { colors } from '@/shared/config/theme'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 
 const SIZE = 21
 
@@ -7,7 +8,14 @@ const SIZE = 21
  * padrão é determinístico só para ler como QR. Trocar por um código real antes
  * de publicar, senão a câmera do usuário não vai a lugar nenhum.
  */
+const MESSAGES = defineMessages({
+  pt: { label: 'Espaço reservado para o QR code de download do app' },
+  en: { label: 'Placeholder for the app download QR code' },
+  es: { label: 'Espacio reservado para el código QR de descarga de la app' },
+})
+
 export function QrPlaceholder() {
+  const m = useMessages(MESSAGES)
   const cells: Array<{ x: number; y: number }> = []
 
   for (let y = 0; y < SIZE; y++) {
@@ -44,7 +52,7 @@ export function QrPlaceholder() {
         shapeRendering="crispEdges"
         style={{ display: 'block' }}
         role="img"
-        aria-label="Espaço reservado para o QR code de download do app"
+        aria-label={m.label}
       >
         {cells.map((cell) => (
           <rect

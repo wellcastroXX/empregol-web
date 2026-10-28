@@ -1,7 +1,29 @@
 import type { ReactNode } from 'react'
 
 import { colors, fonts } from '@/shared/config/theme'
+import { defineMessages, useMessages } from '@/shared/i18n/locale-context'
 import { Eyebrow } from '@/shared/ui/Eyebrow'
+
+const MESSAGES = defineMessages({
+  pt: {
+    loading: 'Carregando',
+    loadFailed: 'Não foi possível carregar.',
+    failed: 'Algo falhou',
+    retry: 'Tentar de novo',
+  },
+  en: {
+    loading: 'Loading',
+    loadFailed: 'Could not load.',
+    failed: 'Something went wrong',
+    retry: 'Try again',
+  },
+  es: {
+    loading: 'Cargando',
+    loadFailed: 'No se pudo cargar.',
+    failed: 'Algo falló',
+    retry: 'Intentar de nuevo',
+  },
+})
 
 const box = {
   background: colors.giz,
@@ -12,10 +34,12 @@ const box = {
 } as const
 
 /** Carregando — mesmo tom discreto do resto do painel. */
-export function PanelLoading({ label = 'Carregando' }: { label?: string }) {
+export function PanelLoading({ label }: { label?: string }) {
+  const m = useMessages(MESSAGES)
+
   return (
     <div style={box} role="status" aria-live="polite">
-      <Eyebrow style={{ letterSpacing: '0.18em' }}>{label}</Eyebrow>
+      <Eyebrow style={{ letterSpacing: '0.18em' }}>{label ?? m.loading}</Eyebrow>
     </div>
   )
 }
@@ -63,7 +87,8 @@ export function PanelEmpty({ title, description, action }: PanelEmptyProps) {
 
 /** Falha de carregamento, com a mensagem que a API devolveu. */
 export function PanelError({ error, onRetry }: { error: unknown; onRetry?: () => void }) {
-  const message = error instanceof Error ? error.message : 'Não foi possível carregar.'
+  const m = useMessages(MESSAGES)
+  const message = error instanceof Error ? error.message : m.loadFailed
 
   return (
     <div style={{ ...box, border: `1px solid ${colors.statusEmpregado}` }} role="alert">
@@ -76,7 +101,7 @@ export function PanelError({ error, onRetry }: { error: unknown; onRetry?: () =>
           margin: '0 0 8px',
         }}
       >
-        Algo falhou
+        {m.failed}
       </h3>
       <p style={{ fontFamily: fonts.text, fontSize: 14, color: colors.cinza, margin: 0 }}>
         {message}
@@ -100,7 +125,7 @@ export function PanelError({ error, onRetry }: { error: unknown; onRetry?: () =>
             textTransform: 'uppercase',
           }}
         >
-          Tentar de novo
+          {m.retry}
         </button>
       )}
     </div>

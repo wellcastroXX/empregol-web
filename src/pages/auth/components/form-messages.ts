@@ -1,0 +1,55 @@
+import { defineMessages } from '@/shared/i18n/locale-context'
+
+/** Rótulos e erros que os formulários de auth repetem entre si. */
+export const FORM_MESSAGES = defineMessages({
+  pt: {
+    email: 'E-mail',
+    emailPlaceholder: 'seu@email.com',
+    password: 'Senha',
+    newPasswordPlaceholder: 'Mínimo 8 caracteres',
+    phone: 'Telefone',
+    phonePlaceholder: '(00) 00000-0000',
+    optional: 'Opcional',
+    createAccount: 'Criar conta ›',
+    creatingAccount: 'Criando conta...',
+    createAccountFailed: 'Não foi possível criar a conta.',
+    nameMin: 'Nome deve ter no mínimo 3 caracteres',
+    emailInvalid: 'E-mail inválido',
+    passwordMin: 'Senha deve ter no mínimo 8 caracteres',
+    phoneInvalid: 'Telefone inválido',
+  },
+  en: {
+    email: 'Email',
+    emailPlaceholder: 'you@email.com',
+    password: 'Password',
+    newPasswordPlaceholder: 'At least 8 characters',
+    phone: 'Phone',
+    phonePlaceholder: '(00) 00000-0000',
+    optional: 'Optional',
+    createAccount: 'Create account ›',
+    creatingAccount: 'Creating account...',
+    createAccountFailed: 'Could not create the account.',
+    nameMin: 'Name must be at least 3 characters',
+    emailInvalid: 'Invalid email',
+    passwordMin: 'Password must be at least 8 characters',
+    phoneInvalid: 'Invalid phone number',
+  },
+  es: {
+    email: 'Correo electrónico',
+    emailPlaceholder: 'tu@email.com',
+    password: 'Contraseña',
+    newPasswordPlaceholder: 'Mínimo 8 caracteres',
+    phone: 'Teléfono',
+    phonePlaceholder: '(00) 00000-0000',
+    optional: 'Opcional',
+    createAccount: 'Crear cuenta ›',
+    creatingAccount: 'Creando cuenta...',
+    createAccountFailed: 'No se pudo crear la cuenta.',
+    nameMin: 'El nombre debe tener al menos 3 caracteres',
+    emailInvalid: 'Correo electrónico inválido',
+    passwordMin: 'La contraseña debe tener al menos 8 caracteres',
+    phoneInvalid: 'Teléfono inválido',
+  },
+})
+
+export type FormMessages = (typeof FORM_MESSAGES)['pt']
